@@ -35,11 +35,11 @@ const Index = () => {
       <Header />
       
       <main className="container mx-auto px-4 pt-32 pb-16">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-primary mb-4">
+        <div className="text-center mb-16 animate-fade-up">
+          <h1 className="text-4xl font-bold text-primary mb-4 tracking-tight">
             Transport Collaboratif
           </h1>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Voyagez ensemble à travers Constantine et ses environs
           </p>
         </div>

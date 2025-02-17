@@ -13,34 +13,35 @@ interface TripCardProps {
 
 const TripCard = ({ from, to, date, time, price, image }: TripCardProps) => {
   return (
-    <div className="glass rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl animate-fade-up w-full">
-      <div className="w-full h-[300px] overflow-hidden">
+    <div className="glass rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] animate-fade-up">
+      <div className="w-full h-[300px] overflow-hidden relative group">
         <img 
           src={image} 
           alt={`${from} to ${to}`}
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
-      <div className="p-6">
-        <div className="flex items-center gap-2 text-primary mb-4">
-          <MapPin className="w-4 h-4" />
-          <span className="text-sm font-medium">{from} → {to}</span>
+      <div className="p-8">
+        <div className="flex items-center gap-3 text-primary mb-6">
+          <MapPin className="w-5 h-5" />
+          <span className="text-base font-medium tracking-wide">{from} → {to}</span>
         </div>
         
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-primary" />
-            <span className="text-sm">{formatDate(date)}</span>
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-3">
+            <Calendar className="w-5 h-5 text-primary" />
+            <span className="text-base">{formatDate(date)}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-primary" />
-            <span className="text-sm">{time}</span>
+          <div className="flex items-center gap-3">
+            <Clock className="w-5 h-5 text-primary" />
+            <span className="text-base">{time}</span>
           </div>
         </div>
         
         <div className="flex justify-between items-center">
-          <span className="text-2xl font-bold text-primary">{price} DZD</span>
-          <button className="px-4 py-2 bg-primary text-white rounded-full hover:bg-primary/90 transition-colors">
+          <span className="text-3xl font-bold text-primary">{price} DZD</span>
+          <button className="px-6 py-3 bg-primary text-white rounded-full hover:bg-primary/90 transition-all duration-300 hover:shadow-lg hover:scale-105">
             Réserver
           </button>
         </div>
