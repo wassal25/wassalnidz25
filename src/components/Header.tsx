@@ -15,12 +15,12 @@ const Header = () => {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/80 backdrop-blur-lg shadow-sm" : ""}`}>
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex justify-center items-center h-16">
+      <div className="w-full">
+        <div className="w-full">
           <img 
             src="/lovable-uploads/935fdad3-49cd-43e7-87a7-c532e68ba0c0.png" 
             alt="Wassalni" 
-            className="h-12 object-contain"
+            className="w-full h-20 object-cover"
           />
         </div>
       </div>
