@@ -31,7 +31,7 @@ const trips = [
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#1B75BC]/10 to-[#1B75BC]/5">
       <Header />
       
       <main className="container mx-auto px-4 pt-32 pb-16">
