@@ -9,7 +9,7 @@ const trips = [
     date: "2024-03-20",
     time: "08:00",
     price: 1200,
-    image: "https://images.unsplash.com/photo-1525438160292-a4a860951216?q=80&w=800",
+    image: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?q=80&w=2000",
   },
   {
     from: "Constantine",
@@ -17,7 +17,7 @@ const trips = [
     date: "2024-03-21",
     time: "07:30",
     price: 2500,
-    image: "https://images.unsplash.com/photo-1580674684081-7617fbf3d745?q=80&w=800",
+    image: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?q=80&w=2000",
   },
   {
     from: "Constantine",
@@ -25,7 +25,7 @@ const trips = [
     date: "2024-03-22",
     time: "09:00",
     price: 800,
-    image: "https://images.unsplash.com/photo-1517479149777-5f3b1511d5ad?q=80&w=800",
+    image: "https://images.unsplash.com/photo-1492321936769-b49830bc1d1e?q=80&w=2000",
   },
 ];
 

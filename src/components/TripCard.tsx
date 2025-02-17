@@ -13,8 +13,8 @@ interface TripCardProps {
 
 const TripCard = ({ from, to, date, time, price, image }: TripCardProps) => {
   return (
-    <div className="glass rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl animate-fade-up">
-      <div className="aspect-video overflow-hidden">
+    <div className="glass rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl animate-fade-up w-full">
+      <div className="w-full h-[300px] overflow-hidden">
         <img 
           src={image} 
           alt={`${from} to ${to}`}
