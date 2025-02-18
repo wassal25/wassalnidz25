@@ -32,15 +32,15 @@ const trips = [
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-white flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-[#333333] to-[#222222] flex flex-col">
       <Header />
       
       <main className="container mx-auto px-4 pt-40 pb-16 flex-grow">
         <div className="text-center mb-16 animate-fade-up">
-          <h1 className="text-4xl font-bold text-primary mb-4 tracking-tight">
+          <h1 className="text-4xl font-bold text-white mb-4 tracking-tight">
             Transport Collaboratif
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
             Voyagez ensemble à travers Constantine et ses environs
           </p>
         </div>
