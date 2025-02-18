@@ -26,7 +26,7 @@ const Header = () => {
             className="w-full h-20 object-cover"
           />
         </div>
-        <nav className="bg-[#1B75BC] text-white">
+        <nav className="bg-primary text-white">
           <div className="container mx-auto px-4">
             <ul className="flex items-center justify-end space-x-8 h-12">
               <li>
