@@ -1,5 +1,6 @@
 
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import TripCard from "@/components/TripCard";
 
 const trips = [
@@ -31,10 +32,10 @@ const trips = [
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1B75BC]/10 to-[#1B75BC]/5">
+    <div className="min-h-screen bg-gradient-to-b from-[#1B75BC]/10 to-[#1B75BC]/5 flex flex-col">
       <Header />
       
-      <main className="container mx-auto px-4 pt-32 pb-16">
+      <main className="container mx-auto px-4 pt-40 pb-16 flex-grow">
         <div className="text-center mb-16 animate-fade-up">
           <h1 className="text-4xl font-bold text-primary mb-4 tracking-tight">
             Transport Collaboratif
@@ -50,6 +51,8 @@ const Index = () => {
           ))}
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };
