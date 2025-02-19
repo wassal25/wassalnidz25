@@ -32,7 +32,7 @@ const trips = [
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0EA5E9] to-[#0369A1] flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-teal-500/80 to-teal-600/90 flex flex-col">
       <Header />
       
       <main className="container mx-auto px-4 pt-40 pb-16 flex-grow">
