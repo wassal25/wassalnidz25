@@ -13,7 +13,7 @@ interface TripCardProps {
 
 const TripCard = ({ from, to, date, time, price, image }: TripCardProps) => {
   return (
-    <div className="bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] animate-fade-up">
+    <div className="bg-teal-500/30 backdrop-blur-lg border border-white/20 shadow-lg rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] animate-fade-up">
       <div className="w-full h-[300px] overflow-hidden relative group">
         <img 
           src={image} 
