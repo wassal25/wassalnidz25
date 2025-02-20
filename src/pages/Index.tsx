@@ -2,6 +2,8 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TripCard from "@/components/TripCard";
+import { Search, MapPin } from "lucide-react";
+import { useState } from "react";
 
 const trips = [
   {
@@ -55,11 +57,23 @@ const trips = [
 ];
 
 const Index = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDestination, setSelectedDestination] = useState("");
+
+  const destinations = [...new Set(trips.map(trip => trip.to))];
+
+  const filteredTrips = trips.filter(trip => {
+    const matchesSearch = trip.to.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         trip.from.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDestination = !selectedDestination || trip.to === selectedDestination;
+    return matchesSearch && matchesDestination;
+  });
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-500/80 to-teal-600/90 flex flex-col">
       <Header />
       
-      <main className="container mx-auto px-4 pt-40 pb-16 flex-grow">
+      <main className="container mx-auto px-4 pt-32 pb-16 flex-grow">
         <div className="text-center mb-16 animate-fade-up">
           <h1 className="text-4xl font-bold text-white mb-4 tracking-tight">
             Transport Collaboratif
@@ -69,8 +83,38 @@ const Index = () => {
           </p>
         </div>
 
+        <div className="bg-teal-600/40 backdrop-blur-sm rounded-2xl p-6 mb-12 animate-fade-up">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/70" />
+              <input
+                type="text"
+                placeholder="Rechercher un trajet..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-teal-400"
+              />
+            </div>
+            <div className="relative">
+              <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/70" />
+              <select
+                value={selectedDestination}
+                onChange={(e) => setSelectedDestination(e.target.value)}
+                className="pl-12 pr-8 py-3 bg-white/10 border border-white/20 rounded-xl text-white appearance-none cursor-pointer min-w-[200px] focus:outline-none focus:ring-2 focus:ring-teal-400"
+              >
+                <option value="">Toutes les destinations</option>
+                {destinations.map((destination) => (
+                  <option key={destination} value={destination} className="text-gray-900">
+                    {destination}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {trips.map((trip, index) => (
+          {filteredTrips.map((trip, index) => (
             <TripCard key={index} {...trip} />
           ))}
         </div>
