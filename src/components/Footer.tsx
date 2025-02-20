@@ -9,7 +9,7 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">À propos</h3>
             <p className="text-white/90">
-              Wassalni est une plateforme de transport collaboratif qui connecte les voyageurs à travers l'Algérie.
+              Wassalni est une plateforme de transport collaboratif qui connecte les voyageurs à travers Constantine.
             </p>
           </div>
           <div>
@@ -37,7 +37,7 @@ const Footer = () => {
         </div>
         <div className="border-t border-white/20 mt-8 pt-8 flex items-center justify-center text-white/80">
           <Copyright size={20} className="mr-2" />
-          <p>2024 Wassalni. Tous droits réservés.</p>
+          <p>2025 Wassalni. Tous droits réservés.</p>
         </div>
       </div>
     </footer>

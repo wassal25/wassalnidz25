@@ -41,7 +41,7 @@ const TripCard = ({ from, to, date, time, price, image }: TripCardProps) => {
         
         <div className="flex justify-between items-center">
           <span className="text-3xl font-bold text-white">{price} DZD</span>
-          <button className="px-6 py-3 bg-teal-500 text-white rounded-full hover:bg-teal-400 transition-all duration-300 hover:shadow-lg hover:scale-105">
+          <button className="px-6 py-3 bg-teal-600/40 backdrop-blur-sm text-white rounded-full hover:bg-teal-500/50 transition-all duration-300 hover:shadow-lg hover:scale-105">
             Réserver
           </button>
         </div>
