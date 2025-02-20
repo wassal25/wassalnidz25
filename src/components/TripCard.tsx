@@ -1,6 +1,6 @@
 
 import { formatDate } from "@/lib/utils";
-import { Calendar, Clock, MapPin } from "lucide-react";
+import { Calendar, Clock, MapPin, Users } from "lucide-react";
 
 interface TripCardProps {
   from: string;
@@ -9,9 +9,10 @@ interface TripCardProps {
   time: string;
   price: number;
   image: string;
+  seats: number;
 }
 
-const TripCard = ({ from, to, date, time, price, image }: TripCardProps) => {
+const TripCard = ({ from, to, date, time, price, image, seats }: TripCardProps) => {
   return (
     <div className="bg-teal-500/30 backdrop-blur-lg border border-white/20 shadow-lg rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] animate-fade-up">
       <div className="w-full h-[300px] overflow-hidden relative group">
@@ -37,6 +38,11 @@ const TripCard = ({ from, to, date, time, price, image }: TripCardProps) => {
             <Clock className="w-5 h-5 text-white" />
             <span className="text-base text-white">{time}</span>
           </div>
+        </div>
+
+        <div className="flex items-center gap-2 mb-6 text-white/90">
+          <Users className="w-5 h-5" />
+          <span className="text-base">{seats} places disponibles</span>
         </div>
         
         <div className="flex justify-between items-center">

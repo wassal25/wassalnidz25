@@ -13,6 +13,7 @@ const trips = [
     date: "2024-03-20",
     time: "08:00",
     price: 100,
+    seats: 3,
     image: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?q=80&w=2000",
   },
   {
@@ -21,6 +22,7 @@ const trips = [
     date: "2024-03-21",
     time: "07:30",
     price: 150,
+    seats: 4,
     image: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?q=80&w=2000",
   },
   {
@@ -29,6 +31,7 @@ const trips = [
     date: "2024-03-22",
     time: "09:00",
     price: 120,
+    seats: 2,
     image: "https://images.unsplash.com/photo-1492321936769-b49830bc1d1e?q=80&w=2000",
   },
   {
@@ -37,6 +40,7 @@ const trips = [
     date: "2024-03-22",
     time: "08:30",
     price: 130,
+    seats: 3,
     image: "https://images.unsplash.com/photo-1465447142348-e9952c393450?q=80&w=2000",
   },
   {
@@ -45,6 +49,7 @@ const trips = [
     date: "2024-03-22",
     time: "10:00",
     price: 110,
+    seats: 4,
     image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=2000",
   },
   {
@@ -53,6 +58,7 @@ const trips = [
     date: "2024-03-22",
     time: "09:30",
     price: 140,
+    seats: 2,
     image: "https://images.unsplash.com/photo-1444723121867-7a241cacace9?q=80&w=2000",
   },
 ];
