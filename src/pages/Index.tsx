@@ -2,6 +2,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TripCard from "@/components/TripCard";
+import Map from "@/components/Map";
 import { Search, MapPin } from "lucide-react";
 import { useState } from "react";
 
@@ -113,10 +114,17 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {filteredTrips.map((trip, index) => (
             <TripCard key={index} {...trip} />
           ))}
+        </div>
+
+        <div className="bg-teal-600/40 backdrop-blur-sm p-6 rounded-2xl animate-fade-up">
+          <h2 className="text-2xl font-bold text-white mb-6 text-center">
+            Découvrez nos trajets sur la carte
+          </h2>
+          <Map />
         </div>
       </main>
 
