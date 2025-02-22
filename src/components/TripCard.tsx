@@ -14,7 +14,7 @@ interface TripCardProps {
 
 const TripCard = ({ from, to, date, time, price, image, seats }: TripCardProps) => {
   return (
-    <div className="bg-teal-500/30 backdrop-blur-lg border border-white/20 shadow-lg rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] animate-fade-up">
+    <div className="bg-purple-600/40 backdrop-blur-sm border border-white/20 shadow-lg rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] animate-fade-up">
       <div className="w-full h-[300px] overflow-hidden relative group">
         <img 
           src={image} 
@@ -47,7 +47,7 @@ const TripCard = ({ from, to, date, time, price, image, seats }: TripCardProps) 
         
         <div className="flex justify-between items-center">
           <span className="text-3xl font-bold text-white">{price} DZD</span>
-          <button className="px-6 py-3 bg-teal-600/40 backdrop-blur-sm text-white rounded-full hover:bg-teal-500/50 transition-all duration-300 hover:shadow-lg hover:scale-105">
+          <button className="px-6 py-3 bg-purple-500/50 text-white rounded-full hover:bg-purple-400/60 transition-all duration-300 hover:shadow-lg hover:scale-105">
             Réserver
           </button>
         </div>
