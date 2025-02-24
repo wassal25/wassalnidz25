@@ -1,8 +1,8 @@
 
-const Login = () => {
+const Register = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Image d'arrière-plan représentant Constantine */}
+      {/* Image d'arrière-plan de Constantine */}
       <div 
         className="absolute inset-0 z-0"
         style={{
@@ -18,12 +18,23 @@ const Login = () => {
       
       <div className="w-full max-w-md bg-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl animate-fade-up border border-white/20 relative z-10">
         <h2 className="text-4xl font-bold text-white text-center mb-8 drop-shadow-lg">
-          WASSALNI
+          Rejoignez WASSALNI
         </h2>
         <p className="text-white/90 text-center mb-8 text-sm">
-          Voyagez ensemble, en toute sécurité
+          Créez votre compte et commencez à voyager
         </p>
         <form className="space-y-6">
+          <div>
+            <label htmlFor="name" className="text-white/90 text-sm font-medium mb-2 block">
+              Nom complet
+            </label>
+            <input
+              id="name"
+              type="text"
+              placeholder="Entrez votre nom"
+              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+            />
+          </div>
           <div>
             <label htmlFor="email" className="text-white/90 text-sm font-medium mb-2 block">
               Email
@@ -42,29 +53,31 @@ const Login = () => {
             <input
               id="password"
               type="password"
-              placeholder="Entrez votre mot de passe"
+              placeholder="Créez votre mot de passe"
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
             />
           </div>
-          <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center text-white/90">
-              <input type="checkbox" className="mr-2 rounded bg-white/10 border-white/20" />
-              Se souvenir de moi
+          <div>
+            <label htmlFor="confirmPassword" className="text-white/90 text-sm font-medium mb-2 block">
+              Confirmer le mot de passe
             </label>
-            <a href="#" className="text-white/90 hover:text-white transition-colors">
-              Mot de passe oublié ?
-            </a>
+            <input
+              id="confirmPassword"
+              type="password"
+              placeholder="Confirmez votre mot de passe"
+              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+            />
           </div>
           <button
             type="submit"
             className="w-full py-3 bg-gradient-to-r from-[#FEC6A1]/80 to-[#45B39D]/80 hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.02] backdrop-blur-sm font-medium text-lg"
           >
-            Se connecter
+            S'inscrire
           </button>
           <p className="text-center text-white/90 mt-4">
-            Vous n'avez pas de compte ?{" "}
-            <a href="/register" className="text-white hover:underline font-medium">
-              S'inscrire
+            Vous avez déjà un compte ?{" "}
+            <a href="/login" className="text-white hover:underline font-medium">
+              Se connecter
             </a>
           </p>
         </form>
@@ -73,4 +86,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
