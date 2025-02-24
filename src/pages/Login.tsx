@@ -1,15 +1,28 @@
 
 const Login = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FDE1D3]/60 via-[#F5B7B1]/40 to-[#45B39D]/90 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Cercles décoratifs en arrière-plan */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-r from-[#FEC6A1]/30 to-[#45B39D]/30 blur-3xl animate-pulse" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-gradient-to-l from-[#FDE1D3]/30 to-[#45B39D]/30 blur-3xl animate-pulse" />
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Image d'arrière-plan représentant le covoiturage */}
+      <div 
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: 'url("https://images.unsplash.com/photo-1469041797191-50ace28483c3?q=80&w=2070")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'brightness(0.7)'
+        }}
+      />
+      
+      {/* Overlay gradient pour améliorer la lisibilité */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#000000]/50 via-transparent to-[#45B39D]/50 z-0" />
       
       <div className="w-full max-w-md bg-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl animate-fade-up border border-white/20 relative z-10">
         <h2 className="text-4xl font-bold text-white text-center mb-8 drop-shadow-lg">
-          Connexion
+          WASSALNI
         </h2>
+        <p className="text-white/90 text-center mb-8 text-sm">
+          Voyagez ensemble, en toute sécurité
+        </p>
         <form className="space-y-6">
           <div>
             <label htmlFor="email" className="text-white/90 text-sm font-medium mb-2 block">
