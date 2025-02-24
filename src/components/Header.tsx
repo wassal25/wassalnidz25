@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react";
-import { Home, LogIn } from "lucide-react";
+import { Home, MessageSquare, Settings, LogIn } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -16,28 +17,43 @@ const Header = () => {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-      scrolled ? "bg-teal-500/30 backdrop-blur-lg shadow-lg" : ""
+      scrolled ? "bg-[#FDE1D3]/20 backdrop-blur-lg shadow-lg" : ""
     }`}>
-      <nav className="bg-teal-600/40 backdrop-blur-sm">
+      <nav className="bg-[#FDE1D3]/30 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            <a href="/" className="flex items-center">
+            <Link to="/" className="flex items-center">
               <span className="text-white text-2xl font-bold tracking-wider">
                 WASSALNI
               </span>
-            </a>
+            </Link>
             <ul className="flex items-center space-x-8">
               <li>
-                <a href="/" className="flex items-center space-x-2 hover:text-white/80 text-white transition-colors">
+                <Link to="/" className="flex items-center space-x-2 hover:text-white/80 text-white transition-all duration-300 hover:scale-105">
                   <Home size={20} />
                   <span>Accueil</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/login" className="flex items-center space-x-2 hover:text-white/80 text-white transition-colors">
+                <Link to="/feedback" className="flex items-center space-x-2 hover:text-white/80 text-white transition-all duration-300 hover:scale-105">
+                  <MessageSquare size={20} />
+                  <span>Feedback</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/settings" className="flex items-center space-x-2 hover:text-white/80 text-white transition-all duration-300 hover:scale-105">
+                  <Settings size={20} />
+                  <span>Paramètres</span>
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/login" 
+                  className="flex items-center space-x-2 px-6 py-2 bg-[#FEC6A1]/50 hover:bg-[#FEC6A1]/60 text-white rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                >
                   <LogIn size={20} />
                   <span>Connexion</span>
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
