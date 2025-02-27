@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Check, Calendar, Clock, MapPin, Users, CreditCard, ChevronLeft, User } from "lucide-react";
+import { Check, Calendar, Clock, MapPin, Users, CreditCard, ChevronLeft, User, Settings, Shield, CreditCardIcon, Truck, Star, Phone } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -37,6 +37,13 @@ const ReservationPage = () => {
   const [step, setStep] = useState<'details' | 'payment' | 'confirmation'>('details');
   const [isLoading, setIsLoading] = useState(false);
   const [reservationComplete, setReservationComplete] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  
+  // Options de paiement
+  const [savePaymentInfo, setSavePaymentInfo] = useState(false);
+  const [enableNotifications, setEnableNotifications] = useState(true);
+  const [preferredLanguage, setPreferredLanguage] = useState("fr");
+  const [theme, setTheme] = useState("light");
 
   // Redirection si aucun voyage n'est sélectionné
   useEffect(() => {
@@ -62,6 +69,7 @@ const ReservationPage = () => {
   const nextStep = () => {
     if (step === 'details') {
       setStep('payment');
+      window.scrollTo(0, 0);
     } else if (step === 'payment') {
       setIsLoading(true);
       // Simuler un temps de chargement pour le traitement du paiement
@@ -69,6 +77,7 @@ const ReservationPage = () => {
         setIsLoading(false);
         setStep('confirmation');
         setReservationComplete(true);
+        window.scrollTo(0, 0);
       }, 1500);
     } else if (step === 'confirmation') {
       navigate('/');
@@ -79,8 +88,10 @@ const ReservationPage = () => {
   const prevStep = () => {
     if (step === 'payment') {
       setStep('details');
+      window.scrollTo(0, 0);
     } else if (step === 'confirmation') {
       setStep('payment');
+      window.scrollTo(0, 0);
     }
   };
 
@@ -97,19 +108,130 @@ const ReservationPage = () => {
       
       {/* Contenu principal */}
       <main className="container mx-auto px-4 pt-32 pb-16 flex-grow">
-        {/* En-tête de la page */}
-        <div className="flex items-center mb-8">
-          <button 
-            onClick={handleBackToHome}
-            className="text-white/80 hover:text-white flex items-center transition-colors"
-          >
-            <ChevronLeft size={20} className="mr-1" />
-            Retour
-          </button>
-          <h1 className="text-3xl font-bold text-white mx-auto pr-10">
+        {/* En-tête de la page avec bouton paramètres */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center">
+            <button 
+              onClick={handleBackToHome}
+              className="text-white/80 hover:text-white flex items-center transition-colors"
+            >
+              <ChevronLeft size={20} className="mr-1" />
+              Retour
+            </button>
+          </div>
+          <h1 className="text-3xl font-bold text-white">
             {step === 'confirmation' ? 'Réservation Confirmée' : 'Réserver votre trajet'}
           </h1>
+          <button 
+            onClick={() => setShowSettings(!showSettings)}
+            className="text-white/80 hover:text-white flex items-center transition-colors p-2 rounded-full bg-white/10 hover:bg-white/20"
+            title="Paramètres"
+          >
+            <Settings size={20} />
+          </button>
         </div>
+        
+        {/* Panneau de paramètres */}
+        {showSettings && (
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6 animate-fade-up border border-white/20">
+            <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+              <Settings className="mr-2" size={18} />
+              Paramètres
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h4 className="text-white font-medium">Préférences générales</h4>
+                
+                <div className="flex items-center justify-between">
+                  <label className="text-white/90">Notifications</label>
+                  <div className="relative inline-block w-12 h-6 transition duration-200 ease-in-out">
+                    <input
+                      type="checkbox"
+                      id="notifications"
+                      checked={enableNotifications}
+                      onChange={() => setEnableNotifications(!enableNotifications)}
+                      className="opacity-0 w-0 h-0"
+                    />
+                    <label 
+                      htmlFor="notifications"
+                      className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 rounded-full transition-all duration-300 ${enableNotifications ? 'bg-teal-500' : 'bg-gray-400'}`}
+                    >
+                      <span className={`absolute left-1 bottom-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${enableNotifications ? 'transform translate-x-6' : ''}`}></span>
+                    </label>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="text-white/90 block mb-2">Langue préférée</label>
+                  <select 
+                    value={preferredLanguage}
+                    onChange={(e) => setPreferredLanguage(e.target.value)}
+                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none"
+                  >
+                    <option value="fr">Français</option>
+                    <option value="ar">Arabe</option>
+                    <option value="en">Anglais</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="text-white/90 block mb-2">Thème</label>
+                  <select 
+                    value={theme}
+                    onChange={(e) => setTheme(e.target.value)}
+                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none"
+                  >
+                    <option value="light">Clair</option>
+                    <option value="dark">Sombre</option>
+                    <option value="auto">Automatique</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <h4 className="text-white font-medium">Sécurité et paiement</h4>
+                
+                <div className="flex items-center justify-between">
+                  <label className="text-white/90">Sauvegarder les infos de paiement</label>
+                  <div className="relative inline-block w-12 h-6 transition duration-200 ease-in-out">
+                    <input
+                      type="checkbox"
+                      id="save-payment"
+                      checked={savePaymentInfo}
+                      onChange={() => setSavePaymentInfo(!savePaymentInfo)}
+                      className="opacity-0 w-0 h-0"
+                    />
+                    <label 
+                      htmlFor="save-payment"
+                      className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 rounded-full transition-all duration-300 ${savePaymentInfo ? 'bg-teal-500' : 'bg-gray-400'}`}
+                    >
+                      <span className={`absolute left-1 bottom-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${savePaymentInfo ? 'transform translate-x-6' : ''}`}></span>
+                    </label>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-white/5 rounded-xl">
+                  <div className="flex items-center mb-2">
+                    <Shield className="text-teal-400 mr-2" size={18} />
+                    <span className="text-white font-medium">Sécurité des données</span>
+                  </div>
+                  <p className="text-white/70 text-sm">
+                    Vos données personnelles et de paiement sont chiffrées et sécurisées selon les normes les plus strictes.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-6 text-center">
+              <button 
+                onClick={() => setShowSettings(false)}
+                className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all duration-300"
+              >
+                Fermer les paramètres
+              </button>
+            </div>
+          </div>
+        )}
         
         {/* Indicateur d'étapes */}
         {!reservationComplete && (
@@ -164,6 +286,32 @@ const ReservationPage = () => {
                 </div>
               </div>
             </div>
+            
+            {/* Information sur le chauffeur */}
+            {step !== 'confirmation' && (
+              <div className="mt-4 bg-white/5 rounded-xl p-4">
+                <div className="flex items-center mb-2">
+                  <div className="w-12 h-12 rounded-full bg-teal-500/30 flex items-center justify-center mr-3">
+                    <User className="text-white" size={24} />
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium">{trip.driverName}</h4>
+                    <div className="flex items-center">
+                      <Star className="text-yellow-400 w-4 h-4" />
+                      <Star className="text-yellow-400 w-4 h-4" />
+                      <Star className="text-yellow-400 w-4 h-4" />
+                      <Star className="text-yellow-400 w-4 h-4" />
+                      <Star className="text-white/30 w-4 h-4" />
+                      <span className="text-white/70 text-sm ml-1">(4.7)</span>
+                    </div>
+                  </div>
+                  <div className="ml-auto flex items-center">
+                    <Truck className="text-white/70 mr-1" size={16} />
+                    <span className="text-white/70 text-sm">Renault Symbol</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           
           {/* Étape 1: Détails de la réservation */}
@@ -209,14 +357,20 @@ const ReservationPage = () => {
                   <label htmlFor="phoneNumber" className="text-white/90 text-sm font-medium mb-2 block">
                     Numéro de téléphone
                   </label>
-                  <input
-                    type="tel"
-                    id="phoneNumber"
-                    placeholder="Entrez votre numéro de téléphone"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
-                  />
+                  <div className="relative">
+                    <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/70" size={16} />
+                    <input
+                      type="tel"
+                      id="phoneNumber"
+                      placeholder="Entrez votre numéro de téléphone"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      className="w-full pl-12 px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+                    />
+                  </div>
+                  <p className="text-white/50 text-xs mt-1">
+                    Ce numéro sera utilisé pour vous contacter en cas de besoin.
+                  </p>
                 </div>
                 
                 <div>
@@ -257,7 +411,7 @@ const ReservationPage = () => {
               <h3 className="text-xl font-semibold text-white mb-4">Méthode de paiement</h3>
               <div className="space-y-4">
                 <div className="flex flex-col space-y-3">
-                  <label className="flex items-center bg-white/5 p-4 rounded-xl cursor-pointer hover:bg-white/10 transition-all">
+                  <label className="flex items-center bg-white/5 p-4 rounded-xl cursor-pointer hover:bg-white/10 transition-all border border-white/5">
                     <input
                       type="radio"
                       name="paymentMethod"
@@ -265,10 +419,18 @@ const ReservationPage = () => {
                       onChange={() => setPaymentMethod('cash')}
                       className="mr-3"
                     />
-                    <span className="text-white">Paiement en espèces (à bord)</span>
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center mr-3">
+                        <CreditCardIcon className="text-green-400" size={20} />
+                      </div>
+                      <div>
+                        <span className="text-white font-medium">Paiement en espèces</span>
+                        <p className="text-white/60 text-sm">Payez directement au chauffeur lors du trajet</p>
+                      </div>
+                    </div>
                   </label>
                   
-                  <label className="flex items-center bg-white/5 p-4 rounded-xl cursor-pointer hover:bg-white/10 transition-all">
+                  <label className="flex items-center bg-white/5 p-4 rounded-xl cursor-pointer hover:bg-white/10 transition-all border border-white/5">
                     <input
                       type="radio"
                       name="paymentMethod"
@@ -276,12 +438,20 @@ const ReservationPage = () => {
                       onChange={() => setPaymentMethod('card')}
                       className="mr-3"
                     />
-                    <span className="text-white">Paiement par carte bancaire</span>
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mr-3">
+                        <CreditCard className="text-blue-400" size={20} />
+                      </div>
+                      <div>
+                        <span className="text-white font-medium">Paiement par carte bancaire</span>
+                        <p className="text-white/60 text-sm">Payez maintenant de manière sécurisée</p>
+                      </div>
+                    </div>
                   </label>
                 </div>
                 
                 {paymentMethod === 'card' && (
-                  <div className="mt-4 p-4 bg-white/5 rounded-xl animate-fade-up">
+                  <div className="mt-4 p-4 bg-white/5 rounded-xl animate-fade-up border border-white/10">
                     <div className="space-y-4">
                       <div>
                         <label htmlFor="cardNumber" className="text-white/90 text-sm font-medium mb-2 block">
@@ -329,6 +499,16 @@ const ReservationPage = () => {
                           className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
                         />
                       </div>
+                      
+                      <label className="flex items-center text-white/80 text-sm cursor-pointer space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={savePaymentInfo}
+                          onChange={() => setSavePaymentInfo(!savePaymentInfo)}
+                          className="form-checkbox rounded text-teal-500 p-2"
+                        />
+                        <span>Sauvegarder les informations de paiement pour de futurs trajets</span>
+                      </label>
                     </div>
                   </div>
                 )}
@@ -339,6 +519,9 @@ const ReservationPage = () => {
                   <span>Total à payer:</span>
                   <span>{totalPrice} DZD</span>
                 </div>
+                <p className="text-white/60 text-sm mt-2 text-center">
+                  En continuant, vous acceptez les Conditions Générales d'Utilisation et la Politique de Confidentialité.
+                </p>
               </div>
             </div>
           )}
@@ -361,10 +544,17 @@ const ReservationPage = () => {
                 <p className="mb-1">Chauffeur : {trip.driverName}</p>
                 <p className="mt-2 font-medium">Total payé : {totalPrice} DZD</p>
               </div>
-              <p className="text-white mt-6">
+              <p className="text-white mt-6 mb-4">
                 Vous avez été ajouté au groupe de discussion pour ce trajet. 
                 Vous pouvez maintenant communiquer avec le chauffeur et les autres passagers.
               </p>
+              
+              <div className="bg-white/5 p-4 rounded-xl max-w-md mx-auto mt-4 border border-teal-500/30">
+                <div className="flex items-center justify-center space-x-2 text-white">
+                  <MessageIcon className="text-teal-400" />
+                  <span>Groupe de discussion créé automatiquement</span>
+                </div>
+              </div>
             </div>
           )}
           
@@ -406,5 +596,12 @@ const ReservationPage = () => {
     </div>
   );
 };
+
+// Icône de message pour éviter de réimporter Lucide
+const MessageIcon = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+  </svg>
+);
 
 export default ReservationPage;

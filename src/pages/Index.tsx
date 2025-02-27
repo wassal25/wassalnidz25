@@ -251,14 +251,8 @@ const Index = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {filteredTrips.length > 0 ? (
             filteredTrips.map((trip, index) => (
-              <div key={index} className="relative">
-                <TripCard {...trip} />
-                <button
-                  onClick={() => handleReservation(trip)}
-                  className="w-full mt-2 py-2 bg-gradient-to-r from-[#FEC6A1]/80 to-[#45B39D]/80 hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl transition-all duration-300"
-                >
-                  Réserver
-                </button>
+              <div key={index} className="relative cursor-pointer" onClick={() => handleReservation(trip)}>
+                <TripCard {...trip} onReserve={() => handleReservation(trip)} />
               </div>
             ))
           ) : (

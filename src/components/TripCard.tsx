@@ -16,9 +16,10 @@ interface TripCardProps {
   price: number;
   image: string;
   seats: number;
+  onReserve?: () => void;
 }
 
-const TripCard = ({ from, to, date, time, price, image, seats }: TripCardProps) => {
+const TripCard = ({ from, to, date, time, price, image, seats, onReserve }: TripCardProps) => {
   return (
     <div className="bg-[#FDE1D3]/40 backdrop-blur-sm border border-white/20 shadow-lg rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] animate-fade-up">
       {/* Image du trajet avec effet hover */}
@@ -60,7 +61,13 @@ const TripCard = ({ from, to, date, time, price, image, seats }: TripCardProps) 
         {/* Ligne prix et bouton */}
         <div className="flex justify-between items-center">
           <span className="text-3xl font-bold text-white">{price} DZD</span>
-          <button className="px-6 py-3 bg-[#FEC6A1]/50 text-white rounded-full hover:bg-[#FEC6A1]/60 transition-all duration-300 hover:shadow-lg hover:scale-105">
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onReserve) onReserve();
+            }}
+            className="px-6 py-3 bg-[#FEC6A1]/50 text-white rounded-full hover:bg-[#FEC6A1]/60 transition-all duration-300 hover:shadow-lg hover:scale-105"
+          >
             Réserver
           </button>
         </div>
