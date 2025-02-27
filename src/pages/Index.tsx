@@ -1,15 +1,23 @@
 
+// =======================================================
+// Page d'accueil principale
+// Description: Interface principale de l'application
+// =======================================================
+
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TripCard from "@/components/TripCard";
 import Map from "@/components/Map";
-import ChatBox from "@/components/ChatBox";
 import AnimatedClock from "@/components/AnimatedClock";
+import GroupChat from "@/components/GroupChat";
 import { Search, MapPin, Calendar, Clock } from "lucide-react";
 import { useState } from "react";
 
+// Données simulées des voyages
 const trips = [
   {
+    id: "trip-1",
     from: "Constantine Centre",
     to: "Hamma Bouziane",
     date: "2024-03-20",
@@ -20,6 +28,7 @@ const trips = [
     driverName: "Ahmed B."
   },
   {
+    id: "trip-2",
     from: "Constantine Centre",
     to: "Ali Mendjeli",
     date: "2024-03-21",
@@ -30,6 +39,7 @@ const trips = [
     driverName: "Karim M."
   },
   {
+    id: "trip-3",
     from: "Constantine Centre",
     to: "El Khroub",
     date: "2024-03-22",
@@ -40,6 +50,7 @@ const trips = [
     driverName: "Sofiane L."
   },
   {
+    id: "trip-4",
     from: "Constantine Centre",
     to: "Didouche Mourad",
     date: "2024-03-22",
@@ -50,6 +61,7 @@ const trips = [
     driverName: "Nassim K."
   },
   {
+    id: "trip-5",
     from: "Constantine Centre",
     to: "Ain Smara",
     date: "2024-03-22",
@@ -60,6 +72,7 @@ const trips = [
     driverName: "Riad D."
   },
   {
+    id: "trip-6",
     from: "Constantine Centre",
     to: "Zighoud Youcef",
     date: "2024-03-22",
@@ -72,17 +85,26 @@ const trips = [
 ];
 
 const Index = () => {
+  // Navigation
+  const navigate = useNavigate();
+  
+  // États pour la recherche et le filtrage
   const [departSearch, setDepartSearch] = useState("");
   const [destinationSearch, setDestinationSearch] = useState("");
   const [timeSearch, setTimeSearch] = useState("");
   const [dateSearch, setDateSearch] = useState("");
   const [selectedDestination, setSelectedDestination] = useState("");
-  const [reservedTrip, setReservedTrip] = useState<(typeof trips)[0] | null>(null);
-
+  
+  // État pour le trajet réservé et le chat
+  const [reservedTrip, setReservedTrip] = useState<string | null>(null);
+  const [reservedTripDetails, setReservedTripDetails] = useState<(typeof trips)[0] | null>(null);
+  
+  // Extraction des valeurs uniques pour les filtres
   const departures = [...new Set(trips.map(trip => trip.from))];
   const destinations = [...new Set(trips.map(trip => trip.to))];
   const times = [...new Set(trips.map(trip => trip.time))];
 
+  // Filtrage des trajets selon les critères de recherche
   const filteredTrips = trips.filter(trip => {
     const matchesDepart = !departSearch || trip.from.toLowerCase().includes(departSearch.toLowerCase());
     const matchesDestination = !destinationSearch || trip.to.toLowerCase().includes(destinationSearch.toLowerCase());
@@ -93,16 +115,35 @@ const Index = () => {
     return matchesDepart && matchesDestination && matchesTime && matchesDate && matchesSelectedDestination;
   });
 
+  // Gestionnaire de réservation
   const handleReservation = (trip: (typeof trips)[0]) => {
-    setReservedTrip(trip);
-    // Ici vous pourriez également enregistrer la réservation dans une base de données
+    // Naviguer vers la page de réservation avec les détails du trajet
+    navigate("/reservation", { state: { trip } });
   };
+
+  // Simuler une réservation déjà effectuée pour le chat
+  // Dans une vraie application, cela viendrait d'une base de données
+  const simulatedReservation = () => {
+    if (!reservedTrip) {
+      // Simuler une réservation pour le premier trajet
+      const trip = trips[0];
+      setReservedTrip(trip.id);
+      setReservedTripDetails(trip);
+    }
+  };
+
+  // Appel à la simulation pour démonstration
+  // Dans une application réelle, on vérifierait les réservations lors du chargement
+  simulatedReservation();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-500/80 to-teal-600/90 flex flex-col">
+      {/* En-tête de la page */}
       <Header />
       
+      {/* Contenu principal */}
       <main className="container mx-auto px-4 pt-32 pb-16 flex-grow">
+        {/* Section titre */}
         <div className="text-center mb-16 animate-fade-up">
           <h1 className="text-4xl font-bold text-white mb-4 tracking-tight">
             Transport Collaboratif
@@ -112,6 +153,7 @@ const Index = () => {
           </p>
         </div>
 
+        {/* Section recherche */}
         <div className="bg-teal-600/40 backdrop-blur-sm rounded-2xl p-6 mb-12 animate-fade-up">
           <div className="flex flex-col md:flex-row gap-8 items-center mb-6">
             <div className="flex-1">
@@ -125,6 +167,7 @@ const Index = () => {
             </div>
           </div>
           
+          {/* Filtres de recherche */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Champ de départ */}
             <div className="relative">
@@ -189,6 +232,7 @@ const Index = () => {
             </div>
           </div>
           
+          {/* Boutons de recherche */}
           <div className="flex justify-center mt-4">
             <button 
               onClick={() => {
@@ -209,6 +253,7 @@ const Index = () => {
           </div>
         </div>
 
+        {/* Section des résultats de trajets */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {filteredTrips.length > 0 ? (
             filteredTrips.map((trip, index) => (
@@ -230,6 +275,7 @@ const Index = () => {
           )}
         </div>
 
+        {/* Section de la carte */}
         <div className="bg-teal-600/40 backdrop-blur-sm p-6 rounded-2xl animate-fade-up">
           <h2 className="text-2xl font-bold text-white mb-6 text-center">
             Découvrez nos trajets sur la carte
@@ -238,14 +284,24 @@ const Index = () => {
         </div>
       </main>
 
+      {/* Pied de page */}
       <Footer />
       
-      {/* Afficher le chat seulement si un trajet est réservé */}
-      {reservedTrip && (
-        <ChatBox 
-          driverName={reservedTrip.driverName} 
-          tripId="trip-123" 
-          onClose={() => {}} 
+      {/* Chat de groupe - Affiché uniquement si l'utilisateur a une réservation active */}
+      {reservedTripDetails && (
+        <GroupChat 
+          tripId={reservedTripDetails.id}
+          tripInfo={{
+            from: reservedTripDetails.from,
+            to: reservedTripDetails.to,
+            date: reservedTripDetails.date,
+            time: reservedTripDetails.time
+          }}
+          currentUser={{
+            id: "current-user",
+            name: "Moi",
+            role: "passenger"
+          }}
         />
       )}
     </div>

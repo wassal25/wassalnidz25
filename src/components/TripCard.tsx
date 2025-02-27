@@ -1,7 +1,13 @@
 
+// =======================================================
+// Composant TripCard
+// Description: Carte affichant les détails d'un trajet disponible
+// =======================================================
+
 import { formatDate } from "@/lib/utils";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
 
+// Interface définissant les propriétés du composant
 interface TripCardProps {
   from: string;
   to: string;
@@ -15,6 +21,7 @@ interface TripCardProps {
 const TripCard = ({ from, to, date, time, price, image, seats }: TripCardProps) => {
   return (
     <div className="bg-[#FDE1D3]/40 backdrop-blur-sm border border-white/20 shadow-lg rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] animate-fade-up">
+      {/* Image du trajet avec effet hover */}
       <div className="w-full h-[300px] overflow-hidden relative group">
         <img 
           src={image} 
@@ -23,12 +30,16 @@ const TripCard = ({ from, to, date, time, price, image, seats }: TripCardProps) 
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
+      
+      {/* Section d'informations */}
       <div className="p-8">
+        {/* Ligne d'itinéraire */}
         <div className="flex items-center gap-3 text-white mb-6">
           <MapPin className="w-5 h-5" />
           <span className="text-base font-medium tracking-wide">{from} → {to}</span>
         </div>
         
+        {/* Ligne date et heure */}
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
             <Calendar className="w-5 h-5 text-white" />
@@ -40,11 +51,13 @@ const TripCard = ({ from, to, date, time, price, image, seats }: TripCardProps) 
           </div>
         </div>
 
+        {/* Ligne places disponibles */}
         <div className="flex items-center gap-2 mb-6 text-white/90">
           <Users className="w-5 h-5" />
           <span className="text-base">{seats} places disponibles</span>
         </div>
         
+        {/* Ligne prix et bouton */}
         <div className="flex justify-between items-center">
           <span className="text-3xl font-bold text-white">{price} DZD</span>
           <button className="px-6 py-3 bg-[#FEC6A1]/50 text-white rounded-full hover:bg-[#FEC6A1]/60 transition-all duration-300 hover:shadow-lg hover:scale-105">
