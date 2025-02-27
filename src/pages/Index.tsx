@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TripCard from "@/components/TripCard";
 import Map from "@/components/Map";
-import { Search, MapPin } from "lucide-react";
+import { Search, MapPin, Calendar, Clock } from "lucide-react";
 import { useState } from "react";
 
 const trips = [
@@ -64,16 +64,24 @@ const trips = [
 ];
 
 const Index = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [departSearch, setDepartSearch] = useState("");
+  const [destinationSearch, setDestinationSearch] = useState("");
+  const [timeSearch, setTimeSearch] = useState("");
+  const [dateSearch, setDateSearch] = useState("");
   const [selectedDestination, setSelectedDestination] = useState("");
 
+  const departures = [...new Set(trips.map(trip => trip.from))];
   const destinations = [...new Set(trips.map(trip => trip.to))];
+  const times = [...new Set(trips.map(trip => trip.time))];
 
   const filteredTrips = trips.filter(trip => {
-    const matchesSearch = trip.to.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         trip.from.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesDestination = !selectedDestination || trip.to === selectedDestination;
-    return matchesSearch && matchesDestination;
+    const matchesDepart = !departSearch || trip.from.toLowerCase().includes(departSearch.toLowerCase());
+    const matchesDestination = !destinationSearch || trip.to.toLowerCase().includes(destinationSearch.toLowerCase());
+    const matchesTime = !timeSearch || trip.time === timeSearch;
+    const matchesDate = !dateSearch || trip.date === dateSearch;
+    const matchesSelectedDestination = !selectedDestination || trip.to === selectedDestination;
+    
+    return matchesDepart && matchesDestination && matchesTime && matchesDate && matchesSelectedDestination;
   });
 
   return (
@@ -91,39 +99,105 @@ const Index = () => {
         </div>
 
         <div className="bg-teal-600/40 backdrop-blur-sm rounded-2xl p-6 mb-12 animate-fade-up">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/70" />
-              <input
-                type="text"
-                placeholder="Rechercher un trajet..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-teal-400"
-              />
+          <div className="flex flex-col gap-4">
+            <h3 className="text-xl font-semibold text-white mb-2">Rechercher un trajet</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Champ de départ */}
+              <div className="relative">
+                <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/70" />
+                <select
+                  value={departSearch}
+                  onChange={(e) => setDepartSearch(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-teal-400 appearance-none"
+                >
+                  <option value="">Lieu de départ</option>
+                  {departures.map((departure) => (
+                    <option key={departure} value={departure} className="text-gray-900">
+                      {departure}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              {/* Champ de destination */}
+              <div className="relative">
+                <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/70" />
+                <select
+                  value={destinationSearch}
+                  onChange={(e) => setDestinationSearch(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-teal-400 appearance-none"
+                >
+                  <option value="">Destination</option>
+                  {destinations.map((destination) => (
+                    <option key={destination} value={destination} className="text-gray-900">
+                      {destination}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              {/* Champ de date */}
+              <div className="relative">
+                <Calendar className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/70" />
+                <input
+                  type="date"
+                  value={dateSearch}
+                  onChange={(e) => setDateSearch(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-teal-400"
+                />
+              </div>
+              
+              {/* Champ d'heure */}
+              <div className="relative">
+                <Clock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/70" />
+                <select
+                  value={timeSearch}
+                  onChange={(e) => setTimeSearch(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-teal-400 appearance-none"
+                >
+                  <option value="">Heure de départ</option>
+                  {times.map((time) => (
+                    <option key={time} value={time} className="text-gray-900">
+                      {time}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div className="relative">
-              <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/70" />
-              <select
-                value={selectedDestination}
-                onChange={(e) => setSelectedDestination(e.target.value)}
-                className="pl-12 pr-8 py-3 bg-white/10 border border-white/20 rounded-xl text-white appearance-none cursor-pointer min-w-[200px] focus:outline-none focus:ring-2 focus:ring-teal-400"
+            
+            <div className="flex justify-center mt-4">
+              <button 
+                onClick={() => {
+                  setDepartSearch("");
+                  setDestinationSearch("");
+                  setTimeSearch("");
+                  setDateSearch("");
+                  setSelectedDestination("");
+                }}
+                className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl mr-4 transition-all duration-300"
               >
-                <option value="">Toutes les destinations</option>
-                {destinations.map((destination) => (
-                  <option key={destination} value={destination} className="text-gray-900">
-                    {destination}
-                  </option>
-                ))}
-              </select>
+                Réinitialiser
+              </button>
+              <button className="px-8 py-2 bg-gradient-to-r from-[#FEC6A1]/80 to-[#45B39D]/80 hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl transition-all duration-300 flex items-center">
+                <Search className="mr-2" size={18} />
+                Rechercher
+              </button>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {filteredTrips.map((trip, index) => (
-            <TripCard key={index} {...trip} />
-          ))}
+          {filteredTrips.length > 0 ? (
+            filteredTrips.map((trip, index) => (
+              <TripCard key={index} {...trip} />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <p className="text-white text-xl">Aucun trajet ne correspond à votre recherche.</p>
+              <p className="text-white/80 mt-2">Essayez d'autres critères de recherche.</p>
+            </div>
+          )}
         </div>
 
         <div className="bg-teal-600/40 backdrop-blur-sm p-6 rounded-2xl animate-fade-up">
