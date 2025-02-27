@@ -1,5 +1,10 @@
 
+import { useState } from "react";
+import { Car, User } from "lucide-react";
+
 const Login = () => {
+  const [userType, setUserType] = useState<'passenger' | 'driver'>('passenger');
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       {/* Image d'arrière-plan représentant Constantine */}
@@ -17,12 +22,39 @@ const Login = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-[#000000]/50 via-transparent to-[#45B39D]/50 z-0" />
       
       <div className="w-full max-w-md bg-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl animate-fade-up border border-white/20 relative z-10">
-        <h2 className="text-4xl font-bold text-white text-center mb-8 drop-shadow-lg">
+        <h2 className="text-4xl font-bold text-white text-center mb-4 drop-shadow-lg">
           WASSALNI
         </h2>
-        <p className="text-white/90 text-center mb-8 text-sm">
+        <p className="text-white/90 text-center mb-6 text-sm">
           Voyagez ensemble, en toute sécurité
         </p>
+
+        {/* Sélecteur de type d'utilisateur */}
+        <div className="flex bg-white/5 p-1 rounded-xl mb-8">
+          <button
+            className={`flex-1 py-2 rounded-lg flex items-center justify-center ${
+              userType === 'passenger' 
+                ? 'bg-gradient-to-r from-[#FEC6A1]/60 to-[#45B39D]/60 text-white' 
+                : 'text-white/70 hover:text-white'
+            } transition-all duration-300`}
+            onClick={() => setUserType('passenger')}
+          >
+            <User className="mr-2 w-4 h-4" />
+            Passager
+          </button>
+          <button
+            className={`flex-1 py-2 rounded-lg flex items-center justify-center ${
+              userType === 'driver' 
+                ? 'bg-gradient-to-r from-[#FEC6A1]/60 to-[#45B39D]/60 text-white' 
+                : 'text-white/70 hover:text-white'
+            } transition-all duration-300`}
+            onClick={() => setUserType('driver')}
+          >
+            <Car className="mr-2 w-4 h-4" />
+            Chauffeur
+          </button>
+        </div>
+
         <form className="space-y-6">
           <div>
             <label htmlFor="email" className="text-white/90 text-sm font-medium mb-2 block">
@@ -63,9 +95,15 @@ const Login = () => {
           </button>
           <p className="text-center text-white/90 mt-4">
             Vous n'avez pas de compte ?{" "}
-            <a href="/register" className="text-white hover:underline font-medium">
-              S'inscrire
-            </a>
+            {userType === 'passenger' ? (
+              <a href="/register-passenger" className="text-white hover:underline font-medium">
+                S'inscrire en tant que passager
+              </a>
+            ) : (
+              <a href="/register-driver" className="text-white hover:underline font-medium">
+                S'inscrire en tant que chauffeur
+              </a>
+            )}
           </p>
         </form>
       </div>
