@@ -9,7 +9,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TripCard from "@/components/TripCard";
 import Map from "@/components/Map";
-import AnimatedClock from "@/components/AnimatedClock";
 import GroupChat from "@/components/GroupChat";
 import { Search, MapPin, Calendar, Clock } from "lucide-react";
 import { useState } from "react";
@@ -155,16 +154,11 @@ const Index = () => {
 
         {/* Section recherche */}
         <div className="bg-teal-600/40 backdrop-blur-sm rounded-2xl p-6 mb-12 animate-fade-up">
-          <div className="flex flex-col md:flex-row gap-8 items-center mb-6">
-            <div className="flex-1">
-              <h3 className="text-xl font-semibold text-white mb-2">Rechercher un trajet</h3>
-              <p className="text-white/80 text-sm mb-4">
-                Trouvez un trajet qui correspond à vos besoins
-              </p>
-            </div>
-            <div className="flex-shrink-0">
-              <AnimatedClock />
-            </div>
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-white mb-2">Rechercher un trajet</h3>
+            <p className="text-white/80 text-sm">
+              Trouvez un trajet qui correspond à vos besoins
+            </p>
           </div>
           
           {/* Filtres de recherche */}
@@ -263,7 +257,7 @@ const Index = () => {
                   onClick={() => handleReservation(trip)}
                   className="w-full mt-2 py-2 bg-gradient-to-r from-[#FEC6A1]/80 to-[#45B39D]/80 hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl transition-all duration-300"
                 >
-                  Réserver ce trajet
+                  Réserver
                 </button>
               </div>
             ))
