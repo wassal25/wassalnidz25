@@ -1,6 +1,11 @@
 
+// =======================================================
+// Composant Header
+// Description: Barre de navigation principale de l'application
+// =======================================================
+
 import { useEffect, useState } from "react";
-import { Home, MessageSquare, Settings, LogIn } from "lucide-react";
+import { Home, Settings, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Header = () => {
@@ -23,6 +28,11 @@ const Header = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center">
+              <img 
+                src="/lovable-uploads/f4bfb0ca-890b-4d1c-a6d4-4e02fc042ff9.png" 
+                alt="Wassalni Logo" 
+                className="h-10 mr-2"
+              />
               <span className="text-white text-2xl font-bold tracking-wider">
                 WASSALNI
               </span>
@@ -32,12 +42,6 @@ const Header = () => {
                 <Link to="/" className="flex items-center space-x-2 hover:text-white/80 text-white transition-all duration-300 hover:scale-105">
                   <Home size={20} />
                   <span>Accueil</span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/feedback" className="flex items-center space-x-2 hover:text-white/80 text-white transition-all duration-300 hover:scale-105">
-                  <MessageSquare size={20} />
-                  <span>Feedback</span>
                 </Link>
               </li>
               <li>
