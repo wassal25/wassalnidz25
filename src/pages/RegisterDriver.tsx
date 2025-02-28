@@ -6,6 +6,18 @@ const RegisterDriver = () => {
   const [step, setStep] = useState(1);
   const [previewVehicle, setPreviewVehicle] = useState<string | null>(null);
   const [previewProfile, setPreviewProfile] = useState<string | null>(null);
+  
+  // Données du formulaire
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    license: "",
+    vehicleBrand: "",
+    vehicleModel: "",
+    registration: ""
+  });
 
   const handleVehicleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -29,8 +41,35 @@ const RegisterDriver = () => {
     }
   };
 
-  const nextStep = () => setStep(step + 1);
-  const prevStep = () => setStep(step - 1);
+  // Gestion des changements de formulaire
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData({
+      ...formData,
+      [id]: value
+    });
+  };
+
+  // Gestion du changement d'étape avec prévention du comportement par défaut
+  const nextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // Prévient le comportement par défaut du bouton
+    setStep(step + 1);
+    window.scrollTo(0, 0); // Retour en haut de page
+  };
+  
+  const prevStep = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // Prévient le comportement par défaut du bouton
+    setStep(step - 1);
+    window.scrollTo(0, 0); // Retour en haut de page
+  };
+
+  // Soumission du formulaire
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Logique de soumission finale du formulaire
+    console.log("Formulaire soumis:", formData, { previewProfile, previewVehicle });
+    // Redirection ou autre action après soumission réussie
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
@@ -67,7 +106,7 @@ const RegisterDriver = () => {
           </div>
         </div>
 
-        <form className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {step === 1 && (
             <>
               <div>
@@ -78,6 +117,8 @@ const RegisterDriver = () => {
                   id="name"
                   type="text"
                   placeholder="Entrez votre nom"
+                  value={formData.name}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
                 />
               </div>
@@ -89,6 +130,8 @@ const RegisterDriver = () => {
                   id="email"
                   type="email"
                   placeholder="Entrez votre email"
+                  value={formData.email}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
                 />
               </div>
@@ -100,6 +143,8 @@ const RegisterDriver = () => {
                   id="phone"
                   type="tel"
                   placeholder="Entrez votre numéro"
+                  value={formData.phone}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
                 />
               </div>
@@ -111,6 +156,8 @@ const RegisterDriver = () => {
                   id="password"
                   type="password"
                   placeholder="Créez votre mot de passe"
+                  value={formData.password}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
                 />
               </div>
@@ -127,28 +174,34 @@ const RegisterDriver = () => {
                   id="license"
                   type="text"
                   placeholder="Entrez votre numéro de permis"
+                  value={formData.license}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
                 />
               </div>
               <div>
-                <label htmlFor="vehicle-brand" className="text-white/90 text-sm font-medium mb-2 block">
+                <label htmlFor="vehicleBrand" className="text-white/90 text-sm font-medium mb-2 block">
                   Marque du véhicule
                 </label>
                 <input
-                  id="vehicle-brand"
+                  id="vehicleBrand"
                   type="text"
                   placeholder="Ex: Renault, Peugeot..."
+                  value={formData.vehicleBrand}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
                 />
               </div>
               <div>
-                <label htmlFor="vehicle-model" className="text-white/90 text-sm font-medium mb-2 block">
+                <label htmlFor="vehicleModel" className="text-white/90 text-sm font-medium mb-2 block">
                   Modèle du véhicule
                 </label>
                 <input
-                  id="vehicle-model"
+                  id="vehicleModel"
                   type="text"
                   placeholder="Ex: Symbol, 301..."
+                  value={formData.vehicleModel}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
                 />
               </div>
@@ -160,6 +213,8 @@ const RegisterDriver = () => {
                   id="registration"
                   type="text"
                   placeholder="Numéro de plaque"
+                  value={formData.registration}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
                 />
               </div>

@@ -16,6 +16,7 @@ import RegisterDriver from "./pages/RegisterDriver";
 import RegisterPassenger from "./pages/RegisterPassenger";
 import ReservationPage from "./pages/ReservationPage";
 import Settings from "./pages/Settings";
+import Feedback from "./pages/Feedback";
 import NotFound from "./pages/NotFound";
 
 // Client React Query pour la gestion d'état et des requêtes
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/register-passenger" element={<RegisterPassenger />} />
           <Route path="/reservation" element={<ReservationPage />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/feedback" element={<Feedback />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

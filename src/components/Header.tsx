@@ -5,7 +5,7 @@
 // =======================================================
 
 import { useEffect, useState } from "react";
-import { Home, Settings, LogIn, Zap } from "lucide-react";
+import { Home, Settings, LogIn, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 
 /**
@@ -38,8 +38,10 @@ const Header = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo et nom de l'application */}
             <Link to="/" className="flex items-center">
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-[#FEC6A1] to-[#45B39D] flex items-center justify-center mr-2">
-                <Zap size={24} className="text-white" />
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-[#FEC6A1] to-[#45B39D] flex items-center justify-center mr-2 relative overflow-hidden shadow-md">
+                {/* Logo W avec effet modéré */}
+                <span className="text-white text-2xl font-bold transform hover:scale-110 transition-transform duration-300" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>W</span>
+                <div className="absolute inset-0 bg-white/10 rounded-lg" style={{ backgroundImage: "linear-gradient(45deg, transparent 65%, rgba(255,255,255,0.3) 70%, transparent 75%)", backgroundSize: "200% 200%", animation: "shine 3s linear infinite" }}></div>
               </div>
               <span className="text-white text-2xl font-bold tracking-wider">
                 WASSALNI
@@ -58,6 +60,12 @@ const Header = () => {
                 <Link to="/settings" className="flex items-center space-x-2 hover:text-white/80 text-white transition-all duration-300 hover:scale-105">
                   <Settings size={20} />
                   <span>Paramètres</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/feedback" className="flex items-center space-x-2 hover:text-white/80 text-white transition-all duration-300 hover:scale-105">
+                  <MessageSquare size={20} />
+                  <span>Feedback</span>
                 </Link>
               </li>
               <li>
