@@ -7,22 +7,30 @@
 import { formatDate } from "@/lib/utils";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
 
-// Interface définissant les propriétés du composant
+/**
+ * Interface définissant les propriétés du composant TripCard
+ */
 interface TripCardProps {
-  from: string;
-  to: string;
-  date: string;
-  time: string;
-  price: number;
-  image: string;
-  seats: number;
-  onReserve?: () => void;
+  from: string;         // Lieu de départ
+  to: string;           // Destination
+  date: string;         // Date du trajet
+  time: string;         // Heure de départ
+  price: number;        // Prix en DZD
+  image: string;        // URL de l'image
+  seats: number;        // Nombre de places disponibles
+  onReserve?: () => void; // Fonction de callback pour la réservation
 }
 
+/**
+ * Composant TripCard - Affiche les détails d'un trajet
+ * 
+ * Ce composant présente les informations d'un trajet disponible
+ * sous forme de carte avec une image, des détails et un bouton de réservation.
+ */
 const TripCard = ({ from, to, date, time, price, image, seats, onReserve }: TripCardProps) => {
   return (
     <div className="bg-[#FDE1D3]/40 backdrop-blur-sm border border-white/20 shadow-lg rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] animate-fade-up">
-      {/* Image du trajet avec effet hover */}
+      {/* Section image */}
       <div className="w-full h-[300px] overflow-hidden relative group">
         <img 
           src={image} 

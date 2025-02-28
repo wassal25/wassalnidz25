@@ -13,7 +13,10 @@ import GroupChat from "@/components/GroupChat";
 import { Search, MapPin, Calendar, Clock, MessageSquare } from "lucide-react";
 import { useState } from "react";
 
-// Données simulées des voyages
+// -------------------------------------------------------
+// DONNÉES SIMULÉES
+// Description: Données de démonstration pour l'affichage des trajets
+// -------------------------------------------------------
 const trips = [
   {
     id: "trip-1",
@@ -28,8 +31,8 @@ const trips = [
   },
   {
     id: "trip-2",
-    from: "Constantine Centre",
-    to: "Ali Mendjeli",
+    from: "Ali Mendjeli",
+    to: "Constantine Centre",
     date: "2024-03-21",
     time: "07:30",
     price: 150,
@@ -39,8 +42,8 @@ const trips = [
   },
   {
     id: "trip-3",
-    from: "Constantine Centre",
-    to: "El Khroub",
+    from: "El Khroub",
+    to: "Constantine Centre",
     date: "2024-03-22",
     time: "09:00",
     price: 120,
@@ -50,8 +53,8 @@ const trips = [
   },
   {
     id: "trip-4",
-    from: "Constantine Centre",
-    to: "Didouche Mourad",
+    from: "Didouche Mourad",
+    to: "Constantine Centre",
     date: "2024-03-22",
     time: "08:30",
     price: 130,
@@ -61,9 +64,9 @@ const trips = [
   },
   {
     id: "trip-5",
-    from: "Constantine Centre",
-    to: "Ain Smara",
-    date: "2024-03-22",
+    from: "Ain Smara",
+    to: "Constantine Centre",
+    date: "2024-03-23",
     time: "10:00",
     price: 110,
     seats: 4,
@@ -72,18 +75,90 @@ const trips = [
   },
   {
     id: "trip-6",
-    from: "Constantine Centre",
-    to: "Zighoud Youcef",
-    date: "2024-03-22",
+    from: "Zighoud Youcef",
+    to: "Constantine Centre",
+    date: "2024-03-23",
     time: "09:30",
     price: 140,
     seats: 2,
     image: "https://images.unsplash.com/photo-1444723121867-7a241cacace9?q=80&w=2000",
     driverName: "Ismail T."
   },
+  // Nouvelles destinations ajoutées
+  {
+    id: "trip-7",
+    from: "Constantine Université",
+    to: "Ali Mendjeli",
+    date: "2024-03-24",
+    time: "08:00",
+    price: 105,
+    seats: 3,
+    image: "https://images.unsplash.com/photo-1465447142348-e9952c393450?q=80&w=2000",
+    driverName: "Mohammed H."
+  },
+  {
+    id: "trip-8",
+    from: "Nouvelle Ville",
+    to: "Constantine Centre",
+    date: "2024-03-24",
+    time: "07:00",
+    price: 95,
+    seats: 4,
+    image: "https://images.unsplash.com/photo-1492321936769-b49830bc1d1e?q=80&w=2000",
+    driverName: "Yacine F."
+  },
+  {
+    id: "trip-9",
+    from: "Cité Daksi",
+    to: "El Khroub",
+    date: "2024-03-25",
+    time: "08:30",
+    price: 115,
+    seats: 2,
+    image: "https://images.unsplash.com/photo-1444723121867-7a241cacace9?q=80&w=2000",
+    driverName: "Hichem B."
+  },
+  {
+    id: "trip-10",
+    from: "Cité Zouaghi",
+    to: "Constantine Centre",
+    date: "2024-03-25",
+    time: "07:30",
+    price: 125,
+    seats: 3,
+    image: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?q=80&w=2000",
+    driverName: "Amir T."
+  },
+  {
+    id: "trip-11",
+    from: "Cité Boussouf",
+    to: "Didouche Mourad",
+    date: "2024-03-26",
+    time: "08:00",
+    price: 135,
+    seats: 4,
+    image: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?q=80&w=2000",
+    driverName: "Omar L."
+  },
+  {
+    id: "trip-12",
+    from: "Cité des Frères Abbas",
+    to: "Constantine Centre",
+    date: "2024-03-26",
+    time: "09:00",
+    price: 145,
+    seats: 2,
+    image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=2000",
+    driverName: "Bilal M."
+  },
 ];
 
+// -------------------------------------------------------
+// COMPOSANT PRINCIPAL
+// Description: Interface principale de l'application
+// -------------------------------------------------------
 const Index = () => {
+  // ==== ÉTATS ET HOOKS ====
   // Navigation
   const navigate = useNavigate();
   
@@ -98,11 +173,13 @@ const Index = () => {
   const [reservedTrip, setReservedTrip] = useState<string | null>(null);
   const [reservedTripDetails, setReservedTripDetails] = useState<(typeof trips)[0] | null>(null);
   
+  // ==== PRÉPARATION DES DONNÉES ====
   // Extraction des valeurs uniques pour les filtres
   const departures = [...new Set(trips.map(trip => trip.from))];
   const destinations = [...new Set(trips.map(trip => trip.to))];
   const times = [...new Set(trips.map(trip => trip.time))];
 
+  // ==== FONCTIONS ====
   // Filtrage des trajets selon les critères de recherche
   const filteredTrips = trips.filter(trip => {
     const matchesDepart = !departSearch || trip.from.toLowerCase().includes(departSearch.toLowerCase());
@@ -135,12 +212,13 @@ const Index = () => {
   // Dans une application réelle, on vérifierait les réservations lors du chargement
   simulatedReservation();
 
+  // ==== RENDU ====
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-500/80 to-teal-600/90 flex flex-col">
-      {/* En-tête de la page */}
+      {/* ==== HEADER ==== */}
       <Header />
       
-      {/* Contenu principal */}
+      {/* ==== MAIN CONTENT ==== */}
       <main className="container mx-auto px-4 pt-32 pb-16 flex-grow">
         {/* Section titre */}
         <div className="text-center mb-16 animate-fade-up">
@@ -152,7 +230,7 @@ const Index = () => {
           </p>
         </div>
 
-        {/* Section recherche */}
+        {/* ==== SEARCH SECTION ==== */}
         <div className="bg-teal-600/40 backdrop-blur-sm rounded-2xl p-6 mb-12 animate-fade-up">
           <div className="mb-6">
             <h3 className="text-xl font-semibold text-white mb-2">Rechercher un trajet</h3>
@@ -247,7 +325,7 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Section des résultats de trajets */}
+        {/* ==== RESULTS SECTION ==== */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {filteredTrips.length > 0 ? (
             filteredTrips.map((trip, index) => (
@@ -263,7 +341,7 @@ const Index = () => {
           )}
         </div>
 
-        {/* Section de la carte */}
+        {/* ==== MAP SECTION ==== */}
         <div className="bg-teal-600/40 backdrop-blur-sm p-6 rounded-2xl animate-fade-up">
           <h2 className="text-2xl font-bold text-white mb-6 text-center">
             Découvrez nos trajets sur la carte
@@ -272,9 +350,10 @@ const Index = () => {
         </div>
       </main>
 
-      {/* Pied de page */}
+      {/* ==== FOOTER ==== */}
       <Footer />
       
+      {/* ==== CHAT COMPONENT ==== */}
       {/* Chat de groupe - Affiché uniquement si l'utilisateur a une réservation active */}
       {reservedTripDetails && (
         <GroupChat 

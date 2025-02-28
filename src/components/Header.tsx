@@ -5,12 +5,21 @@
 // =======================================================
 
 import { useEffect, useState } from "react";
-import { Home, Settings, LogIn } from "lucide-react";
+import { Home, Settings, LogIn, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 
+/**
+ * Composant Header - Barre de navigation principale
+ * 
+ * Ce composant affiche la barre de navigation en haut de l'application.
+ * Il contient le logo, le nom de l'application et les liens de navigation.
+ * Il change d'apparence lors du défilement de la page.
+ */
 const Header = () => {
+  // État pour suivre si l'utilisateur a fait défiler la page
   const [scrolled, setScrolled] = useState(false);
 
+  // Effet pour gérer l'événement de défilement
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -27,16 +36,17 @@ const Header = () => {
       <nav className="bg-[#FDE1D3]/30 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
+            {/* Logo et nom de l'application */}
             <Link to="/" className="flex items-center">
-              <img 
-                src="/lovable-uploads/f4bfb0ca-890b-4d1c-a6d4-4e02fc042ff9.png" 
-                alt="Wassalni Logo" 
-                className="h-10 mr-2"
-              />
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-[#FEC6A1] to-[#45B39D] flex items-center justify-center mr-2">
+                <Zap size={24} className="text-white" />
+              </div>
               <span className="text-white text-2xl font-bold tracking-wider">
                 WASSALNI
               </span>
             </Link>
+            
+            {/* Menu de navigation */}
             <ul className="flex items-center space-x-8">
               <li>
                 <Link to="/" className="flex items-center space-x-2 hover:text-white/80 text-white transition-all duration-300 hover:scale-105">
