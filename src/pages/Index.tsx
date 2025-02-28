@@ -10,7 +10,7 @@ import Footer from "@/components/Footer";
 import TripCard from "@/components/TripCard";
 import Map from "@/components/Map";
 import GroupChat from "@/components/GroupChat";
-import { Search, MapPin, Calendar, Clock } from "lucide-react";
+import { Search, MapPin, Calendar, Clock, MessageSquare } from "lucide-react";
 import { useState } from "react";
 
 // Données simulées des voyages

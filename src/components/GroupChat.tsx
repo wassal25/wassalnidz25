@@ -156,22 +156,6 @@ const GroupChat = ({ tripId, tripInfo, currentUser }: GroupChatProps) => {
 
   return (
     <>
-      {/* Bouton flottant pour ouvrir le chat */}
-      {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 bg-gradient-to-r from-[#FEC6A1] to-[#45B39D] text-white rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300 z-50 group"
-        >
-          <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full text-xs flex items-center justify-center">
-            3
-          </div>
-          <MessageSquare size={24} />
-          <span className="absolute left-0 -ml-2 -mt-10 w-max bg-black/70 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-            Chat de groupe
-          </span>
-        </button>
-      )}
-
       {/* Boîte de dialogue de chat */}
       <div
         className={`fixed bottom-0 right-0 w-full sm:w-96 bg-white/10 backdrop-blur-xl rounded-t-2xl sm:rounded-tl-2xl sm:rounded-tr-none border border-white/20 shadow-2xl transition-all duration-300 z-50 ${
