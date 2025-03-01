@@ -1,5 +1,32 @@
+import { useState, useEffect, RefObject } from "react";
 
-import { useEffect, RefObject } from "react";
+/**
+ * Hook pour détecter si l'appareil est mobile basé sur la largeur de l'écran
+ * 
+ * @returns {boolean} true si l'appareil est considéré comme mobile
+ */
+export function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Vérifier au chargement
+    checkMobile();
+    
+    // Ajouter un écouteur pour les changements de taille d'écran
+    window.addEventListener('resize', checkMobile);
+    
+    // Nettoyer l'écouteur
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+  
+  return isMobile;
+}
 
 /**
  * Hook pour détecter les clics en dehors d'un élément
