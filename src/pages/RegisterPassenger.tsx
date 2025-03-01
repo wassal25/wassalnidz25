@@ -1,8 +1,30 @@
-
 import { useState } from "react";
 import { UserCheck } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const RegisterPassenger = () => {
+  const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    // Simuler une inscription réussie
+    toast.success("Inscription réussie!", {
+      description: "Votre compte passager a été créé avec succès. Vous allez être redirigé vers la page de connexion.",
+      position: "top-center",
+      duration: 4000,
+      style: {
+        background: "linear-gradient(90deg, hsla(139, 70%, 75%, 1) 0%, hsla(63, 90%, 76%, 1) 100%)",
+        color: "white",
+        border: "none"
+      }
+    });
+    
+    // Rediriger vers la page de connexion
+    setTimeout(() => navigate('/login'), 2000);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       {/* Image d'arrière-plan de Constantine */}
@@ -26,7 +48,7 @@ const RegisterPassenger = () => {
         <p className="text-white/90 text-center mb-8 text-sm">
           Inscription Passager
         </p>
-        <form className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="name" className="text-white/90 text-sm font-medium mb-2 block">
               Nom complet
@@ -36,6 +58,7 @@ const RegisterPassenger = () => {
               type="text"
               placeholder="Entrez votre nom"
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+              required
             />
           </div>
           <div>
@@ -47,6 +70,7 @@ const RegisterPassenger = () => {
               type="email"
               placeholder="Entrez votre email"
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+              required
             />
           </div>
           <div>
@@ -58,6 +82,7 @@ const RegisterPassenger = () => {
               type="tel"
               placeholder="Entrez votre numéro"
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+              required
             />
           </div>
           <div>
@@ -69,6 +94,7 @@ const RegisterPassenger = () => {
               type="text"
               placeholder="Entrez votre adresse"
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+              required
             />
           </div>
           <div>
@@ -80,6 +106,7 @@ const RegisterPassenger = () => {
               type="password"
               placeholder="Créez votre mot de passe"
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+              required
             />
           </div>
           <div>
@@ -91,6 +118,7 @@ const RegisterPassenger = () => {
               type="password"
               placeholder="Confirmez votre mot de passe"
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+              required
             />
           </div>
           <button

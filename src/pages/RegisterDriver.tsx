@@ -1,11 +1,13 @@
-
 import { useState } from "react";
 import { Upload, Camera, UserCheck } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const RegisterDriver = () => {
   const [step, setStep] = useState(1);
   const [previewVehicle, setPreviewVehicle] = useState<string | null>(null);
   const [previewProfile, setPreviewProfile] = useState<string | null>(null);
+  const navigate = useNavigate();
   
   // Données du formulaire
   const [formData, setFormData] = useState({
@@ -68,7 +70,21 @@ const RegisterDriver = () => {
     e.preventDefault();
     // Logique de soumission finale du formulaire
     console.log("Formulaire soumis:", formData, { previewProfile, previewVehicle });
-    // Redirection ou autre action après soumission réussie
+    
+    // Notification de succès
+    toast.success("Inscription chauffeur réussie!", {
+      description: "Votre compte chauffeur a été créé avec succès. Vous allez être redirigé vers la page de connexion.",
+      position: "top-center",
+      duration: 4000,
+      style: {
+        background: "linear-gradient(90deg, hsla(39, 100%, 77%, 1) 0%, hsla(22, 90%, 57%, 1) 100%)",
+        color: "white",
+        border: "none"
+      }
+    });
+    
+    // Rediriger vers la page de connexion
+    setTimeout(() => navigate('/login'), 2000);
   };
 
   return (
@@ -120,6 +136,7 @@ const RegisterDriver = () => {
                   value={formData.name}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+                  required
                 />
               </div>
               <div>
@@ -133,6 +150,7 @@ const RegisterDriver = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+                  required
                 />
               </div>
               <div>
@@ -146,6 +164,7 @@ const RegisterDriver = () => {
                   value={formData.phone}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+                  required
                 />
               </div>
               <div>
@@ -159,6 +178,7 @@ const RegisterDriver = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+                  required
                 />
               </div>
             </>
@@ -177,6 +197,7 @@ const RegisterDriver = () => {
                   value={formData.license}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+                  required
                 />
               </div>
               <div>
@@ -190,6 +211,7 @@ const RegisterDriver = () => {
                   value={formData.vehicleBrand}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+                  required
                 />
               </div>
               <div>
@@ -203,6 +225,7 @@ const RegisterDriver = () => {
                   value={formData.vehicleModel}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+                  required
                 />
               </div>
               <div>
@@ -216,6 +239,7 @@ const RegisterDriver = () => {
                   value={formData.registration}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+                  required
                 />
               </div>
             </>

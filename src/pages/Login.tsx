@@ -1,9 +1,30 @@
-
 import { useState } from "react";
 import { Car, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Login = () => {
   const [userType, setUserType] = useState<'passenger' | 'driver'>('passenger');
+  const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    // Simuler une connexion réussie
+    toast.success(`Connexion réussie en tant que ${userType === 'passenger' ? 'passager' : 'chauffeur'}!`, {
+      description: "Bienvenue sur Wassalni. Vous allez être redirigé vers la page d'accueil.",
+      position: "top-center",
+      duration: 3000,
+      style: {
+        background: "linear-gradient(to right, #ffc3a0 0%, #ffafbd 100%)",
+        color: "white",
+        border: "none"
+      }
+    });
+    
+    // Rediriger vers la page d'accueil
+    setTimeout(() => navigate('/'), 1500);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
@@ -55,7 +76,7 @@ const Login = () => {
           </button>
         </div>
 
-        <form className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="text-white/90 text-sm font-medium mb-2 block">
               Email
@@ -65,6 +86,7 @@ const Login = () => {
               type="email"
               placeholder="Entrez votre email"
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+              required
             />
           </div>
           <div>
@@ -76,6 +98,7 @@ const Login = () => {
               type="password"
               placeholder="Entrez votre mot de passe"
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+              required
             />
           </div>
           <div className="flex items-center justify-between text-sm">

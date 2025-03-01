@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { SendHorizontal, ThumbsUp, Star, MessageCircle, Bug, Lightbulb, AlertTriangle, Heart } from "lucide-react";
+import { toast } from "sonner";
 
 /**
  * Composant Feedback - Page pour recueillir l'avis des utilisateurs
@@ -87,6 +88,19 @@ const Feedback = () => {
     setMessage("");
     setSelectedSuggestion("");
     
+    // Afficher une notification de succès
+    toast.success("Feedback envoyé avec succès!", {
+      description: "Merci pour votre contribution à l'amélioration de notre service.",
+      position: "top-center",
+      duration: 5000,
+      icon: <Heart className="text-pink-500" />,
+      style: {
+        background: "linear-gradient(to right, #ffc3a0 0%, #ffafbd 100%)",
+        color: "white",
+        border: "none"
+      }
+    });
+    
     // Réinitialiser l'état de soumission après 5 secondes
     setTimeout(() => {
       setSubmitted(false);
@@ -134,12 +148,34 @@ const Feedback = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-500 via-teal-600 to-[#45B39D] flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
+      {/* Fond animé */}
+      <div className="fixed inset-0 w-full h-full z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-500/80 via-teal-600/90 to-[#45B39D]/80"></div>
+        
+        {/* Formes animées en arrière-plan */}
+        <div className="absolute w-full h-full overflow-hidden">
+          <div className="absolute top-[10%] left-[15%] w-64 h-64 bg-teal-300/20 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+          <div className="absolute top-[20%] right-[20%] w-72 h-72 bg-[#FEC6A1]/20 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+          <div className="absolute bottom-[15%] left-[30%] w-80 h-80 bg-yellow-300/10 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+          <div className="absolute bottom-[25%] right-[25%] w-56 h-56 bg-pink-300/10 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-3000"></div>
+        </div>
+        
+        {/* Motif en arrière-plan */}
+        <div className="absolute inset-0 opacity-5" 
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1614850715649-1d0106293bd1?q=80&w=2070')",
+            backgroundSize: "cover",
+            backgroundPosition: "center"
+          }}
+        ></div>
+      </div>
+
       {/* En-tête */}
       <Header />
       
       {/* Contenu principal */}
-      <main className="container mx-auto px-4 pt-32 pb-16 flex-grow">
+      <main className="container mx-auto px-4 pt-32 pb-16 flex-grow relative z-10">
         {/* Section titre */}
         <div className="text-center mb-8 animate-fade-up">
           <h1 className="text-4xl font-bold text-white mb-4 tracking-tight">
@@ -411,6 +447,30 @@ const Feedback = () => {
       
       {/* Pied de page */}
       <Footer />
+
+      {/* Styles pour les animations */}
+      <style>
+        {`
+          @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+          }
+          .animate-blob {
+            animation: blob 12s infinite alternate;
+          }
+          .animation-delay-2000 {
+            animation-delay: 2s;
+          }
+          .animation-delay-3000 {
+            animation-delay: 3s;
+          }
+          .animation-delay-4000 {
+            animation-delay: 4s;
+          }
+        `}
+      </style>
     </div>
   );
 };
