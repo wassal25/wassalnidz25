@@ -98,11 +98,11 @@ const Header = () => {
       
       {/* Bannière du logo de la société sur toute la largeur */}
       <div className="w-full bg-gradient-to-r from-green-100 to-blue-200 relative py-2 overflow-hidden">
-        <div className="container mx-auto flex justify-center items-center">
+        <div className="w-full flex justify-center items-center">
           <img 
             src="/lovable-uploads/a5974721-6a83-40c5-8a16-dcfb7657615c.png" 
             alt="Wassalni - Application de covoiturage" 
-            className="h-16 object-contain"
+            className="w-full h-16 object-cover"
           />
         </div>
         
