@@ -96,6 +96,20 @@ const Header = () => {
         </div>
       </nav>
       
+      {/* Bannière du logo de la société sur toute la largeur */}
+      <div className="w-full bg-gradient-to-r from-green-100 to-blue-200 relative py-2 overflow-hidden">
+        <div className="container mx-auto flex justify-center items-center">
+          <img 
+            src="/lovable-uploads/a5974721-6a83-40c5-8a16-dcfb7657615c.png" 
+            alt="Wassalni - Application de covoiturage" 
+            className="h-16 object-contain"
+          />
+        </div>
+        
+        {/* Effet de vague pour accentuer le dynamisme */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-teal-600/30"></div>
+      </div>
+      
       {/* Style pour l'animation de brillance */}
       <style>
         {`

@@ -1,476 +1,293 @@
 
 // =======================================================
-// Page de Feedback
-// Description: Page pour recueillir les avis et suggestions des utilisateurs
+// Page de feedback
+// Description: Permet aux utilisateurs de soumettre des commentaires
 // =======================================================
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { SendHorizontal, ThumbsUp, Star, MessageCircle, Bug, Lightbulb, AlertTriangle, Heart } from "lucide-react";
-import { toast } from "sonner";
+import { MessageSquare, Send, Mail, User, Phone } from "lucide-react";
 
-/**
- * Composant Feedback - Page pour recueillir l'avis des utilisateurs
- * 
- * Cette page permet aux utilisateurs de soumettre leurs commentaires,
- * suggestions et évaluations concernant l'application.
- */
 const Feedback = () => {
-  // États pour les données du formulaire
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [feedbackType, setFeedbackType] = useState("suggestion");
-  const [rating, setRating] = useState(5);
+  const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [activeTab, setActiveTab] = useState(0);
-  const [selectedSuggestion, setSelectedSuggestion] = useState("");
+  const [feedbackType, setFeedbackType] = useState("");
+  
+  // Options pour les types de feedback
+  const feedbackOptions = [
+    { id: "suggestion", label: "Suggestion d'amélioration" },
+    { id: "problem", label: "Signalement de problème" },
+    { id: "complaint", label: "Réclamation" },
+    { id: "appreciation", label: "Appréciation" },
+    { id: "other", label: "Autre" }
+  ];
 
-  // Suggestions prédéfinies par type de feedback
-  const suggestionTemplates = {
+  // Suggestions de réponses prédéfinies selon le type
+  const suggestionsByType = {
     suggestion: [
-      "J'aimerais suggérer d'ajouter plus de trajets entre les quartiers périphériques.",
-      "Il serait utile d'avoir une option pour les trajets réguliers (abonnements).",
-      "Je propose d'ajouter une fonctionnalité de messagerie directe avec le conducteur.",
-      "Pourriez-vous ajouter un système de fidélité avec des points ou réductions?"
+      "Je souhaite suggérer une amélioration pour la recherche de trajets.",
+      "Je propose d'ajouter une fonctionnalité de partage de trajet.",
+      "Voici une idée pour améliorer l'interface utilisateur."
     ],
     problem: [
-      "J'ai rencontré un problème lors de la réservation, le bouton ne fonctionne pas correctement.",
-      "L'application est lente lors de la recherche de trajets aux heures de pointe.",
-      "Je ne reçois pas les notifications des messages du conducteur.",
-      "Le système de paiement affiche une erreur lors de la validation."
+      "J'ai rencontré un problème lors de la réservation d'un trajet.",
+      "L'application ne fonctionne pas correctement sur mon appareil.",
+      "Je n'arrive pas à accéder à certaines fonctionnalités."
+    ],
+    complaint: [
+      "Je n'ai pas été satisfait du service de covoiturage.",
+      "Le chauffeur n'était pas ponctuel.",
+      "Je souhaite signaler un comportement inapproprié."
+    ],
+    appreciation: [
+      "Je tiens à exprimer ma satisfaction pour votre service.",
+      "Votre application est très intuitive et facile à utiliser.",
+      "J'apprécie particulièrement la fonctionnalité de..."
     ],
     other: [
-      "Je souhaite signaler un conducteur pour son comportement inapproprié.",
-      "Comment puis-je devenir partenaire de votre plateforme?",
-      "J'aimerais en savoir plus sur vos mesures de sécurité pour les passagers.",
-      "Je souhaite vous féliciter pour la qualité de votre service client."
+      "J'ai une question concernant votre service.",
+      "Je souhaite vous contacter pour une proposition de partenariat.",
+      "J'aimerais obtenir plus d'informations sur..."
     ]
   };
 
-  // Effet pour animer les transitions lors du changement de type de feedback
-  useEffect(() => {
-    // Réinitialiser la suggestion sélectionnée lors du changement de type
-    setSelectedSuggestion("");
-  }, [feedbackType]);
-
-  // Gestionnaire de suggestions prédéfinies
-  const handleSuggestionClick = (suggestion: string) => {
-    if (selectedSuggestion === suggestion) {
-      setSelectedSuggestion("");
-      setMessage(message.replace(suggestion, "").trim());
-    } else {
-      setSelectedSuggestion(suggestion);
-      setMessage((prev) => (prev ? `${prev}\n\n${suggestion}` : suggestion));
-    }
-  };
-
-  // Gestionnaire de soumission du formulaire
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Simuler l'envoi du feedback
-    console.log({
-      name,
-      email,
-      feedbackType,
-      rating,
-      message
-    });
+    // Validation simple
+    if (!name || !email || !message || !feedbackType) {
+      toast.error("Veuillez remplir tous les champs obligatoires.");
+      return;
+    }
     
-    // Réinitialiser le formulaire et afficher un message de confirmation
-    setSubmitted(true);
-    setName("");
-    setEmail("");
-    setFeedbackType("suggestion");
-    setRating(5);
-    setMessage("");
-    setSelectedSuggestion("");
-    
-    // Afficher une notification de succès
-    toast.success("Feedback envoyé avec succès!", {
-      description: "Merci pour votre contribution à l'amélioration de notre service.",
-      position: "top-center",
-      duration: 5000,
-      icon: <Heart className="text-pink-500" />,
-      style: {
-        background: "linear-gradient(to right, #ffc3a0 0%, #ffafbd 100%)",
-        color: "white",
-        border: "none"
-      }
-    });
-    
-    // Réinitialiser l'état de soumission après 5 secondes
+    // Simuler l'envoi des données
     setTimeout(() => {
-      setSubmitted(false);
-    }, 5000);
+      toast.success("Votre feedback a été envoyé avec succès! Merci pour votre contribution.");
+      
+      // Réinitialiser le formulaire
+      setName("");
+      setEmail("");
+      setPhone("");
+      setMessage("");
+      setFeedbackType("");
+      
+      // Rediriger vers la page d'accueil après un délai
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    }, 1000);
   };
 
-  // Rendu des étoiles pour la notation
-  const renderStars = () => {
-    const stars = [];
-    
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <Star
-          key={i}
-          size={28}
-          className={`cursor-pointer transition-all duration-300 ${
-            i <= rating ? "fill-yellow-400 text-yellow-400" : "text-white/40"
-          } hover:scale-110`}
-          onClick={() => setRating(i)}
-        />
-      );
-    }
-    
-    return stars;
+  const handleFeedbackTypeChange = (type: string) => {
+    setFeedbackType(type);
+    // Réinitialiser le message pour permettre la sélection d'une suggestion
+    setMessage("");
   };
 
-  // Options de navigation des onglets
-  const tabs = [
-    { name: "Formulaire", icon: <MessageCircle size={18} /> },
-    { name: "Comment ça marche", icon: <Lightbulb size={18} /> }
-  ];
-
-  // Icône correspondant au type de feedback
-  const getFeedbackTypeIcon = () => {
-    switch (feedbackType) {
-      case "suggestion":
-        return <Lightbulb size={20} />;
-      case "problem":
-        return <Bug size={20} />;
-      case "other":
-        return <AlertTriangle size={20} />;
-      default:
-        return <MessageCircle size={20} />;
-    }
+  const handleSuggestionSelect = (suggestion: string) => {
+    setMessage(suggestion);
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative">
-      {/* Fond animé */}
-      <div className="fixed inset-0 w-full h-full z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-500/80 via-teal-600/90 to-[#45B39D]/80"></div>
-        
-        {/* Formes animées en arrière-plan */}
-        <div className="absolute w-full h-full overflow-hidden">
-          <div className="absolute top-[10%] left-[15%] w-64 h-64 bg-teal-300/20 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
-          <div className="absolute top-[20%] right-[20%] w-72 h-72 bg-[#FEC6A1]/20 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
-          <div className="absolute bottom-[15%] left-[30%] w-80 h-80 bg-yellow-300/10 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
-          <div className="absolute bottom-[25%] right-[25%] w-56 h-56 bg-pink-300/10 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-3000"></div>
-        </div>
-        
-        {/* Motif en arrière-plan */}
-        <div className="absolute inset-0 opacity-5" 
-          style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1614850715649-1d0106293bd1?q=80&w=2070')",
-            backgroundSize: "cover",
-            backgroundPosition: "center"
-          }}
-        ></div>
-      </div>
-
-      {/* En-tête */}
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-teal-500/80 to-teal-600/90">
       <Header />
       
-      {/* Contenu principal */}
-      <main className="container mx-auto px-4 pt-32 pb-16 flex-grow relative z-10">
-        {/* Section titre */}
-        <div className="text-center mb-8 animate-fade-up">
-          <h1 className="text-4xl font-bold text-white mb-4 tracking-tight">
-            Votre Avis Compte
-          </h1>
-          <p className="text-lg text-gray-100 max-w-2xl mx-auto">
-            Partagez vos commentaires, suggestions et idées pour améliorer notre service
-          </p>
-        </div>
-
-        {/* Onglets de navigation */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-full p-1 mb-8 max-w-md mx-auto">
-          <div className="flex">
-            {tabs.map((tab, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveTab(index)}
-                className={`flex-1 flex items-center justify-center py-2 px-4 rounded-full text-sm font-medium transition-all duration-300 ${
-                  activeTab === index
-                    ? "bg-white text-teal-700 shadow-md"
-                    : "text-white hover:bg-white/10"
-                }`}
-              >
-                <span className="mr-2">{tab.icon}</span>
-                {tab.name}
-              </button>
-            ))}
+      <main className="flex-grow container mx-auto px-4 pt-40 pb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          {/* Colonne de gauche: Image d'équipe et texte explicatif */}
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
+            <div className="relative rounded-xl overflow-hidden shadow-lg mb-6 transform transition-transform hover:scale-[1.02]">
+              {/* Image générée représentant une équipe de support client professionnelle */}
+              <div className="relative h-80 w-full rounded-xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-teal-800/70"></div>
+                <img 
+                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80" 
+                  alt="L'équipe Wassalni" 
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <h3 className="text-2xl font-bold mb-1">Notre équipe à votre écoute</h3>
+                  <p className="text-white/90">Nous sommes là pour vous accompagner et améliorer votre expérience</p>
+                </div>
+              </div>
+            </div>
+            
+            <h2 className="text-2xl font-bold text-white mb-4">Votre opinion compte</h2>
+            <p className="text-white/90 mb-6">
+              Chez Wassalni, nous accordons une grande importance à l'expérience de nos utilisateurs.
+              Vos commentaires nous aident à améliorer constamment notre service de covoiturage.
+            </p>
+            
+            <div className="space-y-4">
+              <div className="flex items-start space-x-3">
+                <div className="bg-teal-400/20 rounded-full p-2">
+                  <MessageSquare className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold">Communiquez avec nous</h3>
+                  <p className="text-white/80 text-sm">Partagez vos idées, suggestions ou préoccupations</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-3">
+                <div className="bg-teal-400/20 rounded-full p-2">
+                  <Mail className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold">Support réactif</h3>
+                  <p className="text-white/80 text-sm">Notre équipe vous répondra dans les plus brefs délais</p>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-
-        {/* Contenu des onglets */}
-        <div className="max-w-4xl mx-auto">
-          {/* Onglet Formulaire */}
-          {activeTab === 0 && (
-            <div className="bg-gradient-to-br from-white/10 to-white/20 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/20 animate-fade-up">
-              {submitted ? (
-                <div className="text-center py-12 px-4">
-                  <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-                    <Heart className="text-white" size={40} />
-                  </div>
-                  <h3 className="text-3xl font-bold text-white mb-4">Merci pour votre feedback!</h3>
-                  <p className="text-white/80 text-lg max-w-md mx-auto mb-6">
-                    Votre avis est important pour nous et nous aidera à améliorer notre service.
-                  </p>
-                  <button
-                    onClick={() => setSubmitted(false)}
-                    className="px-6 py-3 bg-white/20 hover:bg-white/30 text-white rounded-xl transition-all duration-300"
-                  >
-                    Envoyer un autre feedback
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Informations personnelles */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="group">
-                      <label htmlFor="name" className="text-white/90 text-sm font-medium mb-2 block">
-                        Nom
-                      </label>
-                      <input
-                        id="name"
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Votre nom"
-                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300 group-hover:bg-white/20"
-                        required
-                      />
-                    </div>
-                    <div className="group">
-                      <label htmlFor="email" className="text-white/90 text-sm font-medium mb-2 block">
-                        Email
-                      </label>
-                      <input
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Votre email"
-                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300 group-hover:bg-white/20"
-                        required
-                      />
-                    </div>
-                  </div>
-                  
-                  {/* Type de feedback */}
-                  <div>
-                    <label className="text-white/90 text-sm font-medium mb-2 block">
-                      Type de feedback
-                    </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <label className="relative">
-                        <input
-                          type="radio"
-                          name="feedbackType"
-                          value="suggestion"
-                          checked={feedbackType === "suggestion"}
-                          onChange={() => setFeedbackType("suggestion")}
-                          className="sr-only"
-                        />
-                        <div className={`px-4 py-3 rounded-xl border ${
-                          feedbackType === "suggestion"
-                            ? "bg-[#FEC6A1]/30 border-[#FEC6A1]"
-                            : "bg-white/10 border-white/20"
-                        } cursor-pointer transition-all flex items-center justify-center hover:bg-white/20`}>
-                          <Lightbulb size={18} className="mr-2" />
-                          <span className="text-white">Suggestion</span>
-                        </div>
-                      </label>
-                      <label className="relative">
-                        <input
-                          type="radio"
-                          name="feedbackType"
-                          value="problem"
-                          checked={feedbackType === "problem"}
-                          onChange={() => setFeedbackType("problem")}
-                          className="sr-only"
-                        />
-                        <div className={`px-4 py-3 rounded-xl border ${
-                          feedbackType === "problem"
-                            ? "bg-[#FEC6A1]/30 border-[#FEC6A1]"
-                            : "bg-white/10 border-white/20"
-                        } cursor-pointer transition-all flex items-center justify-center hover:bg-white/20`}>
-                          <Bug size={18} className="mr-2" />
-                          <span className="text-white">Problème</span>
-                        </div>
-                      </label>
-                      <label className="relative">
-                        <input
-                          type="radio"
-                          name="feedbackType"
-                          value="other"
-                          checked={feedbackType === "other"}
-                          onChange={() => setFeedbackType("other")}
-                          className="sr-only"
-                        />
-                        <div className={`px-4 py-3 rounded-xl border ${
-                          feedbackType === "other"
-                            ? "bg-[#FEC6A1]/30 border-[#FEC6A1]"
-                            : "bg-white/10 border-white/20"
-                        } cursor-pointer transition-all flex items-center justify-center hover:bg-white/20`}>
-                          <AlertTriangle size={18} className="mr-2" />
-                          <span className="text-white">Autre</span>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                  
-                  {/* Suggestions prédéfinies */}
-                  <div className="bg-white/5 p-4 rounded-xl border border-white/10">
-                    <h4 className="text-white text-sm font-medium mb-3 flex items-center">
-                      {getFeedbackTypeIcon()}
-                      <span className="ml-2">Suggestions courantes</span>
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {suggestionTemplates[feedbackType as keyof typeof suggestionTemplates].map((suggestion, index) => (
-                        <button
-                          key={index}
-                          type="button"
-                          onClick={() => handleSuggestionClick(suggestion)}
-                          className={`text-xs px-3 py-1.5 rounded-full text-white transition-all duration-300 ${
-                            selectedSuggestion === suggestion
-                              ? "bg-[#FEC6A1] text-teal-900"
-                              : "bg-white/10 hover:bg-white/20"
-                          }`}
-                        >
-                          {suggestion.length > 40 ? suggestion.substring(0, 40) + "..." : suggestion}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  {/* Notation */}
-                  <div>
-                    <label className="text-white/90 text-sm font-medium mb-2 block">
-                      Comment noteriez-vous notre service ?
-                    </label>
-                    <div className="flex items-center justify-center space-x-2 py-4 bg-white/5 rounded-xl">
-                      {renderStars()}
-                    </div>
-                  </div>
-                  
-                  {/* Message */}
-                  <div>
-                    <label htmlFor="message" className="text-white/90 text-sm font-medium mb-2 block">
-                      Votre message
-                    </label>
-                    <textarea
-                      id="message"
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Partagez vos commentaires, idées ou suggestions..."
-                      rows={5}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300 resize-none"
-                      required
-                    />
-                  </div>
-                  
-                  {/* Bouton d'envoi */}
-                  <div className="flex justify-center">
-                    <button
-                      type="submit"
-                      className="px-8 py-3 bg-gradient-to-r from-[#FEC6A1] to-[#45B39D] hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl transition-all duration-300 hover:shadow-lg flex items-center hover:scale-105 transform"
+          
+          {/* Colonne de droite: Formulaire de feedback */}
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
+            <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+              <MessageSquare className="mr-2" />
+              Formulaire de feedback
+            </h2>
+            
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Type de feedback */}
+              <div>
+                <label className="block text-white font-medium mb-2">Type de feedback</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {feedbackOptions.map((option) => (
+                    <div 
+                      key={option.id}
+                      onClick={() => handleFeedbackTypeChange(option.id)}
+                      className={`px-4 py-3 rounded-xl cursor-pointer transition-all ${
+                        feedbackType === option.id 
+                          ? "bg-teal-600 text-white" 
+                          : "bg-white/20 text-white hover:bg-white/30"
+                      }`}
                     >
-                      <SendHorizontal size={18} className="mr-2" />
-                      Envoyer mon feedback
-                    </button>
+                      {option.label}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Champ Nom */}
+              <div>
+                <label htmlFor="name" className="block text-white font-medium mb-2">
+                  Nom complet
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-teal-200" />
                   </div>
-                </form>
+                  <input
+                    type="text"
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="bg-white/10 border border-white/20 text-white rounded-xl block w-full pl-10 pr-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-500 placeholder:text-white/60"
+                    placeholder="Votre nom"
+                    required
+                  />
+                </div>
+              </div>
+              
+              {/* Champ Email */}
+              <div>
+                <label htmlFor="email" className="block text-white font-medium mb-2">
+                  Adresse email
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-teal-200" />
+                  </div>
+                  <input
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="bg-white/10 border border-white/20 text-white rounded-xl block w-full pl-10 pr-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-500 placeholder:text-white/60"
+                    placeholder="votre@email.com"
+                    required
+                  />
+                </div>
+              </div>
+              
+              {/* Champ Téléphone (optionnel) */}
+              <div>
+                <label htmlFor="phone" className="block text-white font-medium mb-2">
+                  Téléphone (optionnel)
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Phone className="h-5 w-5 text-teal-200" />
+                  </div>
+                  <input
+                    type="tel"
+                    id="phone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="bg-white/10 border border-white/20 text-white rounded-xl block w-full pl-10 pr-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-500 placeholder:text-white/60"
+                    placeholder="Votre numéro de téléphone"
+                  />
+                </div>
+              </div>
+              
+              {/* Suggestions basées sur le type de feedback sélectionné */}
+              {feedbackType && (
+                <div className="space-y-2">
+                  <label className="block text-white font-medium mb-1">
+                    Suggestions:
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {(suggestionsByType[feedbackType as keyof typeof suggestionsByType] || []).map((suggestion, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => handleSuggestionSelect(suggestion)}
+                        className="px-3 py-2 text-sm bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors"
+                      >
+                        {suggestion.length > 40 ? suggestion.substring(0, 40) + '...' : suggestion}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
-            </div>
-          )}
-
-          {/* Onglet Comment ça marche */}
-          {activeTab === 1 && (
-            <div className="bg-gradient-to-br from-white/10 to-white/20 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/20 animate-fade-up">
-              <div className="text-center mb-8">
-                <Lightbulb size={40} className="mx-auto mb-4 text-yellow-300" />
-                <h3 className="text-2xl font-bold text-white mb-2">Comment fonctionne le feedback ?</h3>
-                <p className="text-white/80">
-                  Nous prenons votre avis très au sérieux pour améliorer constamment notre service.
-                </p>
+              
+              {/* Champ Message */}
+              <div>
+                <label htmlFor="message" className="block text-white font-medium mb-2">
+                  Votre message
+                </label>
+                <textarea
+                  id="message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  rows={4}
+                  className="bg-white/10 border border-white/20 text-white rounded-xl block w-full px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-500 placeholder:text-white/60"
+                  placeholder="Décrivez votre feedback ici..."
+                  required
+                ></textarea>
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white/10 p-6 rounded-xl border border-white/20 transform transition-all duration-300 hover:translate-y-[-5px] hover:bg-white/20">
-                  <div className="w-12 h-12 rounded-full bg-teal-500/20 flex items-center justify-center mb-4">
-                    <MessageCircle size={24} className="text-teal-300" />
-                  </div>
-                  <h4 className="text-xl font-semibold text-white mb-2">1. Partagez</h4>
-                  <p className="text-white/70">
-                    Partagez vos idées, suggestions ou problèmes rencontrés lors de l'utilisation de notre service.
-                  </p>
-                </div>
-
-                <div className="bg-white/10 p-6 rounded-xl border border-white/20 transform transition-all duration-300 hover:translate-y-[-5px] hover:bg-white/20">
-                  <div className="w-12 h-12 rounded-full bg-teal-500/20 flex items-center justify-center mb-4">
-                    <Lightbulb size={24} className="text-yellow-300" />
-                  </div>
-                  <h4 className="text-xl font-semibold text-white mb-2">2. Nous analysons</h4>
-                  <p className="text-white/70">
-                    Notre équipe analyse chaque retour avec attention pour comprendre vos besoins et préoccupations.
-                  </p>
-                </div>
-
-                <div className="bg-white/10 p-6 rounded-xl border border-white/20 transform transition-all duration-300 hover:translate-y-[-5px] hover:bg-white/20">
-                  <div className="w-12 h-12 rounded-full bg-teal-500/20 flex items-center justify-center mb-4">
-                    <ThumbsUp size={24} className="text-teal-300" />
-                  </div>
-                  <h4 className="text-xl font-semibold text-white mb-2">3. Nous améliorons</h4>
-                  <p className="text-white/70">
-                    Vos retours nous aident à améliorer continuellement l'application et à offrir une meilleure expérience.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 text-center">
-                <button
-                  onClick={() => setActiveTab(0)}
-                  className="px-6 py-3 bg-white/20 hover:bg-white/30 text-white rounded-xl transition-all duration-300"
-                >
-                  Partager mon avis maintenant
-                </button>
-              </div>
-            </div>
-          )}
+              
+              {/* Bouton d'envoi */}
+              <button
+                type="submit"
+                className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-xl font-medium hover:from-teal-600 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl"
+              >
+                <Send className="h-5 w-5" />
+                <span>Envoyer votre feedback</span>
+              </button>
+            </form>
+          </div>
         </div>
       </main>
       
-      {/* Pied de page */}
       <Footer />
-
-      {/* Styles pour les animations */}
-      <style>
-        {`
-          @keyframes blob {
-            0% { transform: translate(0px, 0px) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-            100% { transform: translate(0px, 0px) scale(1); }
-          }
-          .animate-blob {
-            animation: blob 12s infinite alternate;
-          }
-          .animation-delay-2000 {
-            animation-delay: 2s;
-          }
-          .animation-delay-3000 {
-            animation-delay: 3s;
-          }
-          .animation-delay-4000 {
-            animation-delay: 4s;
-          }
-        `}
-      </style>
     </div>
   );
 };
