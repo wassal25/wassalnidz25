@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import { useTheme } from "@/context/ThemeContext";
 import { useLanguage, Language } from "@/context/LanguageContext";
 import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { 
   Bell, 
   Moon, 
@@ -28,14 +29,22 @@ import {
   Mail, 
   HelpCircle,
   Clock,
-  Database
+  Database,
+  Check,
+  X
 } from "lucide-react";
 
+/**
+ * Composant principal des paramètres
+ * Gère les préférences utilisateur et configurations de l'application
+ */
 const Settings = () => {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
+  
+  // ===== SECTION: ÉTATS LOCAUX =====
   
   // États pour les différentes options de paramètres
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -50,9 +59,14 @@ const Settings = () => {
   const [supabaseProjectId, setSupabaseProjectId] = useState("");
   const [supabaseApiKey, setSupabaseApiKey] = useState("");
   const [isConnectedToSupabase, setIsConnectedToSupabase] = useState(false);
-
-  // Effet pour charger les paramètres sauvegardés
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionError, setConnectionError] = useState("");
+  
+  // ===== SECTION: EFFETS =====
+  
+  // Effet pour charger les paramètres sauvegardés depuis le localStorage
   useEffect(() => {
+    // Récupération des paramètres depuis localStorage
     const savedNotifications = localStorage.getItem('notificationsEnabled');
     const savedDriverNotifications = localStorage.getItem('driverNotificationsEnabled');
     const savedRegion = localStorage.getItem('region');
@@ -64,6 +78,7 @@ const Settings = () => {
     const savedSupabaseApiKey = localStorage.getItem('supabaseApiKey');
     const savedSupabaseConnection = localStorage.getItem('isConnectedToSupabase');
     
+    // Application des paramètres sauvegardés
     if (savedNotifications) setNotificationsEnabled(savedNotifications === 'true');
     if (savedDriverNotifications) setDriverNotificationsEnabled(savedDriverNotifications === 'true');
     if (savedRegion) setRegion(savedRegion);
@@ -76,12 +91,7 @@ const Settings = () => {
     if (savedSupabaseConnection) setIsConnectedToSupabase(savedSupabaseConnection === 'true');
   }, []);
 
-  // Fonction pour sauvegarder les paramètres dans localStorage
-  const saveSettings = (key: string, value: string | boolean) => {
-    localStorage.setItem(key, value.toString());
-  };
-
-  // Appliquer la taille du texte
+  // Effet pour appliquer la taille du texte
   useEffect(() => {
     const sizes = {
       "1": "text-sm",
@@ -89,15 +99,67 @@ const Settings = () => {
       "3": "text-lg"
     };
     
+    // Appliquer la taille du texte au document
     document.documentElement.classList.remove("text-sm", "text-base", "text-lg");
     document.documentElement.classList.add(sizes[textSize as keyof typeof sizes]);
     saveSettings('textSize', textSize);
   }, [textSize]);
 
+  // ===== SECTION: FONCTIONS UTILITAIRES =====
+  
+  // Fonction pour sauvegarder les paramètres dans localStorage
+  const saveSettings = (key: string, value: string | boolean) => {
+    localStorage.setItem(key, value.toString());
+  };
+
+  // ===== SECTION: GESTIONNAIRES D'ÉVÉNEMENTS =====
+  
   // Gérer la connexion à Supabase
-  const handleSupabaseConnection = () => {
-    if (supabaseProjectId && supabaseApiKey) {
-      // Simuler une connexion à Supabase
+  const handleSupabaseConnection = async () => {
+    // Vérification que les champs nécessaires sont remplis
+    if (!supabaseProjectId || !supabaseApiKey) {
+      setConnectionError(
+        language === 'fr' ? "Veuillez remplir tous les champs" : 
+        language === 'ar' ? "يرجى ملء جميع الحقول" : 
+        "Please fill in all fields"
+      );
+      
+      toast({
+        variant: "destructive",
+        title: language === 'fr' ? "Erreur de connexion" : language === 'ar' ? "خطأ في الاتصال" : "Connection error",
+        description: language === 'fr' ? "Veuillez remplir tous les champs" : 
+                    language === 'ar' ? "يرجى ملء جميع الحقول" : 
+                    "Please fill in all fields",
+      });
+      return;
+    }
+    
+    setIsConnecting(true);
+    setConnectionError("");
+    
+    try {
+      // Simulation d'une tentative de connexion à Supabase avec délai pour l'effet UI
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      
+      // Vérifier le format de l'ID du projet (simule une validation)
+      if (supabaseProjectId.length < 10 || !/^[a-zA-Z0-9-]+$/.test(supabaseProjectId)) {
+        throw new Error(
+          language === 'fr' ? "ID de projet Supabase invalide" : 
+          language === 'ar' ? "معرف مشروع Supabase غير صالح" : 
+          "Invalid Supabase project ID"
+        );
+      }
+      
+      // Vérifier le format de la clé API (simule une validation)
+      if (!supabaseApiKey.startsWith("eyJ") || supabaseApiKey.length < 20) {
+        throw new Error(
+          language === 'fr' ? "Clé API Supabase invalide" : 
+          language === 'ar' ? "مفتاح API Supabase غير صالح" : 
+          "Invalid Supabase API key"
+        );
+      }
+      
+      // Connexion réussie
       setIsConnectedToSupabase(true);
       saveSettings('supabaseProjectId', supabaseProjectId);
       saveSettings('supabaseApiKey', supabaseApiKey);
@@ -109,15 +171,36 @@ const Settings = () => {
                     language === 'ar' ? "تم توصيل مشروع Supabase الخاص بك الآن" : 
                     "Your Supabase project is now connected",
       });
-    } else {
+    } catch (error) {
+      // Gestion des erreurs
+      const errorMessage = error instanceof Error ? error.message : 
+        language === 'fr' ? "Erreur de connexion inconnue" : 
+        language === 'ar' ? "خطأ اتصال غير معروف" : 
+        "Unknown connection error";
+      
+      setConnectionError(errorMessage);
+      
       toast({
         variant: "destructive",
         title: language === 'fr' ? "Erreur de connexion" : language === 'ar' ? "خطأ في الاتصال" : "Connection error",
-        description: language === 'fr' ? "Veuillez remplir tous les champs" : 
-                    language === 'ar' ? "يرجى ملء جميع الحقول" : 
-                    "Please fill in all fields",
+        description: errorMessage,
       });
+    } finally {
+      setIsConnecting(false);
     }
+  };
+
+  // Gérer la déconnexion de Supabase
+  const handleSupabaseDisconnection = () => {
+    setIsConnectedToSupabase(false);
+    saveSettings('isConnectedToSupabase', 'false');
+    
+    toast({
+      title: language === 'fr' ? "Déconnexion réussie" : language === 'ar' ? "تم قطع الاتصال بنجاح" : "Disconnection successful",
+      description: language === 'fr' ? "Votre projet Supabase a été déconnecté" : 
+                  language === 'ar' ? "تم قطع الاتصال بمشروع Supabase الخاص بك" : 
+                  "Your Supabase project has been disconnected",
+    });
   };
 
   // Gérer le changement de langue
@@ -125,6 +208,8 @@ const Settings = () => {
     setLanguage(newLanguage);
   };
 
+  // ===== SECTION: CLASSES DYNAMIQUES =====
+  
   // Classes dynamiques pour s'adapter au thème sombre
   const bgClass = theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gradient-to-b from-teal-500/80 to-teal-600/90 text-white';
   const cardBgClass = theme === 'dark' ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/10 border-white/20';
@@ -137,6 +222,7 @@ const Settings = () => {
   const toggleBgActive = theme === 'dark' ? 'bg-blue-600' : 'bg-teal-500';
   const toggleBgInactive = theme === 'dark' ? 'bg-gray-600' : 'bg-gray-400';
 
+  // ===== SECTION: RENDU DU COMPOSANT =====
   return (
     <div className={`min-h-screen ${bgClass} flex flex-col`}>
       <Header />
@@ -170,7 +256,7 @@ const Settings = () => {
             </button>
           </div>
           
-          {/* Section Supabase */}
+          {/* ===== SECTION SUPABASE ===== */}
           <div className="mb-8">
             <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
               <Database className="mr-2" size={18} />
@@ -179,17 +265,17 @@ const Settings = () => {
             <div className={`${sectionBgClass} rounded-xl p-4 space-y-4`}>
               {isConnectedToSupabase ? (
                 <div className="flex flex-col items-center">
-                  <div className="bg-green-500/20 text-green-300 px-4 py-2 rounded-lg mb-2">
+                  <div className="bg-green-500/20 text-green-300 px-4 py-2 rounded-lg mb-2 flex items-center">
+                    <Check className="mr-2" size={16} />
                     {language === 'fr' ? "Connecté à Supabase" : language === 'ar' ? "متصل بـ Supabase" : "Connected to Supabase"}
                   </div>
+                  <p className="text-white/70 text-sm my-2">
+                    {language === 'fr' ? `Projet: ${supabaseProjectId}` : 
+                     language === 'ar' ? `المشروع: ${supabaseProjectId}` : 
+                     `Project: ${supabaseProjectId}`}
+                  </p>
                   <button 
-                    onClick={() => {
-                      setIsConnectedToSupabase(false);
-                      saveSettings('isConnectedToSupabase', 'false');
-                      toast({
-                        title: language === 'fr' ? "Déconnexion réussie" : language === 'ar' ? "تم قطع الاتصال بنجاح" : "Disconnection successful",
-                      });
-                    }}
+                    onClick={handleSupabaseDisconnection}
                     className={`w-full py-2 ${buttonBgClass} text-white rounded-xl transition-all duration-300 mt-2`}
                   >
                     {language === 'fr' ? "Déconnecter" : language === 'ar' ? "قطع الاتصال" : "Disconnect"}
@@ -197,6 +283,12 @@ const Settings = () => {
                 </div>
               ) : (
                 <>
+                  {connectionError && (
+                    <div className="bg-red-500/20 text-red-300 px-4 py-2 rounded-lg mb-2 flex items-center">
+                      <X className="mr-2" size={16} />
+                      {connectionError}
+                    </div>
+                  )}
                   <div>
                     <label className="text-white/90 block mb-2">{t('supabaseProjectId')}</label>
                     <input 
@@ -219,16 +311,26 @@ const Settings = () => {
                   </div>
                   <button 
                     onClick={handleSupabaseConnection}
-                    className={`w-full py-2 ${gradientButtonClass} text-white rounded-xl transition-all duration-300`}
+                    className={`w-full py-2 ${gradientButtonClass} text-white rounded-xl transition-all duration-300 flex items-center justify-center`}
+                    disabled={isConnecting}
                   >
-                    {t('connectToSupabase')}
+                    {isConnecting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/20 border-t-white/80 rounded-full animate-spin mr-2"></div>
+                        {language === 'fr' ? "Connexion en cours..." : 
+                         language === 'ar' ? "جاري الاتصال..." : 
+                         "Connecting..."}
+                      </>
+                    ) : (
+                      t('connectToSupabase')
+                    )}
                   </button>
                 </>
               )}
             </div>
           </div>
           
-          {/* Section thème et apparence */}
+          {/* ===== SECTION THÈME ET APPARENCE ===== */}
           <div className="mb-8">
             <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
               {theme === 'dark' ? (
@@ -278,7 +380,7 @@ const Settings = () => {
             </div>
           </div>
           
-          {/* Section notifications */}
+          {/* ===== SECTION NOTIFICATIONS ===== */}
           <div className="mb-8">
             <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
               <Bell className="mr-2" size={18} />
@@ -359,7 +461,7 @@ const Settings = () => {
             </div>
           </div>
           
-          {/* Section langue et région */}
+          {/* ===== SECTION LANGUE ET RÉGION ===== */}
           <div className="mb-8">
             <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
               <Globe className="mr-2" size={18} />
@@ -432,7 +534,7 @@ const Settings = () => {
             </div>
           </div>
           
-          {/* Section paiement et sécurité */}
+          {/* ===== SECTION PAIEMENT ET SÉCURITÉ ===== */}
           <div className="mb-8">
             <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
               <Shield className="mr-2" size={18} />
@@ -480,7 +582,7 @@ const Settings = () => {
             </div>
           </div>
           
-          {/* Section véhicules (pour les chauffeurs) */}
+          {/* ===== SECTION VÉHICULES ===== */}
           <div className="mb-8">
             <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
               <Car className="mr-2" size={18} />
@@ -505,7 +607,7 @@ const Settings = () => {
             </div>
           </div>
           
-          {/* Section support */}
+          {/* ===== SECTION SUPPORT ===== */}
           <div className="mb-8">
             <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
               <HelpCircle className="mr-2" size={18} />
@@ -535,7 +637,7 @@ const Settings = () => {
             </div>
           </div>
           
-          {/* Section à propos */}
+          {/* ===== SECTION À PROPOS ===== */}
           <div>
             <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
               <MapPin className="mr-2" size={18} />
