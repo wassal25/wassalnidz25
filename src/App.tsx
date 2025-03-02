@@ -18,6 +18,11 @@ import ReservationPage from "./pages/ReservationPage";
 import Settings from "./pages/Settings";
 import Feedback from "./pages/Feedback";
 import NotFound from "./pages/NotFound";
+import About from "./pages/About";
+import SearchHelp from "./pages/SearchHelp";
+import Map from "./pages/Map";
+import CreateTrip from "./pages/CreateTrip";
+import CommunityChat from "./pages/CommunityChat";
 
 // Client React Query pour la gestion d'état et des requêtes
 const queryClient = new QueryClient();
@@ -40,6 +45,11 @@ const App = () => (
           <Route path="/reservation" element={<ReservationPage />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/feedback" element={<Feedback />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/search-help" element={<SearchHelp />} />
+          <Route path="/map" element={<Map />} />
+          <Route path="/create-trip" element={<CreateTrip />} />
+          <Route path="/community-chat" element={<CommunityChat />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

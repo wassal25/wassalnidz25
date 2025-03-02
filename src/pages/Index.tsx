@@ -12,6 +12,7 @@ import Map from "@/components/Map";
 import GroupChat from "@/components/GroupChat";
 import { Search, MapPin, Calendar, Clock, MessageSquare } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 // -------------------------------------------------------
 // DONNÉES SIMULÉES
@@ -208,6 +209,36 @@ const Index = () => {
     }
   };
 
+  // Fonctions interactives pour les différentes sections
+  const handleMapClick = () => {
+    toast.info("Ouverture de la carte complète", {
+      description: "Vous seriez redirigé vers une vue détaillée de la carte",
+    });
+    navigate("/map");
+  };
+
+  const handleSearchClick = () => {
+    toast.success("Recherche lancée", {
+      description: "Résultats de recherche filtrés selon vos critères",
+    });
+  };
+
+  const handleSuggestionClick = (destination: string) => {
+    setSelectedDestination(destination);
+    toast.info(`Filtrage par ${destination}`, {
+      description: `Affichage des trajets vers ${destination}`,
+    });
+  };
+
+  const handleChatClick = () => {
+    if (!reservedTripDetails) {
+      toast.info("Accès au chat global", {
+        description: "Vous seriez redirigé vers le chat communautaire",
+      });
+      navigate("/community-chat");
+    }
+  };
+
   // Appel à la simulation pour démonstration
   // Dans une application réelle, on vérifierait les réservations lors du chargement
   simulatedReservation();
@@ -220,19 +251,22 @@ const Index = () => {
       
       {/* ==== MAIN CONTENT ==== */}
       <main className="container mx-auto px-4 pt-32 pb-16 flex-grow">
-        {/* Section titre */}
-        <div className="text-center mb-16 animate-fade-up">
+        {/* Section titre - Rendue interactive, cliquable pour aller à l'À propos */}
+        <div 
+          className="text-center mb-16 animate-fade-up cursor-pointer hover:scale-105 transition-transform"
+          onClick={() => navigate("/about")}
+        >
           <h1 className="text-4xl font-bold text-white mb-4 tracking-tight">
-            Transport Collaboratif
+            Voyagez ensemble dans la wilaya de Constantine
           </h1>
           <p className="text-lg text-gray-100 max-w-2xl mx-auto">
-            Voyagez ensemble dans la wilaya de Constantine
+            Cliquez pour en savoir plus sur notre service
           </p>
         </div>
 
         {/* ==== SEARCH SECTION ==== */}
         <div className="bg-teal-600/40 backdrop-blur-sm rounded-2xl p-6 mb-12 animate-fade-up">
-          <div className="mb-6">
+          <div className="mb-6 cursor-pointer hover:text-white/80 transition-colors" onClick={() => navigate("/search-help")}>
             <h3 className="text-xl font-semibold text-white mb-2">Rechercher un trajet</h3>
             <p className="text-white/80 text-sm">
               Trouvez un trajet qui correspond à vos besoins
@@ -247,7 +281,8 @@ const Index = () => {
               <select
                 value={departSearch}
                 onChange={(e) => setDepartSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-teal-400 appearance-none"
+                className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-teal-400 appearance-none cursor-pointer"
+                onClick={() => toast.info("Sélection du lieu de départ")}
               >
                 <option value="">Lieu de départ</option>
                 {departures.map((departure) => (
@@ -264,7 +299,8 @@ const Index = () => {
               <select
                 value={destinationSearch}
                 onChange={(e) => setDestinationSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-teal-400 appearance-none"
+                className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-teal-400 appearance-none cursor-pointer"
+                onClick={() => toast.info("Sélection de la destination")}
               >
                 <option value="">Destination</option>
                 {destinations.map((destination) => (
@@ -282,7 +318,8 @@ const Index = () => {
                 type="date"
                 value={dateSearch}
                 onChange={(e) => setDateSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-teal-400"
+                className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-teal-400 cursor-pointer"
+                onClick={() => toast.info("Sélection de la date")}
               />
             </div>
             
@@ -292,7 +329,8 @@ const Index = () => {
               <select
                 value={timeSearch}
                 onChange={(e) => setTimeSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-teal-400 appearance-none"
+                className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-teal-400 appearance-none cursor-pointer"
+                onClick={() => toast.info("Sélection de l'heure")}
               >
                 <option value="">Heure de départ</option>
                 {times.map((time) => (
@@ -313,12 +351,16 @@ const Index = () => {
                 setTimeSearch("");
                 setDateSearch("");
                 setSelectedDestination("");
+                toast.info("Critères réinitialisés");
               }}
               className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl mr-4 transition-all duration-300"
             >
               Réinitialiser
             </button>
-            <button className="px-8 py-2 bg-gradient-to-r from-[#FEC6A1]/80 to-[#45B39D]/80 hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl transition-all duration-300 flex items-center">
+            <button 
+              className="px-8 py-2 bg-gradient-to-r from-[#FEC6A1]/80 to-[#45B39D]/80 hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl transition-all duration-300 flex items-center"
+              onClick={handleSearchClick}
+            >
               <Search className="mr-2" size={18} />
               Rechercher
             </button>
@@ -334,15 +376,21 @@ const Index = () => {
               </div>
             ))
           ) : (
-            <div className="col-span-full text-center py-12">
+            <div 
+              className="col-span-full text-center py-12 cursor-pointer hover:bg-teal-600/30 rounded-xl transition-all" 
+              onClick={() => navigate("/create-trip")}
+            >
               <p className="text-white text-xl">Aucun trajet ne correspond à votre recherche.</p>
-              <p className="text-white/80 mt-2">Essayez d'autres critères de recherche.</p>
+              <p className="text-white/80 mt-2">Cliquez ici pour proposer un nouveau trajet.</p>
             </div>
           )}
         </div>
 
         {/* ==== MAP SECTION ==== */}
-        <div className="bg-teal-600/40 backdrop-blur-sm p-6 rounded-2xl animate-fade-up">
+        <div 
+          className="bg-teal-600/40 backdrop-blur-sm p-6 rounded-2xl animate-fade-up cursor-pointer hover:bg-teal-600/60 transition-all"
+          onClick={handleMapClick}
+        >
           <h2 className="text-2xl font-bold text-white mb-6 text-center">
             Découvrez nos trajets sur la carte
           </h2>
@@ -355,7 +403,7 @@ const Index = () => {
       
       {/* ==== CHAT COMPONENT ==== */}
       {/* Chat de groupe - Affiché uniquement si l'utilisateur a une réservation active */}
-      {reservedTripDetails && (
+      {reservedTripDetails ? (
         <GroupChat 
           tripId={reservedTripDetails.id}
           tripInfo={{
@@ -370,6 +418,13 @@ const Index = () => {
             role: "passenger"
           }}
         />
+      ) : (
+        <div 
+          className="fixed bottom-6 right-6 bg-[#FEC6A1]/90 p-3 rounded-full shadow-lg cursor-pointer hover:bg-[#FEC6A1] transition-all"
+          onClick={handleChatClick}
+        >
+          <MessageSquare size={28} className="text-white" />
+        </div>
       )}
     </div>
   );
