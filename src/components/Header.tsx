@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from "react";
 import { Home, Settings, LogIn, MessageSquare } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 /**
  * Composant Header - Barre de navigation principale
@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 const Header = () => {
   // État pour suivre si l'utilisateur a fait défiler la page
   const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
 
   // Effet pour gérer l'événement de défilement
   useEffect(() => {
@@ -36,10 +37,10 @@ const Header = () => {
       <nav className="bg-[#FDE1D3]/30 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            {/* Logo et nom de l'application */}
+            {/* Logo et nom de l'application - maintenant clickable avec redirections vers l'accueil */}
             <div className="flex items-center">
               <Link to="/" className="flex items-center group">
-                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-teal-700 to-teal-500 flex items-center justify-center shadow-lg relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-xl">
+                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-teal-700 to-teal-500 flex items-center justify-center shadow-lg relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105">
                   {/* Logo moderne avec W et forme officielle */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <img 
