@@ -10,7 +10,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useTheme } from "@/context/ThemeContext";
 import { useLanguage, Language } from "@/context/LanguageContext";
-import { useToast } from "@/components/ui/use-toast";
 import { toast } from "sonner";
 import { 
   Bell, 
@@ -28,10 +27,7 @@ import {
   Phone, 
   Mail, 
   HelpCircle,
-  Clock,
-  Database,
-  Check,
-  X
+  Clock
 } from "lucide-react";
 
 /**
@@ -42,7 +38,6 @@ const Settings = () => {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
-  const { toast: uiToast } = useToast();
   
   // ===== SECTION: ÉTATS LOCAUX =====
   
@@ -54,13 +49,6 @@ const Settings = () => {
   const [savePaymentInfo, setSavePaymentInfo] = useState(false);
   const [textSize, setTextSize] = useState("2");
   const [timeFormat, setTimeFormat] = useState("24");
-  
-  // États pour Supabase
-  const [supabaseProjectId, setSupabaseProjectId] = useState("");
-  const [supabaseApiKey, setSupabaseApiKey] = useState("");
-  const [isConnectedToSupabase, setIsConnectedToSupabase] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [connectionError, setConnectionError] = useState("");
   
   // ===== SECTION: EFFETS =====
   
@@ -74,9 +62,6 @@ const Settings = () => {
     const savedPaymentInfo = localStorage.getItem('savePaymentInfo');
     const savedTextSize = localStorage.getItem('textSize');
     const savedTimeFormat = localStorage.getItem('timeFormat');
-    const savedSupabaseProjectId = localStorage.getItem('supabaseProjectId');
-    const savedSupabaseApiKey = localStorage.getItem('supabaseApiKey');
-    const savedSupabaseConnection = localStorage.getItem('isConnectedToSupabase');
     
     // Application des paramètres sauvegardés
     if (savedNotifications) setNotificationsEnabled(savedNotifications === 'true');
@@ -86,9 +71,6 @@ const Settings = () => {
     if (savedPaymentInfo) setSavePaymentInfo(savedPaymentInfo === 'true');
     if (savedTextSize) setTextSize(savedTextSize);
     if (savedTimeFormat) setTimeFormat(savedTimeFormat);
-    if (savedSupabaseProjectId) setSupabaseProjectId(savedSupabaseProjectId);
-    if (savedSupabaseApiKey) setSupabaseApiKey(savedSupabaseApiKey);
-    if (savedSupabaseConnection) setIsConnectedToSupabase(savedSupabaseConnection === 'true');
   }, []);
 
   // Effet pour appliquer la taille du texte
@@ -113,95 +95,6 @@ const Settings = () => {
   };
 
   // ===== SECTION: GESTIONNAIRES D'ÉVÉNEMENTS =====
-  
-  // Gérer la connexion à Supabase
-  const handleSupabaseConnection = async () => {
-    // Vérification que les champs nécessaires sont remplis
-    if (!supabaseProjectId || !supabaseApiKey) {
-      setConnectionError(
-        language === 'fr' ? "Veuillez remplir tous les champs" : 
-        language === 'ar' ? "يرجى ملء جميع الحقول" : 
-        "Please fill in all fields"
-      );
-      
-      toast({
-        variant: "destructive",
-        title: language === 'fr' ? "Erreur de connexion" : language === 'ar' ? "خطأ في الاتصال" : "Connection error",
-        description: language === 'fr' ? "Veuillez remplir tous les champs" : 
-                    language === 'ar' ? "يرجى ملء جميع الحقول" : 
-                    "Please fill in all fields",
-      });
-      return;
-    }
-    
-    setIsConnecting(true);
-    setConnectionError("");
-    
-    try {
-      // Simulation d'une tentative de connexion à Supabase avec délai pour l'effet UI
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      // Vérifier le format de l'ID du projet (simule une validation)
-      if (supabaseProjectId.length < 10 || !/^[a-zA-Z0-9-]+$/.test(supabaseProjectId)) {
-        throw new Error(
-          language === 'fr' ? "ID de projet Supabase invalide" : 
-          language === 'ar' ? "معرف مشروع Supabase غير صالح" : 
-          "Invalid Supabase project ID"
-        );
-      }
-      
-      // Vérifier le format de la clé API (simule une validation)
-      if (!supabaseApiKey.startsWith("eyJ") || supabaseApiKey.length < 20) {
-        throw new Error(
-          language === 'fr' ? "Clé API Supabase invalide" : 
-          language === 'ar' ? "مفتاح API Supabase غير صالح" : 
-          "Invalid Supabase API key"
-        );
-      }
-      
-      // Connexion réussie
-      setIsConnectedToSupabase(true);
-      saveSettings('supabaseProjectId', supabaseProjectId);
-      saveSettings('supabaseApiKey', supabaseApiKey);
-      saveSettings('isConnectedToSupabase', 'true');
-      
-      toast({
-        title: language === 'fr' ? "Connexion réussie" : language === 'ar' ? "تم الاتصال بنجاح" : "Connection successful",
-        description: language === 'fr' ? "Votre projet Supabase est maintenant connecté" : 
-                    language === 'ar' ? "تم توصيل مشروع Supabase الخاص بك الآن" : 
-                    "Your Supabase project is now connected",
-      });
-    } catch (error) {
-      // Gestion des erreurs
-      const errorMessage = error instanceof Error ? error.message : 
-        language === 'fr' ? "Erreur de connexion inconnue" : 
-        language === 'ar' ? "خطأ اتصال غير معروف" : 
-        "Unknown connection error";
-      
-      setConnectionError(errorMessage);
-      
-      toast({
-        variant: "destructive",
-        title: language === 'fr' ? "Erreur de connexion" : language === 'ar' ? "خطأ في الاتصال" : "Connection error",
-        description: errorMessage,
-      });
-    } finally {
-      setIsConnecting(false);
-    }
-  };
-
-  // Gérer la déconnexion de Supabase
-  const handleSupabaseDisconnection = () => {
-    setIsConnectedToSupabase(false);
-    saveSettings('isConnectedToSupabase', 'false');
-    
-    toast({
-      title: language === 'fr' ? "Déconnexion réussie" : language === 'ar' ? "تم قطع الاتصال بنجاح" : "Disconnection successful",
-      description: language === 'fr' ? "Votre projet Supabase a été déconnecté" : 
-                  language === 'ar' ? "تم قطع الاتصال بمشروع Supabase الخاص بك" : 
-                  "Your Supabase project has been disconnected",
-    });
-  };
 
   // Gérer le changement de langue
   const handleLanguageChange = (newLanguage: Language) => {
@@ -254,80 +147,6 @@ const Settings = () => {
             <button className={`mt-4 px-6 py-2 ${buttonBgClass} text-white rounded-xl transition-all duration-300`}>
               {t('editProfile')}
             </button>
-          </div>
-          
-          {/* ===== SECTION SUPABASE ===== */}
-          <div className="mb-8">
-            <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
-              <Database className="mr-2" size={18} />
-              {t('supabaseConnection')}
-            </h3>
-            <div className={`${sectionBgClass} rounded-xl p-4 space-y-4`}>
-              {isConnectedToSupabase ? (
-                <div className="flex flex-col items-center">
-                  <div className="bg-green-500/20 text-green-300 px-4 py-2 rounded-lg mb-2 flex items-center">
-                    <Check className="mr-2" size={16} />
-                    {language === 'fr' ? "Connecté à Supabase" : language === 'ar' ? "متصل بـ Supabase" : "Connected to Supabase"}
-                  </div>
-                  <p className="text-white/70 text-sm my-2">
-                    {language === 'fr' ? `Projet: ${supabaseProjectId}` : 
-                     language === 'ar' ? `المشروع: ${supabaseProjectId}` : 
-                     `Project: ${supabaseProjectId}`}
-                  </p>
-                  <button 
-                    onClick={handleSupabaseDisconnection}
-                    className={`w-full py-2 ${buttonBgClass} text-white rounded-xl transition-all duration-300 mt-2`}
-                  >
-                    {language === 'fr' ? "Déconnecter" : language === 'ar' ? "قطع الاتصال" : "Disconnect"}
-                  </button>
-                </div>
-              ) : (
-                <>
-                  {connectionError && (
-                    <div className="bg-red-500/20 text-red-300 px-4 py-2 rounded-lg mb-2 flex items-center">
-                      <X className="mr-2" size={16} />
-                      {connectionError}
-                    </div>
-                  )}
-                  <div>
-                    <label className="text-white/90 block mb-2">{t('supabaseProjectId')}</label>
-                    <input 
-                      type="text" 
-                      value={supabaseProjectId}
-                      onChange={(e) => setSupabaseProjectId(e.target.value)}
-                      className={`w-full px-4 py-2 ${inputBgClass} rounded-xl text-white focus:outline-none`}
-                      placeholder="exemple: abcdefghijklmnopqrst"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-white/90 block mb-2">{t('supabaseApiKey')}</label>
-                    <input 
-                      type="password" 
-                      value={supabaseApiKey}
-                      onChange={(e) => setSupabaseApiKey(e.target.value)}
-                      className={`w-full px-4 py-2 ${inputBgClass} rounded-xl text-white focus:outline-none`}
-                      placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                    />
-                  </div>
-                  <button 
-                    onClick={handleSupabaseConnection}
-                    className={`w-full py-2 ${gradientButtonClass} text-white rounded-xl transition-all duration-300 flex items-center justify-center`}
-                    disabled={isConnecting}
-                  >
-                    {isConnecting ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white/20 border-t-white/80 rounded-full animate-spin mr-2"></div>
-                        {language === 'fr' ? "Connexion en cours..." : 
-                         language === 'ar' ? "جاري الاتصال..." : 
-                         "Connecting..."}
-                      </>
-                    ) : (
-                      t('connectToSupabase')
-                    )}
-                  </button>
-                </>
-              )}
-            </div>
           </div>
           
           {/* ===== SECTION THÈME ET APPARENCE ===== */}
