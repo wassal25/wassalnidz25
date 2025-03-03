@@ -1,7 +1,6 @@
-
 import { useState } from "react";
-import { Upload, Camera, UserCheck } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Upload, Camera, UserCheck, Home } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -92,6 +91,15 @@ const RegisterDriver = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Home button - Added */}
+      <Link 
+        to="/" 
+        className="absolute top-4 left-4 z-20 bg-white/20 p-2 rounded-full backdrop-blur-sm hover:bg-white/30 transition-all duration-300"
+        aria-label={t('returnToHome')}
+      >
+        <Home className="w-6 h-6 text-white" />
+      </Link>
+      
       {/* Image d'arrière-plan de Constantine */}
       <div 
         className="absolute inset-0 z-0"
