@@ -10,9 +10,11 @@ import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { MessageSquare, Send, Mail, User, Phone } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 const Feedback = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -21,39 +23,79 @@ const Feedback = () => {
   
   // Options pour les types de feedback
   const feedbackOptions = [
-    { id: "suggestion", label: "Suggestion d'amélioration" },
-    { id: "problem", label: "Signalement de problème" },
-    { id: "complaint", label: "Réclamation" },
-    { id: "appreciation", label: "Appréciation" },
-    { id: "other", label: "Autre" }
+    { id: "suggestion", label: t('suggestionOption') },
+    { id: "problem", label: t('problemOption') },
+    { id: "complaint", label: t('complaintOption') },
+    { id: "appreciation", label: t('appreciationOption') },
+    { id: "other", label: t('otherOption') }
   ];
 
   // Suggestions de réponses prédéfinies selon le type
   const suggestionsByType = {
     suggestion: [
-      "Je souhaite suggérer une amélioration pour la recherche de trajets.",
-      "Je propose d'ajouter une fonctionnalité de partage de trajet.",
-      "Voici une idée pour améliorer l'interface utilisateur."
+      t('language') === 'fr' ? "Je souhaite suggérer une amélioration pour la recherche de trajets." : 
+      t('language') === 'ar' ? "أود أن أقترح تحسينًا لميزة البحث عن الرحلات." : 
+      "I would like to suggest an improvement for the trip search feature.",
+      
+      t('language') === 'fr' ? "Je propose d'ajouter une fonctionnalité de partage de trajet." : 
+      t('language') === 'ar' ? "أقترح إضافة ميزة مشاركة الرحلة." : 
+      "I suggest adding a trip sharing feature.",
+      
+      t('language') === 'fr' ? "Voici une idée pour améliorer l'interface utilisateur." : 
+      t('language') === 'ar' ? "إليك فكرة لتحسين واجهة المستخدم." : 
+      "Here's an idea to improve the user interface."
     ],
     problem: [
-      "J'ai rencontré un problème lors de la réservation d'un trajet.",
-      "L'application ne fonctionne pas correctement sur mon appareil.",
-      "Je n'arrive pas à accéder à certaines fonctionnalités."
+      t('language') === 'fr' ? "J'ai rencontré un problème lors de la réservation d'un trajet." : 
+      t('language') === 'ar' ? "واجهت مشكلة عند حجز رحلة." : 
+      "I encountered a problem when booking a trip.",
+      
+      t('language') === 'fr' ? "L'application ne fonctionne pas correctement sur mon appareil." : 
+      t('language') === 'ar' ? "التطبيق لا يعمل بشكل صحيح على جهازي." : 
+      "The application doesn't work properly on my device.",
+      
+      t('language') === 'fr' ? "Je n'arrive pas à accéder à certaines fonctionnalités." : 
+      t('language') === 'ar' ? "لا يمكنني الوصول إلى بعض الميزات." : 
+      "I can't access certain features."
     ],
     complaint: [
-      "Je n'ai pas été satisfait du service de covoiturage.",
-      "Le chauffeur n'était pas ponctuel.",
-      "Je souhaite signaler un comportement inapproprié."
+      t('language') === 'fr' ? "Je n'ai pas été satisfait du service de covoiturage." : 
+      t('language') === 'ar' ? "لم أكن راضيًا عن خدمة مشاركة الركوب." : 
+      "I was not satisfied with the carpooling service.",
+      
+      t('language') === 'fr' ? "Le chauffeur n'était pas ponctuel." : 
+      t('language') === 'ar' ? "لم يكن السائق في الموعد المحدد." : 
+      "The driver was not punctual.",
+      
+      t('language') === 'fr' ? "Je souhaite signaler un comportement inapproprié." : 
+      t('language') === 'ar' ? "أود الإبلاغ عن سلوك غير لائق." : 
+      "I want to report inappropriate behavior."
     ],
     appreciation: [
-      "Je tiens à exprimer ma satisfaction pour votre service.",
-      "Votre application est très intuitive et facile à utiliser.",
-      "J'apprécie particulièrement la fonctionnalité de..."
+      t('language') === 'fr' ? "Je tiens à exprimer ma satisfaction pour votre service." : 
+      t('language') === 'ar' ? "أود أن أعبر عن رضاي عن خدمتكم." : 
+      "I would like to express my satisfaction with your service.",
+      
+      t('language') === 'fr' ? "Votre application est très intuitive et facile à utiliser." : 
+      t('language') === 'ar' ? "تطبيقكم بديهي وسهل الاستخدام." : 
+      "Your application is very intuitive and easy to use.",
+      
+      t('language') === 'fr' ? "J'apprécie particulièrement la fonctionnalité de..." : 
+      t('language') === 'ar' ? "أقدر بشكل خاص ميزة..." : 
+      "I particularly appreciate the feature of..."
     ],
     other: [
-      "J'ai une question concernant votre service.",
-      "Je souhaite vous contacter pour une proposition de partenariat.",
-      "J'aimerais obtenir plus d'informations sur..."
+      t('language') === 'fr' ? "J'ai une question concernant votre service." : 
+      t('language') === 'ar' ? "لدي سؤال بخصوص خدمتكم." : 
+      "I have a question about your service.",
+      
+      t('language') === 'fr' ? "Je souhaite vous contacter pour une proposition de partenariat." : 
+      t('language') === 'ar' ? "أود الاتصال بكم بخصوص اقتراح شراكة." : 
+      "I wish to contact you for a partnership proposal.",
+      
+      t('language') === 'fr' ? "J'aimerais obtenir plus d'informations sur..." : 
+      t('language') === 'ar' ? "أود الحصول على مزيد من المعلومات حول..." : 
+      "I would like to get more information about..."
     ]
   };
 
@@ -62,13 +104,13 @@ const Feedback = () => {
     
     // Validation simple
     if (!name || !email || !message || !feedbackType) {
-      toast.error("Veuillez remplir tous les champs obligatoires.");
+      toast.error(t('requiredFieldsError'));
       return;
     }
     
     // Simuler l'envoi des données
     setTimeout(() => {
-      toast.success("Votre feedback a été envoyé avec succès! Merci pour votre contribution.");
+      toast.success(t('feedbackSuccess'));
       
       // Réinitialiser le formulaire
       setName("");
@@ -108,20 +150,19 @@ const Feedback = () => {
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-teal-800/70"></div>
                 <img 
                   src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80" 
-                  alt="L'équipe Wassalni" 
+                  alt={t('ourTeamListening')} 
                   className="h-full w-full object-cover"
                 />
                 <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <h3 className="text-2xl font-bold mb-1">Notre équipe à votre écoute</h3>
-                  <p className="text-white/90">Nous sommes là pour vous accompagner et améliorer votre expérience</p>
+                  <h3 className="text-2xl font-bold mb-1">{t('ourTeamListening')}</h3>
+                  <p className="text-white/90">{t('teamDescription')}</p>
                 </div>
               </div>
             </div>
             
-            <h2 className="text-2xl font-bold text-white mb-4">Votre opinion compte</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">{t('yourOpinionMatters')}</h2>
             <p className="text-white/90 mb-6">
-              Chez Wassalni, nous accordons une grande importance à l'expérience de nos utilisateurs.
-              Vos commentaires nous aident à améliorer constamment notre service de covoiturage.
+              {t('feedbackDescription')}
             </p>
             
             <div className="space-y-4">
@@ -130,8 +171,8 @@ const Feedback = () => {
                   <MessageSquare className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold">Communiquez avec nous</h3>
-                  <p className="text-white/80 text-sm">Partagez vos idées, suggestions ou préoccupations</p>
+                  <h3 className="text-white font-semibold">{t('communicateWithUs')}</h3>
+                  <p className="text-white/80 text-sm">{t('shareIdeas')}</p>
                 </div>
               </div>
               
@@ -140,8 +181,8 @@ const Feedback = () => {
                   <Mail className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold">Support réactif</h3>
-                  <p className="text-white/80 text-sm">Notre équipe vous répondra dans les plus brefs délais</p>
+                  <h3 className="text-white font-semibold">{t('reactiveSupport')}</h3>
+                  <p className="text-white/80 text-sm">{t('quickResponse')}</p>
                 </div>
               </div>
             </div>
@@ -151,13 +192,13 @@ const Feedback = () => {
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
             <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
               <MessageSquare className="mr-2" />
-              Formulaire de feedback
+              {t('feedbackFormTitle')}
             </h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Type de feedback */}
               <div>
-                <label className="block text-white font-medium mb-2">Type de feedback</label>
+                <label className="block text-white font-medium mb-2">{t('feedbackType')}</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {feedbackOptions.map((option) => (
                     <div 
@@ -178,7 +219,7 @@ const Feedback = () => {
               {/* Champ Nom */}
               <div>
                 <label htmlFor="name" className="block text-white font-medium mb-2">
-                  Nom complet
+                  {t('fullName')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -190,7 +231,7 @@ const Feedback = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="bg-white/10 border border-white/20 text-white rounded-xl block w-full pl-10 pr-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-500 placeholder:text-white/60"
-                    placeholder="Votre nom"
+                    placeholder={t('namePlaceholder')}
                     required
                   />
                 </div>
@@ -199,7 +240,7 @@ const Feedback = () => {
               {/* Champ Email */}
               <div>
                 <label htmlFor="email" className="block text-white font-medium mb-2">
-                  Adresse email
+                  {t('email')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -211,7 +252,7 @@ const Feedback = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="bg-white/10 border border-white/20 text-white rounded-xl block w-full pl-10 pr-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-500 placeholder:text-white/60"
-                    placeholder="votre@email.com"
+                    placeholder={t('emailPlaceholder')}
                     required
                   />
                 </div>
@@ -220,7 +261,7 @@ const Feedback = () => {
               {/* Champ Téléphone (optionnel) */}
               <div>
                 <label htmlFor="phone" className="block text-white font-medium mb-2">
-                  Téléphone (optionnel)
+                  {t('phoneNumber')} ({t('language') === 'fr' ? 'optionnel' : t('language') === 'ar' ? 'اختياري' : 'optional'})
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -232,7 +273,7 @@ const Feedback = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="bg-white/10 border border-white/20 text-white rounded-xl block w-full pl-10 pr-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-500 placeholder:text-white/60"
-                    placeholder="Votre numéro de téléphone"
+                    placeholder={t('phoneNumberPlaceholder')}
                   />
                 </div>
               </div>
@@ -241,7 +282,7 @@ const Feedback = () => {
               {feedbackType && (
                 <div className="space-y-2">
                   <label className="block text-white font-medium mb-1">
-                    Suggestions:
+                    {t('suggestions')}
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {(suggestionsByType[feedbackType as keyof typeof suggestionsByType] || []).map((suggestion, index) => (
@@ -261,7 +302,7 @@ const Feedback = () => {
               {/* Champ Message */}
               <div>
                 <label htmlFor="message" className="block text-white font-medium mb-2">
-                  Votre message
+                  {t('yourMessage')}
                 </label>
                 <textarea
                   id="message"
@@ -269,7 +310,7 @@ const Feedback = () => {
                   onChange={(e) => setMessage(e.target.value)}
                   rows={4}
                   className="bg-white/10 border border-white/20 text-white rounded-xl block w-full px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-500 placeholder:text-white/60"
-                  placeholder="Décrivez votre feedback ici..."
+                  placeholder={t('messagePlaceholder')}
                   required
                 ></textarea>
               </div>
@@ -280,7 +321,7 @@ const Feedback = () => {
                 className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-xl font-medium hover:from-teal-600 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl"
               >
                 <Send className="h-5 w-5" />
-                <span>Envoyer votre feedback</span>
+                <span>{t('sendFeedback')}</span>
               </button>
             </form>
           </div>
