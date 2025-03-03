@@ -1,7 +1,8 @@
 
 // =======================================================
-// Composant racine App
-// Description: Configuration des routes et fournisseurs globaux
+// Fichier: App.tsx
+// Description: Composant racine App
+// Fonctionnalité: Configuration des routes et fournisseurs globaux
 // =======================================================
 
 import { Toaster } from "@/components/ui/toaster";
@@ -29,16 +30,24 @@ import CommunityChat from "./pages/CommunityChat";
 // Client React Query pour la gestion d'état et des requêtes
 const queryClient = new QueryClient();
 
+/**
+ * Composant principal de l'application
+ * Structure l'application avec les différents contextes et le routeur
+ * Assure que le thème et la langue sont appliqués globalement
+ */
 const App = () => (
+  // QueryClientProvider pour la gestion des requêtes API
   <QueryClientProvider client={queryClient}>
+    {/* ThemeProvider pour la gestion du thème clair/sombre à l'échelle de l'application */}
     <ThemeProvider>
+      {/* LanguageProvider pour la gestion multilingue (français, arabe, anglais) */}
       <LanguageProvider>
         <TooltipProvider>
           {/* Gestionnaires de notifications */}
           <Toaster />
           <Sonner />
           
-          {/* Configuration du routeur */}
+          {/* Configuration du routeur avec les différentes routes de l'application */}
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />

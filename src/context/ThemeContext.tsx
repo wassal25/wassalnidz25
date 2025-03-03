@@ -42,11 +42,13 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     // Sauvegarder la préférence de thème dans localStorage
     localStorage.setItem('theme', theme);
     
-    // Appliquer la classe de thème au document
+    // Appliquer la classe de thème au document HTML globalement
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
     }
 
     // Mettre à jour la métadonnée pour le thème couleur sur mobile

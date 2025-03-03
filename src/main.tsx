@@ -12,8 +12,8 @@ const setViewportMetaTag = () => {
   if (!viewport) {
     // Si non, créer et ajouter la meta tag
     viewport = document.createElement('meta');
-    viewport.name = 'viewport';
-    viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+    (viewport as HTMLMetaElement).name = 'viewport';
+    (viewport as HTMLMetaElement).content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
     document.head.appendChild(viewport);
   }
 };
