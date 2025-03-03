@@ -1,15 +1,22 @@
 
+// =======================================================
+// Fichier: LanguageContext.tsx
+// Description: Contexte global pour la gestion de la langue (fr/ar/en)
+// Fonctionnalité: Permet de changer la langue dans toute l'application et support RTL pour l'arabe
+// =======================================================
+
 import { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 
 export type Language = 'fr' | 'ar' | 'en';
 
+// Interface définissant les propriétés du contexte de langue
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
 }
 
-// Create translations object
+// Création des objets de traduction pour chaque langue
 const translations: Record<Language, Record<string, string>> = {
   fr: {
     // French translations
@@ -51,10 +58,23 @@ const translations: Record<Language, Record<string, string>> = {
     termsOfUse: 'Conditions d\'utilisation',
     privacyPolicy: 'Politique de confidentialité',
     editProfile: 'Modifier le profil',
-    supabaseConnection: 'Connexion à Supabase',
-    connectToSupabase: 'Connecter à Supabase',
-    supabaseProjectId: 'ID du projet Supabase',
-    supabaseApiKey: 'Clé API Supabase',
+    // Navigation items
+    home: 'Accueil',
+    feedback: 'Feedback',
+    login: 'Connexion',
+    register: 'Inscription',
+    aboutUs: 'À propos',
+    contactUs: 'Contact',
+    // Footer items
+    aboutCompany: 'À propos',
+    usefulLinks: 'Liens utiles',
+    howItWorks: 'Comment ça marche',
+    faq: 'FAQ',
+    contactInfo: 'Contact',
+    email: 'Email',
+    phone: 'Téléphone',
+    address: 'Adresse',
+    copyright: 'Tous droits réservés'
   },
   ar: {
     // Arabic translations
@@ -96,10 +116,23 @@ const translations: Record<Language, Record<string, string>> = {
     termsOfUse: 'شروط الاستخدام',
     privacyPolicy: 'سياسة الخصوصية',
     editProfile: 'تعديل الملف الشخصي',
-    supabaseConnection: 'الاتصال بـ Supabase',
-    connectToSupabase: 'الاتصال بـ Supabase',
-    supabaseProjectId: 'معرف مشروع Supabase',
-    supabaseApiKey: 'مفتاح API لـ Supabase',
+    // Navigation items
+    home: 'الرئيسية',
+    feedback: 'تعليقات',
+    login: 'تسجيل الدخول',
+    register: 'تسجيل',
+    aboutUs: 'من نحن',
+    contactUs: 'اتصل بنا',
+    // Footer items
+    aboutCompany: 'عن الشركة',
+    usefulLinks: 'روابط مفيدة',
+    howItWorks: 'كيف يعمل',
+    faq: 'الأسئلة الشائعة',
+    contactInfo: 'معلومات الاتصال',
+    email: 'البريد الإلكتروني',
+    phone: 'الهاتف',
+    address: 'العنوان',
+    copyright: 'جميع الحقوق محفوظة'
   },
   en: {
     // English translations
@@ -141,41 +174,67 @@ const translations: Record<Language, Record<string, string>> = {
     termsOfUse: 'Terms of Use',
     privacyPolicy: 'Privacy Policy',
     editProfile: 'Edit Profile',
-    supabaseConnection: 'Supabase Connection',
-    connectToSupabase: 'Connect to Supabase',
-    supabaseProjectId: 'Supabase Project ID',
-    supabaseApiKey: 'Supabase API Key',
+    // Navigation items
+    home: 'Home',
+    feedback: 'Feedback',
+    login: 'Login',
+    register: 'Register',
+    aboutUs: 'About Us',
+    contactUs: 'Contact Us',
+    // Footer items
+    aboutCompany: 'About',
+    usefulLinks: 'Useful Links',
+    howItWorks: 'How It Works',
+    faq: 'FAQ',
+    contactInfo: 'Contact',
+    email: 'Email',
+    phone: 'Phone',
+    address: 'Address',
+    copyright: 'All rights reserved'
   }
 };
 
+// Création du contexte avec des valeurs par défaut
 const LanguageContext = createContext<LanguageContextType>({
   language: 'fr',
   setLanguage: () => {},
   t: (key: string) => key,
 });
 
+// Hook personnalisé pour utiliser le contexte de langue
 export const useLanguage = () => useContext(LanguageContext);
 
+/**
+ * Composant Provider pour la langue
+ * Gère l'état de la langue et l'applique à l'ensemble du document
+ * Persiste le choix dans localStorage et configure la direction du texte (RTL/LTR)
+ */
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguage] = useState<Language>(() => {
-    // Check if language preference is saved in localStorage
+    // Vérifier si une préférence de langue est sauvegardée dans localStorage
     const savedLanguage = localStorage.getItem('language') as Language;
     return savedLanguage || 'fr';
   });
 
-  // Effect to save language preference to localStorage
+  // Effet pour appliquer les changements de langue au document
   useEffect(() => {
+    // Sauvegarder la préférence de langue dans localStorage
     localStorage.setItem('language', language);
     
-    // Set direction based on language
+    // Définir la direction en fonction de la langue (RTL pour l'arabe)
     if (language === 'ar') {
       document.documentElement.dir = 'rtl';
+      document.documentElement.lang = 'ar';
     } else {
       document.documentElement.dir = 'ltr';
+      document.documentElement.lang = language;
     }
+
+    // Définir l'attribut lang sur html
+    document.documentElement.setAttribute('lang', language);
   }, [language]);
 
-  // Translation function
+  // Fonction de traduction
   const t = (key: string): string => {
     return translations[language]?.[key] || key;
   };
