@@ -1,17 +1,20 @@
+
 import { useState } from "react";
 import { UserCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useLanguage } from "@/context/LanguageContext";
 
 const RegisterPassenger = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     // Simuler une inscription réussie
-    toast.success("Inscription réussie!", {
-      description: "Votre compte passager a été créé avec succès. Vous allez être redirigé vers la page de connexion.",
+    toast.success(t('registerSuccess'), {
+      description: t('registerSuccessMessage'),
       position: "top-center",
       duration: 4000,
       style: {
@@ -46,17 +49,17 @@ const RegisterPassenger = () => {
           WASSALNI
         </h2>
         <p className="text-white/90 text-center mb-8 text-sm">
-          Inscription Passager
+          {t('passengerRegistration')}
         </p>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="name" className="text-white/90 text-sm font-medium mb-2 block">
-              Nom complet
+              {t('fullName')}
             </label>
             <input
               id="name"
               type="text"
-              placeholder="Entrez votre nom"
+              placeholder={t('namePlaceholder')}
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
               required
             />
@@ -68,55 +71,55 @@ const RegisterPassenger = () => {
             <input
               id="email"
               type="email"
-              placeholder="Entrez votre email"
+              placeholder={t('emailPlaceholder')}
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
               required
             />
           </div>
           <div>
             <label htmlFor="phone" className="text-white/90 text-sm font-medium mb-2 block">
-              Numéro de téléphone
+              {t('phoneNumber')}
             </label>
             <input
               id="phone"
               type="tel"
-              placeholder="Entrez votre numéro"
+              placeholder={t('phoneNumberPlaceholder')}
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
               required
             />
           </div>
           <div>
             <label htmlFor="address" className="text-white/90 text-sm font-medium mb-2 block">
-              Adresse
+              {t('address')}
             </label>
             <input
               id="address"
               type="text"
-              placeholder="Entrez votre adresse"
+              placeholder={t('addressPlaceholder')}
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
               required
             />
           </div>
           <div>
             <label htmlFor="password" className="text-white/90 text-sm font-medium mb-2 block">
-              Mot de passe
+              {t('password')}
             </label>
             <input
               id="password"
               type="password"
-              placeholder="Créez votre mot de passe"
+              placeholder={t('createPassword')}
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
               required
             />
           </div>
           <div>
             <label htmlFor="confirmPassword" className="text-white/90 text-sm font-medium mb-2 block">
-              Confirmer le mot de passe
+              {t('confirmPassword')}
             </label>
             <input
               id="confirmPassword"
               type="password"
-              placeholder="Confirmez votre mot de passe"
+              placeholder={t('confirmPasswordPlaceholder')}
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
               required
             />
@@ -126,12 +129,12 @@ const RegisterPassenger = () => {
             className="w-full py-3 bg-gradient-to-r from-[#FEC6A1]/80 to-[#45B39D]/80 hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.02] backdrop-blur-sm font-medium text-lg flex items-center justify-center"
           >
             <UserCheck className="mr-2 w-5 h-5" />
-            S'inscrire
+            {t('register')}
           </button>
           <p className="text-center text-white/90 mt-4">
-            Vous avez déjà un compte ?{" "}
+            {t('alreadyHaveAccount')}{" "}
             <a href="/login" className="text-white hover:underline font-medium">
-              Se connecter
+              {t('login')}
             </a>
           </p>
         </form>

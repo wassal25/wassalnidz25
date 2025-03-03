@@ -1,13 +1,16 @@
+
 import { useState } from "react";
 import { Upload, Camera, UserCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useLanguage } from "@/context/LanguageContext";
 
 const RegisterDriver = () => {
   const [step, setStep] = useState(1);
   const [previewVehicle, setPreviewVehicle] = useState<string | null>(null);
   const [previewProfile, setPreviewProfile] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { t } = useLanguage();
   
   // Données du formulaire
   const [formData, setFormData] = useState({
@@ -72,8 +75,8 @@ const RegisterDriver = () => {
     console.log("Formulaire soumis:", formData, { previewProfile, previewVehicle });
     
     // Notification de succès
-    toast.success("Inscription chauffeur réussie!", {
-      description: "Votre compte chauffeur a été créé avec succès. Vous allez être redirigé vers la page de connexion.",
+    toast.success(t('registerSuccess'), {
+      description: t('registerSuccessMessage'),
       position: "top-center",
       duration: 4000,
       style: {
@@ -108,7 +111,7 @@ const RegisterDriver = () => {
           WASSALNI
         </h2>
         <p className="text-white/90 text-center mb-8 text-sm">
-          Inscription Chauffeur
+          {t('driverRegistration')}
         </p>
 
         {/* Indicateur d'étape */}
@@ -127,12 +130,12 @@ const RegisterDriver = () => {
             <>
               <div>
                 <label htmlFor="name" className="text-white/90 text-sm font-medium mb-2 block">
-                  Nom complet
+                  {t('fullName')}
                 </label>
                 <input
                   id="name"
                   type="text"
-                  placeholder="Entrez votre nom"
+                  placeholder={t('namePlaceholder')}
                   value={formData.name}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
@@ -146,7 +149,7 @@ const RegisterDriver = () => {
                 <input
                   id="email"
                   type="email"
-                  placeholder="Entrez votre email"
+                  placeholder={t('emailPlaceholder')}
                   value={formData.email}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
@@ -155,12 +158,12 @@ const RegisterDriver = () => {
               </div>
               <div>
                 <label htmlFor="phone" className="text-white/90 text-sm font-medium mb-2 block">
-                  Numéro de téléphone
+                  {t('phoneNumber')}
                 </label>
                 <input
                   id="phone"
                   type="tel"
-                  placeholder="Entrez votre numéro"
+                  placeholder={t('phoneNumberPlaceholder')}
                   value={formData.phone}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
@@ -169,12 +172,12 @@ const RegisterDriver = () => {
               </div>
               <div>
                 <label htmlFor="password" className="text-white/90 text-sm font-medium mb-2 block">
-                  Mot de passe
+                  {t('password')}
                 </label>
                 <input
                   id="password"
                   type="password"
-                  placeholder="Créez votre mot de passe"
+                  placeholder={t('passwordPlaceholder')}
                   value={formData.password}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
@@ -188,12 +191,12 @@ const RegisterDriver = () => {
             <>
               <div>
                 <label htmlFor="license" className="text-white/90 text-sm font-medium mb-2 block">
-                  Numéro de permis de conduire
+                  {t('licenseNumber')}
                 </label>
                 <input
                   id="license"
                   type="text"
-                  placeholder="Entrez votre numéro de permis"
+                  placeholder={t('licenseNumber')}
                   value={formData.license}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
@@ -202,7 +205,7 @@ const RegisterDriver = () => {
               </div>
               <div>
                 <label htmlFor="vehicleBrand" className="text-white/90 text-sm font-medium mb-2 block">
-                  Marque du véhicule
+                  {t('vehicleBrand')}
                 </label>
                 <input
                   id="vehicleBrand"
@@ -216,7 +219,7 @@ const RegisterDriver = () => {
               </div>
               <div>
                 <label htmlFor="vehicleModel" className="text-white/90 text-sm font-medium mb-2 block">
-                  Modèle du véhicule
+                  {t('vehicleModel')}
                 </label>
                 <input
                   id="vehicleModel"
@@ -230,12 +233,12 @@ const RegisterDriver = () => {
               </div>
               <div>
                 <label htmlFor="registration" className="text-white/90 text-sm font-medium mb-2 block">
-                  Numéro d'immatriculation
+                  {t('registrationNumber')}
                 </label>
                 <input
                   id="registration"
                   type="text"
-                  placeholder="Numéro de plaque"
+                  placeholder={t('registrationNumber')}
                   value={formData.registration}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
@@ -249,7 +252,7 @@ const RegisterDriver = () => {
             <>
               <div className="space-y-4">
                 <label className="text-white/90 text-sm font-medium mb-2 block">
-                  Photo de profil
+                  {t('profilePicture')}
                 </label>
                 <div className="flex flex-col items-center">
                   <div className="w-32 h-32 rounded-full bg-white/10 border border-white/20 flex items-center justify-center mb-2 overflow-hidden">
@@ -261,7 +264,7 @@ const RegisterDriver = () => {
                   </div>
                   <label htmlFor="profile-pic" className="px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white cursor-pointer hover:bg-white/20 transition-all flex items-center">
                     <Upload className="mr-2 w-4 h-4" />
-                    Télécharger
+                    {t('upload')}
                     <input 
                       type="file" 
                       id="profile-pic" 
@@ -275,7 +278,7 @@ const RegisterDriver = () => {
 
               <div className="space-y-4">
                 <label className="text-white/90 text-sm font-medium mb-2 block">
-                  Photo du véhicule
+                  {t('vehiclePicture')}
                 </label>
                 <div className="flex flex-col items-center">
                   <div className="w-full h-40 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center mb-2 overflow-hidden">
@@ -287,7 +290,7 @@ const RegisterDriver = () => {
                   </div>
                   <label htmlFor="vehicle-pic" className="px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white cursor-pointer hover:bg-white/20 transition-all flex items-center">
                     <Upload className="mr-2 w-4 h-4" />
-                    Télécharger
+                    {t('upload')}
                     <input 
                       type="file" 
                       id="vehicle-pic" 
@@ -308,7 +311,7 @@ const RegisterDriver = () => {
                 onClick={prevStep}
                 className="px-6 py-3 bg-white/10 text-white rounded-xl transition-all duration-300 hover:bg-white/20"
               >
-                Précédent
+                {t('previous')}
               </button>
             )}
             
@@ -319,7 +322,7 @@ const RegisterDriver = () => {
                 className="px-6 py-3 bg-gradient-to-r from-[#FEC6A1]/80 to-[#45B39D]/80 hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl transition-all duration-300 hover:shadow-lg"
                 style={{ marginLeft: step === 1 ? 'auto' : '0' }}
               >
-                Suivant
+                {t('next')}
               </button>
             ) : (
               <button
@@ -327,16 +330,16 @@ const RegisterDriver = () => {
                 className="px-6 py-3 bg-gradient-to-r from-[#FEC6A1]/80 to-[#45B39D]/80 hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl transition-all duration-300 hover:shadow-lg flex items-center"
               >
                 <UserCheck className="mr-2 w-4 h-4" />
-                S'inscrire
+                {t('register')}
               </button>
             )}
           </div>
         </form>
 
         <p className="text-center text-white/90 mt-8">
-          Vous avez déjà un compte ?{" "}
+          {t('alreadyHaveAccount')}{" "}
           <a href="/login" className="text-white hover:underline font-medium">
-            Se connecter
+            {t('login')}
           </a>
         </p>
       </div>

@@ -1,18 +1,21 @@
+
 import { useState } from "react";
 import { Car, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useLanguage } from "@/context/LanguageContext";
 
 const Login = () => {
   const [userType, setUserType] = useState<'passenger' | 'driver'>('passenger');
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     // Simuler une connexion réussie
-    toast.success(`Connexion réussie en tant que ${userType === 'passenger' ? 'passager' : 'chauffeur'}!`, {
-      description: "Bienvenue sur Wassalni. Vous allez être redirigé vers la page d'accueil.",
+    toast.success(t('loginSuccess'), {
+      description: t('loginSuccessMessage'),
       position: "top-center",
       duration: 3000,
       style: {
@@ -47,7 +50,7 @@ const Login = () => {
           WASSALNI
         </h2>
         <p className="text-white/90 text-center mb-6 text-sm">
-          Voyagez ensemble, en toute sécurité
+          {t('travelSafely')}
         </p>
 
         {/* Sélecteur de type d'utilisateur */}
@@ -61,7 +64,7 @@ const Login = () => {
             onClick={() => setUserType('passenger')}
           >
             <User className="mr-2 w-4 h-4" />
-            Passager
+            {t('passenger')}
           </button>
           <button
             className={`flex-1 py-2 rounded-lg flex items-center justify-center ${
@@ -72,7 +75,7 @@ const Login = () => {
             onClick={() => setUserType('driver')}
           >
             <Car className="mr-2 w-4 h-4" />
-            Chauffeur
+            {t('driver')}
           </button>
         </div>
 
@@ -84,19 +87,19 @@ const Login = () => {
             <input
               id="email"
               type="email"
-              placeholder="Entrez votre email"
+              placeholder={t('emailPlaceholder')}
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
               required
             />
           </div>
           <div>
             <label htmlFor="password" className="text-white/90 text-sm font-medium mb-2 block">
-              Mot de passe
+              {t('password')}
             </label>
             <input
               id="password"
               type="password"
-              placeholder="Entrez votre mot de passe"
+              placeholder={t('passwordPlaceholder')}
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
               required
             />
@@ -104,27 +107,27 @@ const Login = () => {
           <div className="flex items-center justify-between text-sm">
             <label className="flex items-center text-white/90">
               <input type="checkbox" className="mr-2 rounded bg-white/10 border-white/20" />
-              Se souvenir de moi
+              {t('rememberMe')}
             </label>
             <a href="#" className="text-white/90 hover:text-white transition-colors">
-              Mot de passe oublié ?
+              {t('forgotPassword')}
             </a>
           </div>
           <button
             type="submit"
             className="w-full py-3 bg-gradient-to-r from-[#FEC6A1]/80 to-[#45B39D]/80 hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.02] backdrop-blur-sm font-medium text-lg"
           >
-            Se connecter
+            {t('login')}
           </button>
           <p className="text-center text-white/90 mt-4">
-            Vous n'avez pas de compte ?{" "}
+            {t('doNotHaveAccount')}{" "}
             {userType === 'passenger' ? (
               <a href="/register-passenger" className="text-white hover:underline font-medium">
-                S'inscrire en tant que passager
+                {t('registerAsPassenger')}
               </a>
             ) : (
               <a href="/register-driver" className="text-white hover:underline font-medium">
-                S'inscrire en tant que chauffeur
+                {t('registerAsDriver')}
               </a>
             )}
           </p>

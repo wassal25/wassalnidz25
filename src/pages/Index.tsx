@@ -13,6 +13,7 @@ import GroupChat from "@/components/GroupChat";
 import { Search, MapPin, Calendar, Clock, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useLanguage } from "@/context/LanguageContext";
 
 // -------------------------------------------------------
 // DONNÉES SIMULÉES
@@ -162,6 +163,7 @@ const Index = () => {
   // ==== ÉTATS ET HOOKS ====
   // Navigation
   const navigate = useNavigate();
+  const { t } = useLanguage();
   
   // États pour la recherche et le filtrage
   const [departSearch, setDepartSearch] = useState("");
@@ -257,19 +259,19 @@ const Index = () => {
           onClick={() => navigate("/about")}
         >
           <h1 className="text-4xl font-bold text-white mb-4 tracking-tight">
-            Voyagez ensemble dans la wilaya de Constantine
+            {t('travelTogether')}
           </h1>
           <p className="text-lg text-gray-100 max-w-2xl mx-auto">
-            Cliquez pour en savoir plus sur notre service
+            {t('clickToLearnMore')}
           </p>
         </div>
 
         {/* ==== SEARCH SECTION ==== */}
         <div className="bg-teal-600/40 backdrop-blur-sm rounded-2xl p-6 mb-12 animate-fade-up">
           <div className="mb-6 cursor-pointer hover:text-white/80 transition-colors" onClick={() => navigate("/search-help")}>
-            <h3 className="text-xl font-semibold text-white mb-2">Rechercher un trajet</h3>
+            <h3 className="text-xl font-semibold text-white mb-2">{t('searchTrip')}</h3>
             <p className="text-white/80 text-sm">
-              Trouvez un trajet qui correspond à vos besoins
+              {t('findTrip')}
             </p>
           </div>
           
@@ -284,7 +286,7 @@ const Index = () => {
                 className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-teal-400 appearance-none cursor-pointer"
                 onClick={() => toast.info("Sélection du lieu de départ")}
               >
-                <option value="">Lieu de départ</option>
+                <option value="">{t('departureLocation')}</option>
                 {departures.map((departure) => (
                   <option key={departure} value={departure} className="text-gray-900">
                     {departure}
@@ -302,7 +304,7 @@ const Index = () => {
                 className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-teal-400 appearance-none cursor-pointer"
                 onClick={() => toast.info("Sélection de la destination")}
               >
-                <option value="">Destination</option>
+                <option value="">{t('destination')}</option>
                 {destinations.map((destination) => (
                   <option key={destination} value={destination} className="text-gray-900">
                     {destination}
@@ -332,7 +334,7 @@ const Index = () => {
                 className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-teal-400 appearance-none cursor-pointer"
                 onClick={() => toast.info("Sélection de l'heure")}
               >
-                <option value="">Heure de départ</option>
+                <option value="">{t('departureTime')}</option>
                 {times.map((time) => (
                   <option key={time} value={time} className="text-gray-900">
                     {time}
@@ -355,14 +357,14 @@ const Index = () => {
               }}
               className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl mr-4 transition-all duration-300"
             >
-              Réinitialiser
+              {t('reset')}
             </button>
             <button 
               className="px-8 py-2 bg-gradient-to-r from-[#FEC6A1]/80 to-[#45B39D]/80 hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl transition-all duration-300 flex items-center"
               onClick={handleSearchClick}
             >
               <Search className="mr-2" size={18} />
-              Rechercher
+              {t('search')}
             </button>
           </div>
         </div>
@@ -380,8 +382,8 @@ const Index = () => {
               className="col-span-full text-center py-12 cursor-pointer hover:bg-teal-600/30 rounded-xl transition-all" 
               onClick={() => navigate("/create-trip")}
             >
-              <p className="text-white text-xl">Aucun trajet ne correspond à votre recherche.</p>
-              <p className="text-white/80 mt-2">Cliquez ici pour proposer un nouveau trajet.</p>
+              <p className="text-white text-xl">{t('noTripsFound')}</p>
+              <p className="text-white/80 mt-2">{t('clickToCreateTrip')}</p>
             </div>
           )}
         </div>
@@ -392,7 +394,7 @@ const Index = () => {
           onClick={handleMapClick}
         >
           <h2 className="text-2xl font-bold text-white mb-6 text-center">
-            Découvrez nos trajets sur la carte
+            {t('discoverMap')}
           </h2>
           <Map />
         </div>
