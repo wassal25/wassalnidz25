@@ -11,6 +11,7 @@ import { Calendar, Clock, MapPin, Users } from "lucide-react";
  * Interface définissant les propriétés du composant TripCard
  */
 interface TripCardProps {
+  id?: string;         // Identifiant unique du trajet
   from: string;         // Lieu de départ
   to: string;           // Destination
   date: string;         // Date du trajet
@@ -18,6 +19,7 @@ interface TripCardProps {
   price: number;        // Prix en DZD
   image: string;        // URL de l'image
   seats: number;        // Nombre de places disponibles
+  driverName?: string;  // Nom du chauffeur
   onReserve?: () => void; // Fonction de callback pour la réservation
 }
 
@@ -27,7 +29,7 @@ interface TripCardProps {
  * Ce composant présente les informations d'un trajet disponible
  * sous forme de carte avec une image, des détails et un bouton de réservation.
  */
-const TripCard = ({ from, to, date, time, price, image, seats, onReserve }: TripCardProps) => {
+const TripCard = ({ id, from, to, date, time, price, image, seats, driverName, onReserve }: TripCardProps) => {
   return (
     <div className="bg-[#FDE1D3]/40 backdrop-blur-sm border border-white/20 shadow-lg rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] animate-fade-up">
       {/* Section image */}
@@ -74,9 +76,10 @@ const TripCard = ({ from, to, date, time, price, image, seats, onReserve }: Trip
               e.stopPropagation();
               if (onReserve) onReserve();
             }}
-            className="px-6 py-3 bg-[#FEC6A1]/50 text-white rounded-full hover:bg-[#FEC6A1]/60 transition-all duration-300 hover:shadow-lg hover:scale-105"
+            className={`px-6 py-3 ${seats > 0 ? 'bg-[#FEC6A1]/50 text-white hover:bg-[#FEC6A1]/60 hover:shadow-lg hover:scale-105' : 'bg-gray-400/50 text-white/70 cursor-not-allowed'} rounded-full transition-all duration-300`}
+            disabled={seats <= 0}
           >
-            Réserver
+            {seats > 0 ? 'Réserver' : 'Complet'}
           </button>
         </div>
       </div>
