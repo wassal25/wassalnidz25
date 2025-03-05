@@ -9,6 +9,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Check, Calendar, Clock, MapPin, Users, CreditCard, ChevronLeft, User, Settings, Shield, CreditCardIcon, Truck, Star, Phone } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Map from "@/components/Map";
+import { toast } from "sonner";
 
 // Interface pour le type de voyage
 interface TripDetails {
@@ -27,7 +29,10 @@ const ReservationPage = () => {
   // Récupération des paramètres d'URL et initialisation de la navigation
   const location = useLocation();
   const navigate = useNavigate();
-  const trip = location.state?.trip as TripDetails;
+  const tripFromLocation = location.state?.trip as TripDetails;
+  
+  // Créer une copie locale du voyage pour pouvoir modifier le nombre de places
+  const [trip, setTrip] = useState<TripDetails | null>(null);
   
   // États pour le formulaire de réservation
   const [seatCount, setSeatCount] = useState(1);
@@ -44,6 +49,15 @@ const ReservationPage = () => {
   const [enableNotifications, setEnableNotifications] = useState(true);
   const [preferredLanguage, setPreferredLanguage] = useState("fr");
   const [theme, setTheme] = useState("light");
+
+  // Initialiser le voyage local depuis les paramètres d'URL
+  useEffect(() => {
+    if (tripFromLocation) {
+      setTrip(tripFromLocation);
+    } else {
+      navigate('/');
+    }
+  }, [tripFromLocation, navigate]);
 
   // Redirection si aucun voyage n'est sélectionné
   useEffect(() => {
@@ -75,6 +89,21 @@ const ReservationPage = () => {
       // Simuler un temps de chargement pour le traitement du paiement
       setTimeout(() => {
         setIsLoading(false);
+        
+        // Mettre à jour le nombre de places disponibles
+        if (trip) {
+          const updatedTrip = {
+            ...trip,
+            seats: Math.max(0, trip.seats - seatCount)
+          };
+          setTrip(updatedTrip);
+          
+          // Dans une vraie application, on sauvegarderait cette modification dans une base de données
+          toast.success("Places réservées avec succès", {
+            description: `${seatCount} place(s) réservée(s). Reste ${updatedTrip.seats} place(s) disponible(s).`
+          });
+        }
+        
         setStep('confirmation');
         setReservationComplete(true);
         window.scrollTo(0, 0);
@@ -554,6 +583,21 @@ const ReservationPage = () => {
                   <MessageIcon className="text-teal-400" />
                   <span>Groupe de discussion créé automatiquement</span>
                 </div>
+              </div>
+              
+              {/* Carte d'itinéraire */}
+              <div className="mt-8">
+                <h3 className="text-xl font-semibold text-white mb-4">Itinéraire du trajet</h3>
+                <div className="rounded-2xl overflow-hidden">
+                  <Map 
+                    origin={trip.from} 
+                    destination={trip.to} 
+                    showItinerary={true} 
+                  />
+                </div>
+                <p className="text-white/70 text-sm mt-2">
+                  Vous pouvez utiliser cette carte pour suivre votre trajet
+                </p>
               </div>
             </div>
           )}

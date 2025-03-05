@@ -14,7 +14,7 @@ import { Locate, MapPin } from 'lucide-react';
  * Ce composant utilise Google Maps pour afficher une carte
  * centrée sur Constantine et montrer la position actuelle de l'utilisateur.
  */
-const Map = () => {
+const Map = ({ destination = null, origin = null, showItinerary = false }) => {
   // Référence pour l'élément DOM qui contiendra la carte
   const mapContainer = useRef<HTMLDivElement>(null);
   // État pour stocker l'instance de la carte Google Maps
@@ -23,28 +23,31 @@ const Map = () => {
   const [userMarker, setUserMarker] = useState<google.maps.Marker | null>(null);
   // État pour stocker si le chargement de la position est en cours
   const [isLoadingPosition, setIsLoadingPosition] = useState(false);
-  // État pour stocker la clé API Google Maps entrée par l'utilisateur
-  const [apiKey, setApiKey] = useState<string>(() => localStorage.getItem('googleMapsApiKey') || '');
   // État pour vérifier si l'API Google Maps est chargée
   const [isApiLoaded, setIsApiLoaded] = useState(false);
+  // État pour stocker l'itinéraire
+  const [directionsRenderer, setDirectionsRenderer] = useState<google.maps.DirectionsRenderer | null>(null);
 
+  // Clé API Google Maps (intégrée directement)
+  const googleMapsApiKey = "AIzaSyAShg04o1uyNHkCNwWLwrEuV7jxZ8xiIU8";
+  
   // Coordonnées de Constantine
   const constantineCoordinates = { lat: 36.3650, lng: 6.6147 };
 
   // Fonction pour charger l'API Google Maps
-  const loadGoogleMapsApi = (key: string) => {
+  const loadGoogleMapsApi = () => {
     if (window.google?.maps) {
       setIsApiLoaded(true);
       return;
     }
 
     // Éviter de recharger le script si déjà présent
-    if (document.querySelector(`script[src*="maps.googleapis.com/maps/api/js?key=${key}"]`)) {
+    if (document.querySelector(`script[src*="maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}"]`)) {
       return;
     }
 
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places`;
     script.async = true;
     script.defer = true;
     
@@ -54,16 +57,21 @@ const Map = () => {
     
     script.onerror = () => {
       toast.error("Erreur de chargement de Google Maps API", {
-        description: "Veuillez vérifier votre clé API",
+        description: "Veuillez vérifier que la facturation est activée sur votre compte Google Cloud",
       });
     };
     
     document.head.appendChild(script);
   };
 
+  // Effet pour charger l'API Google Maps au montage du composant
+  useEffect(() => {
+    loadGoogleMapsApi();
+  }, []);
+
   // Effet pour initialiser la carte une fois l'API chargée
   useEffect(() => {
-    if (!apiKey || !isApiLoaded || !mapContainer.current) return;
+    if (!isApiLoaded || !mapContainer.current) return;
 
     const initializeMap = () => {
       const newMap = new google.maps.Map(mapContainer.current!, {
@@ -116,10 +124,57 @@ const Map = () => {
       });
 
       setMap(newMap);
+      
+      // Créer le renderer d'itinéraire si nécessaire
+      if (showItinerary) {
+        const directionsService = new google.maps.DirectionsService();
+        const newDirectionsRenderer = new google.maps.DirectionsRenderer({
+          map: newMap,
+          suppressMarkers: false,
+          polylineOptions: {
+            strokeColor: "#45B39D",
+            strokeWeight: 5
+          }
+        });
+        setDirectionsRenderer(newDirectionsRenderer);
+      }
     };
 
     initializeMap();
-  }, [apiKey, isApiLoaded]);
+  }, [isApiLoaded, showItinerary]);
+
+  // Effet pour afficher l'itinéraire si les points d'origine et de destination sont définis
+  useEffect(() => {
+    if (!map || !directionsRenderer || !origin || !destination) return;
+
+    const directionsService = new google.maps.DirectionsService();
+    
+    directionsService.route(
+      {
+        origin: origin,
+        destination: destination,
+        travelMode: google.maps.TravelMode.DRIVING
+      },
+      (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+          directionsRenderer.setDirections(result);
+          
+          // Ajuster le zoom pour voir tout l'itinéraire
+          if (result?.routes[0]?.bounds) {
+            map.fitBounds(result.routes[0].bounds);
+          }
+          
+          toast.success("Itinéraire calculé avec succès", {
+            description: `Distance: ${result?.routes[0]?.legs[0]?.distance?.text || "N/A"}`,
+          });
+        } else {
+          toast.error("Erreur lors du calcul de l'itinéraire", {
+            description: "Veuillez vérifier les adresses saisies",
+          });
+        }
+      }
+    );
+  }, [map, directionsRenderer, origin, destination]);
 
   // Fonction pour géolocaliser l'utilisateur
   const locateUser = () => {
@@ -206,79 +261,17 @@ const Map = () => {
     }
   };
 
-  // Gestionnaire pour le changement de clé API
-  const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newKey = e.target.value;
-    setApiKey(newKey);
-    localStorage.setItem('googleMapsApiKey', newKey);
-  };
-
-  // Gestionnaire pour soumettre la clé API
-  const handleApiKeySubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (apiKey) {
-      loadGoogleMapsApi(apiKey);
-    }
-  };
-
-  // Effet pour charger l'API Google Maps au chargement si la clé est présente
-  useEffect(() => {
-    if (apiKey) {
-      loadGoogleMapsApi(apiKey);
-    }
-  }, []);
-
   return (
     <div className="relative w-full h-[500px] rounded-2xl overflow-hidden">
-      {!apiKey || !isApiLoaded ? (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/30 backdrop-blur-sm">
-          <div className="bg-white p-6 rounded-xl shadow-lg max-w-md w-full">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Configuration de Google Maps</h3>
-            <form onSubmit={handleApiKeySubmit} className="space-y-4">
-              <div>
-                <label htmlFor="apiKey" className="block text-gray-700 text-sm mb-2">Entrez votre clé API Google Maps:</label>
-                <input
-                  id="apiKey"
-                  type="text"
-                  value={apiKey}
-                  onChange={handleApiKeyChange}
-                  placeholder="Votre clé API Google Maps"
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  required
-                />
-                <p className="text-gray-600 text-xs mt-2">
-                  Vous pouvez obtenir une clé API sur la 
-                  <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank" rel="noopener noreferrer" className="text-teal-600 ml-1 hover:underline">
-                    Console Google Cloud
-                  </a>
-                </p>
-              </div>
-              <div className="text-xs text-gray-500 mt-2">
-                <p>N'oubliez pas d'activer la facturation sur votre compte Google Cloud pour utiliser les services de Maps.</p>
-                <p>Une erreur "BillingNotEnabledMapError" indique que la facturation n'est pas activée.</p>
-              </div>
-              <button
-                type="submit"
-                className="w-full py-2 px-4 bg-gradient-to-r from-[#FEC6A1] to-[#45B39D] hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 rounded-lg text-white transition-all"
-              >
-                Charger la carte
-              </button>
-            </form>
-          </div>
-        </div>
-      ) : (
-        <>
-          <div ref={mapContainer} className="absolute inset-0" />
-          <button
-            onClick={locateUser}
-            disabled={isLoadingPosition}
-            className="absolute top-4 right-4 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg z-10 transition-all"
-            title="Localiser ma position"
-          >
-            <Locate size={20} className={`${isLoadingPosition ? 'animate-spin text-gray-400' : 'text-teal-600'}`} />
-          </button>
-        </>
-      )}
+      <div ref={mapContainer} className="absolute inset-0" />
+      <button
+        onClick={locateUser}
+        disabled={isLoadingPosition || !isApiLoaded}
+        className="absolute top-4 right-4 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg z-10 transition-all"
+        title="Localiser ma position"
+      >
+        <Locate size={20} className={`${isLoadingPosition ? 'animate-spin text-gray-400' : 'text-teal-600'}`} />
+      </button>
     </div>
   );
 };
