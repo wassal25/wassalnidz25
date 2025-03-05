@@ -73,11 +73,30 @@ const Map = () => {
         fullscreenControl: false,
         mapTypeControl: false,
         streetViewControl: false,
+        // Style clair pour la carte
         styles: [
           {
-            featureType: "poi",
-            elementType: "labels",
-            stylers: [{ visibility: "off" }]
+            "featureType": "administrative",
+            "elementType": "geometry",
+            "stylers": [{"visibility": "on"}]
+          },
+          {
+            "featureType": "poi",
+            "stylers": [{"visibility": "off"}]
+          },
+          {
+            "featureType": "road",
+            "elementType": "labels.icon",
+            "stylers": [{"visibility": "on"}]
+          },
+          {
+            "featureType": "transit",
+            "stylers": [{"visibility": "on"}]
+          },
+          {
+            "featureType": "water",
+            "elementType": "geometry",
+            "stylers": [{"color": "#a0d6d1"}]
           }
         ]
       });
@@ -212,31 +231,35 @@ const Map = () => {
   return (
     <div className="relative w-full h-[500px] rounded-2xl overflow-hidden">
       {!apiKey || !isApiLoaded ? (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/10 backdrop-blur-md">
-          <div className="bg-white/20 p-6 rounded-xl backdrop-blur-sm max-w-md w-full">
-            <h3 className="text-xl font-bold text-white mb-4">Configuration de Google Maps</h3>
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/30 backdrop-blur-sm">
+          <div className="bg-white p-6 rounded-xl shadow-lg max-w-md w-full">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Configuration de Google Maps</h3>
             <form onSubmit={handleApiKeySubmit} className="space-y-4">
               <div>
-                <label htmlFor="apiKey" className="block text-white text-sm mb-2">Entrez votre clé API Google Maps:</label>
+                <label htmlFor="apiKey" className="block text-gray-700 text-sm mb-2">Entrez votre clé API Google Maps:</label>
                 <input
                   id="apiKey"
                   type="text"
                   value={apiKey}
                   onChange={handleApiKeyChange}
                   placeholder="Votre clé API Google Maps"
-                  className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   required
                 />
-                <p className="text-white/70 text-xs mt-2">
+                <p className="text-gray-600 text-xs mt-2">
                   Vous pouvez obtenir une clé API sur la 
-                  <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank" rel="noopener noreferrer" className="text-teal-300 ml-1 hover:underline">
+                  <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank" rel="noopener noreferrer" className="text-teal-600 ml-1 hover:underline">
                     Console Google Cloud
                   </a>
                 </p>
               </div>
+              <div className="text-xs text-gray-500 mt-2">
+                <p>N'oubliez pas d'activer la facturation sur votre compte Google Cloud pour utiliser les services de Maps.</p>
+                <p>Une erreur "BillingNotEnabledMapError" indique que la facturation n'est pas activée.</p>
+              </div>
               <button
                 type="submit"
-                className="w-full py-2 px-4 bg-gradient-to-r from-[#FEC6A1]/80 to-[#45B39D]/80 hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 rounded-lg text-white transition-all"
+                className="w-full py-2 px-4 bg-gradient-to-r from-[#FEC6A1] to-[#45B39D] hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 rounded-lg text-white transition-all"
               >
                 Charger la carte
               </button>
