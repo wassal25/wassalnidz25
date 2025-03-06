@@ -1,4 +1,3 @@
-
 // =======================================================
 // Page de réservation
 // Description: Page permettant aux utilisateurs de finaliser leur réservation
