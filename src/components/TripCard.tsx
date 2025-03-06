@@ -72,7 +72,10 @@ const TripCard = ({ id, from, to, date, time, price, image, seats, driverName, o
         <div className="flex justify-between items-center">
           <span className="text-3xl font-bold text-white">{price} DZD</span>
           <button 
-            onClick={onReserve}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onReserve) onReserve();
+            }}
             className={`px-6 py-3 ${seats > 0 ? 'bg-[#FEC6A1]/50 text-white hover:bg-[#FEC6A1]/60 hover:shadow-lg hover:scale-105' : 'bg-gray-400/50 text-white/70 cursor-not-allowed'} rounded-full transition-all duration-300`}
             disabled={seats <= 0}
           >
