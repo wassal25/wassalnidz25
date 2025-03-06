@@ -583,21 +583,6 @@ const ReservationPage = () => {
                   <span>Groupe de discussion créé automatiquement</span>
                 </div>
               </div>
-              
-              {/* Carte d'itinéraire */}
-              <div className="mt-8">
-                <h3 className="text-xl font-semibold text-white mb-4">Itinéraire du trajet</h3>
-                <div className="rounded-2xl overflow-hidden">
-                  <Map 
-                    origin={trip.from} 
-                    destination={trip.to} 
-                    showItinerary={true} 
-                  />
-                </div>
-                <p className="text-white/70 text-sm mt-2">
-                  Vous pouvez utiliser cette carte pour suivre votre trajet
-                </p>
-              </div>
             </div>
           )}
           
