@@ -374,7 +374,10 @@ const Index = () => {
           {filteredTrips.length > 0 ? (
             filteredTrips.map((trip, index) => (
               <div key={index} className="relative cursor-pointer" onClick={() => handleReservation(trip)}>
-                <TripCard {...trip} onReserve={() => handleReservation(trip)} />
+                <TripCard 
+                  {...trip} 
+                  onReserve={() => handleReservation(trip)} 
+                />
               </div>
             ))
           ) : (

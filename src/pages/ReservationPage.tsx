@@ -1,3 +1,4 @@
+
 // =======================================================
 // Page de réservation
 // Description: Page permettant aux utilisateurs de finaliser leur réservation
@@ -8,7 +9,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Check, Calendar, Clock, MapPin, Users, CreditCard, ChevronLeft, User, Settings, Shield, CreditCardIcon, Truck, Star, Phone } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Map from "@/components/Map";
 import { toast } from "sonner";
 
 // Interface pour le type de voyage
