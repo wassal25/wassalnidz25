@@ -53,11 +53,9 @@ const Map = ({ destination = null, origin = null, showItinerary = false }) => {
     
     script.onload = () => {
       setIsApiLoaded(true);
-      console.log("Google Maps API loaded successfully");
     };
     
     script.onerror = () => {
-      console.error("Google Maps API failed to load");
       toast.error("Erreur de chargement de Google Maps API", {
         description: "Veuillez vérifier que la facturation est activée sur votre compte Google Cloud",
       });
@@ -75,123 +73,107 @@ const Map = ({ destination = null, origin = null, showItinerary = false }) => {
   useEffect(() => {
     if (!isApiLoaded || !mapContainer.current) return;
 
-    try {
-      const initializeMap = () => {
-        const newMap = new google.maps.Map(mapContainer.current!, {
-          center: constantineCoordinates,
-          zoom: 13,
-          mapTypeId: google.maps.MapTypeId.ROADMAP,
-          fullscreenControl: false,
-          mapTypeControl: false,
-          streetViewControl: false,
-          // Style clair pour la carte
-          styles: [
-            {
-              "featureType": "administrative",
-              "elementType": "geometry",
-              "stylers": [{"visibility": "on"}]
-            },
-            {
-              "featureType": "poi",
-              "stylers": [{"visibility": "off"}]
-            },
-            {
-              "featureType": "road",
-              "elementType": "labels.icon",
-              "stylers": [{"visibility": "on"}]
-            },
-            {
-              "featureType": "transit",
-              "stylers": [{"visibility": "on"}]
-            },
-            {
-              "featureType": "water",
-              "elementType": "geometry",
-              "stylers": [{"color": "#a0d6d1"}]
-            }
-          ]
-        });
+    const initializeMap = () => {
+      const newMap = new google.maps.Map(mapContainer.current!, {
+        center: constantineCoordinates,
+        zoom: 13,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        fullscreenControl: false,
+        mapTypeControl: false,
+        streetViewControl: false,
+        // Style clair pour la carte
+        styles: [
+          {
+            "featureType": "administrative",
+            "elementType": "geometry",
+            "stylers": [{"visibility": "on"}]
+          },
+          {
+            "featureType": "poi",
+            "stylers": [{"visibility": "off"}]
+          },
+          {
+            "featureType": "road",
+            "elementType": "labels.icon",
+            "stylers": [{"visibility": "on"}]
+          },
+          {
+            "featureType": "transit",
+            "stylers": [{"visibility": "on"}]
+          },
+          {
+            "featureType": "water",
+            "elementType": "geometry",
+            "stylers": [{"color": "#a0d6d1"}]
+          }
+        ]
+      });
 
-        // Ajouter un marqueur pour Constantine Centre
-        new google.maps.Marker({
-          position: constantineCoordinates,
+      // Ajouter un marqueur pour Constantine Centre
+      new google.maps.Marker({
+        position: constantineCoordinates,
+        map: newMap,
+        title: "Constantine Centre",
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: "#45B39D",
+          fillOpacity: 1,
+          strokeWeight: 0,
+          scale: 8
+        }
+      });
+
+      setMap(newMap);
+      
+      // Créer le renderer d'itinéraire si nécessaire
+      if (showItinerary) {
+        const directionsService = new google.maps.DirectionsService();
+        const newDirectionsRenderer = new google.maps.DirectionsRenderer({
           map: newMap,
-          title: "Constantine Centre",
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            fillColor: "#45B39D",
-            fillOpacity: 1,
-            strokeWeight: 0,
-            scale: 8
+          suppressMarkers: false,
+          polylineOptions: {
+            strokeColor: "#45B39D",
+            strokeWeight: 5
           }
         });
+        setDirectionsRenderer(newDirectionsRenderer);
+      }
+    };
 
-        setMap(newMap);
-        
-        // Créer le renderer d'itinéraire si nécessaire
-        if (showItinerary) {
-          console.log("Initializing directions renderer");
-          const newDirectionsRenderer = new google.maps.DirectionsRenderer({
-            map: newMap,
-            suppressMarkers: false,
-            polylineOptions: {
-              strokeColor: "#45B39D",
-              strokeWeight: 5
-            }
-          });
-          setDirectionsRenderer(newDirectionsRenderer);
-        }
-      };
-
-      initializeMap();
-    } catch (error) {
-      console.error("Error initializing map:", error);
-      toast.error("Erreur lors de l'initialisation de la carte", {
-        description: "Une erreur technique s'est produite",
-      });
-    }
+    initializeMap();
   }, [isApiLoaded, showItinerary]);
 
   // Effet pour afficher l'itinéraire si les points d'origine et de destination sont définis
   useEffect(() => {
     if (!map || !directionsRenderer || !origin || !destination) return;
 
-    try {
-      console.log(`Calculating route from ${origin} to ${destination}`);
-      const directionsService = new google.maps.DirectionsService();
-      
-      directionsService.route(
-        {
-          origin: origin,
-          destination: destination,
-          travelMode: google.maps.TravelMode.DRIVING
-        },
-        (result, status) => {
-          if (status === google.maps.DirectionsStatus.OK) {
-            directionsRenderer.setDirections(result);
-            
-            // Ajuster le zoom pour voir tout l'itinéraire
-            if (result?.routes[0]?.bounds) {
-              map.fitBounds(result.routes[0].bounds);
-            }
-            
-            toast.success("Itinéraire calculé avec succès", {
-              description: `Distance: ${result?.routes[0]?.legs[0]?.distance?.text || "N/A"}`,
-            });
-          } else {
-            console.error("Directions request failed with status:", status);
-            toast.error("Erreur lors du calcul de l'itinéraire", {
-              description: "Veuillez vérifier les adresses saisies",
-            });
+    const directionsService = new google.maps.DirectionsService();
+    
+    directionsService.route(
+      {
+        origin: origin,
+        destination: destination,
+        travelMode: google.maps.TravelMode.DRIVING
+      },
+      (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+          directionsRenderer.setDirections(result);
+          
+          // Ajuster le zoom pour voir tout l'itinéraire
+          if (result?.routes[0]?.bounds) {
+            map.fitBounds(result.routes[0].bounds);
           }
+          
+          toast.success("Itinéraire calculé avec succès", {
+            description: `Distance: ${result?.routes[0]?.legs[0]?.distance?.text || "N/A"}`,
+          });
+        } else {
+          toast.error("Erreur lors du calcul de l'itinéraire", {
+            description: "Veuillez vérifier les adresses saisies",
+          });
         }
-      );
-    } catch (error) {
-      console.error("Error calculating route:", error);
-      toast.error("Erreur lors du calcul de l'itinéraire", {
-        description: "Une erreur technique s'est produite",
-      });
-    }
+      }
+    );
   }, [map, directionsRenderer, origin, destination]);
 
   // Fonction pour géolocaliser l'utilisateur

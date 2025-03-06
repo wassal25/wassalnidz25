@@ -1,3 +1,4 @@
+
 // =======================================================
 // Page de réservation
 // Description: Page permettant aux utilisateurs de finaliser leur réservation
@@ -572,15 +573,6 @@ const ReservationPage = () => {
                 <p className="mb-1">Chauffeur : {trip.driverName}</p>
                 <p className="mt-2 font-medium">Total payé : {totalPrice} DZD</p>
               </div>
-              
-              {/* Ajout de la carte d'itinéraire */}
-              <div className="mt-8 mb-6">
-                <h4 className="text-xl text-white mb-4">Itinéraire du trajet</h4>
-                <div className="h-64 rounded-xl overflow-hidden">
-                  <Map origin={trip.from} destination={trip.to} showItinerary={true} />
-                </div>
-              </div>
-              
               <p className="text-white mt-6 mb-4">
                 Vous avez été ajouté au groupe de discussion pour ce trajet. 
                 Vous pouvez maintenant communiquer avec le chauffeur et les autres passagers.
@@ -591,6 +583,21 @@ const ReservationPage = () => {
                   <MessageIcon className="text-teal-400" />
                   <span>Groupe de discussion créé automatiquement</span>
                 </div>
+              </div>
+              
+              {/* Carte d'itinéraire */}
+              <div className="mt-8">
+                <h3 className="text-xl font-semibold text-white mb-4">Itinéraire du trajet</h3>
+                <div className="rounded-2xl overflow-hidden">
+                  <Map 
+                    origin={trip.from} 
+                    destination={trip.to} 
+                    showItinerary={true} 
+                  />
+                </div>
+                <p className="text-white/70 text-sm mt-2">
+                  Vous pouvez utiliser cette carte pour suivre votre trajet
+                </p>
               </div>
             </div>
           )}
