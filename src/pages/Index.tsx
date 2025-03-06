@@ -197,6 +197,7 @@ const Index = () => {
   // Gestionnaire de réservation
   const handleReservation = (trip: (typeof trips)[0]) => {
     // Naviguer vers la page de réservation avec les détails du trajet
+    console.log("Navigation vers la page de réservation", trip);
     navigate("/reservation", { state: { trip } });
   };
 
