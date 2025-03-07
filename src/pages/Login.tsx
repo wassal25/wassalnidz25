@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { Car, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 import AuthBackground from "@/components/auth/AuthBackground";
 import AuthContainer from "@/components/auth/AuthContainer";
 import FormField from "@/components/auth/FormField";
@@ -14,26 +14,25 @@ import SubmitButton from "@/components/auth/SubmitButton";
  */
 const Login = () => {
   const [userType, setUserType] = useState<'passenger' | 'driver'>('passenger');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { signIn } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    // Simuler une connexion réussie
-    toast.success(t('loginSuccess'), {
-      description: t('loginSuccessMessage'),
-      position: "top-center",
-      duration: 3000,
-      style: {
-        background: "linear-gradient(to right, #ffc3a0 0%, #ffafbd 100%)",
-        color: "white",
-        border: "none"
-      }
-    });
-    
-    // Rediriger vers la page d'accueil
-    setTimeout(() => navigate('/'), 1500);
+    try {
+      await signIn(email, password);
+      // La redirection est gérée dans le contexte d'authentification
+    } catch (error) {
+      console.error("Erreur de connexion:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -51,6 +50,7 @@ const Login = () => {
                 : 'text-white/70 hover:text-white'
             } transition-all duration-300`}
             onClick={() => setUserType('passenger')}
+            type="button"
           >
             <User className="mr-2 w-4 h-4" />
             {t('passenger')}
@@ -62,6 +62,7 @@ const Login = () => {
                 : 'text-white/70 hover:text-white'
             } transition-all duration-300`}
             onClick={() => setUserType('driver')}
+            type="button"
           >
             <Car className="mr-2 w-4 h-4" />
             {t('driver')}
@@ -74,6 +75,8 @@ const Login = () => {
             label="Email"
             type="email"
             placeholder={t('emailPlaceholder')}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
           <FormField
@@ -81,6 +84,8 @@ const Login = () => {
             label={t('password')}
             type="password"
             placeholder={t('passwordPlaceholder')}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
           
@@ -95,7 +100,7 @@ const Login = () => {
           </div>
           
           <SubmitButton>
-            {t('login')}
+            {isLoading ? "Connexion..." : t('login')}
           </SubmitButton>
           
           <p className="text-center text-white/90 mt-4">

@@ -12,6 +12,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { AuthProvider } from "@/context/AuthContext";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -49,22 +50,24 @@ const App = () => (
           
           {/* Configuration du routeur avec les différentes routes de l'application */}
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/register-driver" element={<RegisterDriver />} />
-              <Route path="/register-passenger" element={<RegisterPassenger />} />
-              <Route path="/reservation" element={<ReservationPage />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/feedback" element={<Feedback />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/search-help" element={<SearchHelp />} />
-              <Route path="/map" element={<Map />} />
-              <Route path="/create-trip" element={<CreateTrip />} />
-              <Route path="/community-chat" element={<CommunityChat />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <AuthProvider>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/register-driver" element={<RegisterDriver />} />
+                <Route path="/register-passenger" element={<RegisterPassenger />} />
+                <Route path="/reservation" element={<ReservationPage />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/feedback" element={<Feedback />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/search-help" element={<SearchHelp />} />
+                <Route path="/map" element={<Map />} />
+                <Route path="/create-trip" element={<CreateTrip />} />
+                <Route path="/community-chat" element={<CommunityChat />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </AuthProvider>
           </BrowserRouter>
         </TooltipProvider>
       </LanguageProvider>
