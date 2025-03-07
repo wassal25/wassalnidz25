@@ -2,6 +2,8 @@
 // =======================================================
 // Composant Map
 // Description: Carte interactive affichant les trajets et la position GPS
+// Fonctionnalité: Affiche la carte Google Maps, géolocalisation de l'utilisateur
+// Couleur: Fond dégradé de teal (#45B39D) à pêche (#FEC6A1) comme le logo
 // =======================================================
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -73,30 +75,35 @@ const Map = () => {
         fullscreenControl: false,
         mapTypeControl: false,
         streetViewControl: false,
-        // Style clair pour la carte
+        // Style personnalisé pour la carte - couleurs harmonisées avec le site
         styles: [
           {
-            "featureType": "administrative",
+            "featureType": "water",
             "elementType": "geometry",
-            "stylers": [{"visibility": "on"}]
+            "stylers": [{"color": "#a0d6d1"}] // Teinte eau assortie au thème teal
           },
           {
-            "featureType": "poi",
-            "stylers": [{"visibility": "off"}]
+            "featureType": "landscape",
+            "elementType": "geometry",
+            "stylers": [{"color": "#f9f3ee"}] // Teinte pêche légère pour le paysage
           },
           {
             "featureType": "road",
-            "elementType": "labels.icon",
-            "stylers": [{"visibility": "on"}]
+            "elementType": "geometry",
+            "stylers": [{"color": "#ffffff"}, {"lightness": 10}]
+          },
+          {
+            "featureType": "poi",
+            "stylers": [{"visibility": "simplified"}, {"lightness": 40}]
           },
           {
             "featureType": "transit",
             "stylers": [{"visibility": "on"}]
           },
           {
-            "featureType": "water",
+            "featureType": "administrative",
             "elementType": "geometry",
-            "stylers": [{"color": "#a0d6d1"}]
+            "stylers": [{"visibility": "on"}, {"lightness": 40}]
           }
         ]
       });
@@ -108,7 +115,7 @@ const Map = () => {
         title: "Constantine Centre",
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
-          fillColor: "#45B39D",
+          fillColor: "#45B39D", // Couleur principale du site
           fillOpacity: 1,
           strokeWeight: 0,
           scale: 8
@@ -152,7 +159,7 @@ const Map = () => {
             animation: google.maps.Animation.DROP,
             icon: {
               path: google.maps.SymbolPath.CIRCLE,
-              fillColor: "#4285F4", // Couleur Google Maps bleu
+              fillColor: "#FEC6A1", // Couleur secondaire du site (pêche)
               fillOpacity: 1,
               strokeWeight: 1,
               strokeColor: "#FFFFFF",
@@ -229,9 +236,9 @@ const Map = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-[500px] rounded-2xl overflow-hidden">
+    <div className="relative w-full h-[500px] rounded-2xl overflow-hidden bg-gradient-to-r from-[#45B39D]/20 to-[#FEC6A1]/20">
       {!apiKey || !isApiLoaded ? (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/30 backdrop-blur-sm">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-r from-[#45B39D]/30 to-[#FEC6A1]/30 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-xl shadow-lg max-w-md w-full">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Configuration de Google Maps</h3>
             <form onSubmit={handleApiKeySubmit} className="space-y-4">
@@ -259,7 +266,7 @@ const Map = () => {
               </div>
               <button
                 type="submit"
-                className="w-full py-2 px-4 bg-gradient-to-r from-[#FEC6A1] to-[#45B39D] hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 rounded-lg text-white transition-all"
+                className="w-full py-2 px-4 bg-gradient-to-r from-[#45B39D] to-[#FEC6A1] hover:from-[#45B39D]/90 hover:to-[#FEC6A1]/90 rounded-lg text-white transition-all"
               >
                 Charger la carte
               </button>
