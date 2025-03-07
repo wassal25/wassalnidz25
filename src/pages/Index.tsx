@@ -10,7 +10,7 @@ import Footer from "@/components/Footer";
 import TripCard from "@/components/TripCard";
 import Map from "@/components/Map";
 import GroupChat from "@/components/GroupChat";
-import { Search, MapPin, Calendar, Clock, MessageSquare } from "lucide-react";
+import { Search, MapPin, Calendar, Clock, MessageSquare, Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useLanguage } from "@/context/LanguageContext";
@@ -255,7 +255,7 @@ const Index = () => {
       <main className="container mx-auto px-4 pt-32 pb-16 flex-grow">
         {/* Section titre - Rendue interactive, cliquable pour aller à l'À propos */}
         <div 
-          className="text-center mb-16 animate-fade-up cursor-pointer hover:scale-105 transition-transform"
+          className="text-center mb-8 animate-fade-up cursor-pointer hover:scale-105 transition-transform"
           onClick={() => navigate("/about")}
         >
           <h1 className="text-4xl font-bold text-white mb-4 tracking-tight">
@@ -264,6 +264,17 @@ const Index = () => {
           <p className="text-lg text-gray-100 max-w-2xl mx-auto">
             {t('clickToLearnMore')}
           </p>
+        </div>
+
+        {/* Bouton "Proposer un trajet" en haut de la page */}
+        <div className="mb-8 flex justify-center">
+          <button 
+            onClick={() => navigate("/create-trip")}
+            className="px-8 py-3 bg-gradient-to-r from-[#FEC6A1] to-[#45B39D] hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl shadow-lg transition-all duration-300 flex items-center gap-2 text-lg font-medium"
+          >
+            <Plus size={20} />
+            {t('offerTrip')}
+          </button>
         </div>
 
         {/* ==== SEARCH SECTION ==== */}

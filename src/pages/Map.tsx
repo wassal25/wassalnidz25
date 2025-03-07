@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Map from "@/components/Map";
-import { ArrowLeft, Search, MapPin, Plus } from "lucide-react";
+import { ArrowLeft, Search, MapPin } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 /**
@@ -28,17 +28,6 @@ const MapPage = () => {
       <Header />
       
       <main className="container mx-auto px-4 pt-32 pb-16 flex-grow">
-        {/* Bouton "Proposer un trajet" en haut de la page */}
-        <div className="mb-8 flex justify-center">
-          <button 
-            onClick={() => navigate("/create-trip")}
-            className="px-8 py-3 bg-gradient-to-r from-[#FEC6A1] to-[#45B39D] hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl shadow-lg transition-all duration-300 flex items-center gap-2 text-lg font-medium"
-          >
-            <Plus size={20} />
-            {t('offerTrip')}
-          </button>
-        </div>
-        
         {/* Navigation et barre de recherche */}
         <div className="mb-6 flex items-center justify-between">
           <button 
