@@ -9,81 +9,65 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      feedback: {
+      chat_messages: {
         Row: {
-          contenue: string | null
-          émail: string
-          "nom complet": number
-          type: string | null
+          created_at: string
+          id: string
+          message: string
+          trip_id: string
+          user_id: string
         }
         Insert: {
-          contenue?: string | null
-          émail: string
-          "nom complet"?: number
-          type?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          trip_id: string
+          user_id: string
         }
         Update: {
-          contenue?: string | null
-          émail?: string
-          "nom complet"?: number
-          type?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          trip_id?: string
+          user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
       }
-      "inscription chauffeur": {
+      feedbacks: {
         Row: {
-          "adresse personnel": string
-          émail: string | null
-          immatricule: number | null
-          "mark de vehicule": number | null
-          "nom complet": string
-          "num permis": number | null
-          "numéro de téléphone": number | null
-          password: string | null
+          content: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          type: string
+          user_id: string | null
         }
         Insert: {
-          "adresse personnel": string
-          émail?: string | null
-          immatricule?: number | null
-          "mark de vehicule"?: number | null
-          "nom complet": string
-          "num permis"?: number | null
-          "numéro de téléphone"?: number | null
-          password?: string | null
+          content: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          type: string
+          user_id?: string | null
         }
         Update: {
-          "adresse personnel"?: string
-          émail?: string | null
-          immatricule?: number | null
-          "mark de vehicule"?: number | null
-          "nom complet"?: string
-          "num permis"?: number | null
-          "numéro de téléphone"?: number | null
-          password?: string | null
-        }
-        Relationships: []
-      }
-      "inscription passager": {
-        Row: {
-          "adresse personnel": string | null
-          émail: string
-          "nom complet": string
-          "numéro téléphone": number | null
-          password: string | null
-        }
-        Insert: {
-          "adresse personnel"?: string | null
-          émail: string
-          "nom complet": string
-          "numéro téléphone"?: number | null
-          password?: string | null
-        }
-        Update: {
-          "adresse personnel"?: string | null
-          émail?: string
-          "nom complet"?: string
-          "numéro téléphone"?: number | null
-          password?: string | null
+          content?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          type?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -91,29 +75,178 @@ export type Database = {
         Row: {
           address: string | null
           created_at: string
+          driver_license: string | null
           full_name: string | null
           id: string
+          is_verified: boolean | null
           phone_number: string | null
+          profile_image: string | null
           updated_at: string
           user_type: string
         }
         Insert: {
           address?: string | null
           created_at?: string
+          driver_license?: string | null
           full_name?: string | null
           id: string
+          is_verified?: boolean | null
           phone_number?: string | null
+          profile_image?: string | null
           updated_at?: string
           user_type?: string
         }
         Update: {
           address?: string | null
           created_at?: string
+          driver_license?: string | null
           full_name?: string | null
           id?: string
+          is_verified?: boolean | null
           phone_number?: string | null
+          profile_image?: string | null
           updated_at?: string
           user_type?: string
+        }
+        Relationships: []
+      }
+      reservations: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          passenger_id: string
+          payment_method: string | null
+          phone_number: string | null
+          seats_booked: number
+          status: string
+          trip_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          passenger_id: string
+          payment_method?: string | null
+          phone_number?: string | null
+          seats_booked?: number
+          status?: string
+          trip_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          passenger_id?: string
+          payment_method?: string | null
+          phone_number?: string | null
+          seats_booked?: number
+          status?: string
+          trip_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservations_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_connections: {
+        Row: {
+          created_at: string
+          id: string
+          provider: string
+          provider_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          provider: string
+          provider_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          provider?: string
+          provider_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      trips: {
+        Row: {
+          created_at: string
+          date: string
+          driver_id: string | null
+          from_location: string
+          id: string
+          image: string
+          price: number
+          seats: number
+          time: string
+          to_location: string
+          vehicle_info: Json | null
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          driver_id?: string | null
+          from_location: string
+          id?: string
+          image: string
+          price: number
+          seats: number
+          time: string
+          to_location: string
+          vehicle_info?: Json | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          driver_id?: string | null
+          from_location?: string
+          id?: string
+          image?: string
+          price?: number
+          seats?: number
+          time?: string
+          to_location?: string
+          vehicle_info?: Json | null
+        }
+        Relationships: []
+      }
+      vehicles: {
+        Row: {
+          brand: string
+          created_at: string
+          driver_id: string
+          id: string
+          image: string | null
+          model: string
+          registration_number: string
+        }
+        Insert: {
+          brand: string
+          created_at?: string
+          driver_id: string
+          id?: string
+          image?: string | null
+          model: string
+          registration_number: string
+        }
+        Update: {
+          brand?: string
+          created_at?: string
+          driver_id?: string
+          id?: string
+          image?: string | null
+          model?: string
+          registration_number?: string
         }
         Relationships: []
       }

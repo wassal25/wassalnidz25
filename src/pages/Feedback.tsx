@@ -11,15 +11,19 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { MessageSquare, Send, Mail, User, Phone } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext"; 
+import { supabase } from "@/lib/supabase";
 
 const Feedback = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [feedbackType, setFeedbackType] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Options pour les types de feedback
   const feedbackOptions = [
@@ -99,7 +103,7 @@ const Feedback = () => {
     ]
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validation simple
@@ -108,8 +112,30 @@ const Feedback = () => {
       return;
     }
     
-    // Simuler l'envoi des données
-    setTimeout(() => {
+    setIsSubmitting(true);
+    
+    try {
+      // Préparer les données du feedback
+      const feedbackData = {
+        user_id: user?.id || null,
+        full_name: name,
+        email: email,
+        type: feedbackType,
+        content: message
+      };
+      
+      // Enregistrer le feedback dans Supabase
+      const { error } = await supabase
+        .from('feedbacks')
+        .insert([feedbackData]);
+        
+      if (error) {
+        console.error("Erreur lors de l'enregistrement du feedback:", error);
+        toast.error(t('feedbackError'));
+        setIsSubmitting(false);
+        return;
+      }
+      
       toast.success(t('feedbackSuccess'));
       
       // Réinitialiser le formulaire
@@ -123,7 +149,12 @@ const Feedback = () => {
       setTimeout(() => {
         navigate("/");
       }, 2000);
-    }, 1000);
+    } catch (error) {
+      console.error("Erreur lors de la soumission:", error);
+      toast.error(t('feedbackError'));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleFeedbackTypeChange = (type: string) => {
@@ -149,7 +180,7 @@ const Feedback = () => {
               <div className="relative h-80 w-full rounded-xl overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-teal-800/70"></div>
                 <img 
-                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80" 
+                  src="/images/support-team.jpg" 
                   alt={t('ourTeamListening')} 
                   className="h-full w-full object-cover"
                 />
@@ -318,10 +349,20 @@ const Feedback = () => {
               {/* Bouton d'envoi */}
               <button
                 type="submit"
-                className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-xl font-medium hover:from-teal-600 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl"
+                disabled={isSubmitting}
+                className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-xl font-medium hover:from-teal-600 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-70"
               >
-                <Send className="h-5 w-5" />
-                <span>{t('sendFeedback')}</span>
+                {isSubmitting ? (
+                  <>
+                    <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                    <span>{t('sending')}</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-5 w-5 mr-2" />
+                    <span>{t('sendFeedback')}</span>
+                  </>
+                )}
               </button>
             </form>
           </div>

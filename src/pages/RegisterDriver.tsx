@@ -4,6 +4,8 @@ import { UserCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/lib/supabase";
 import AuthBackground from "@/components/auth/AuthBackground";
 import AuthContainer from "@/components/auth/AuthContainer";
 import FormField from "@/components/auth/FormField";
@@ -32,12 +34,14 @@ const StepNavigation = ({
   step, 
   prevStep, 
   nextStep, 
-  isLastStep 
+  isLastStep,
+  isLoading 
 }: { 
   step: number;
   prevStep: (e: React.MouseEvent<HTMLButtonElement>) => void;
   nextStep: (e: React.MouseEvent<HTMLButtonElement>) => void;
   isLastStep: boolean;
+  isLoading: boolean;
 }) => {
   const { t } = useLanguage();
   
@@ -48,6 +52,7 @@ const StepNavigation = ({
           type="button"
           onClick={prevStep}
           className="px-6 py-3 bg-white/10 text-white rounded-xl transition-all duration-300 hover:bg-white/20"
+          disabled={isLoading}
         >
           {t('previous')}
         </button>
@@ -59,11 +64,12 @@ const StepNavigation = ({
           onClick={nextStep}
           className="px-6 py-3 bg-gradient-to-r from-[#FEC6A1]/80 to-[#45B39D]/80 hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl transition-all duration-300 hover:shadow-lg"
           style={{ marginLeft: step === 1 ? 'auto' : '0' }}
+          disabled={isLoading}
         >
           {t('next')}
         </button>
       ) : (
-        <SubmitButton>
+        <SubmitButton isLoading={isLoading}>
           <UserCheck className="mr-2 w-4 h-4" />
           {t('register')}
         </SubmitButton>
@@ -79,8 +85,12 @@ const RegisterDriver = () => {
   const [step, setStep] = useState(1);
   const [previewVehicle, setPreviewVehicle] = useState<string | null>(null);
   const [previewProfile, setPreviewProfile] = useState<string | null>(null);
+  const [vehicleFile, setVehicleFile] = useState<File | null>(null);
+  const [profileFile, setProfileFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { signUp } = useAuth();
   
   // Données du formulaire
   const [formData, setFormData] = useState({
@@ -97,6 +107,7 @@ const RegisterDriver = () => {
   const handleVehicleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setVehicleFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewVehicle(reader.result as string);
@@ -108,6 +119,7 @@ const RegisterDriver = () => {
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setProfileFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewProfile(reader.result as string);
@@ -138,23 +150,105 @@ const RegisterDriver = () => {
     window.scrollTo(0, 0);
   };
 
-  // Soumission du formulaire
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Formulaire soumis:", formData, { previewProfile, previewVehicle });
-    
-    toast.success(t('registerSuccess'), {
-      description: t('registerSuccessMessage'),
-      position: "top-center",
-      duration: 4000,
-      style: {
-        background: "linear-gradient(90deg, hsla(39, 100%, 77%, 1) 0%, hsla(22, 90%, 57%, 1) 100%)",
-        color: "white",
-        border: "none"
+  // Fonction pour télécharger une image sur Supabase
+  const uploadImage = async (file: File, folder: string) => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+      const filePath = `${folder}/${fileName}`;
+      
+      // Télécharger le fichier dans le bucket 'public'
+      const { data, error } = await supabase.storage
+        .from('public')
+        .upload(filePath, file);
+        
+      if (error) {
+        throw error;
       }
-    });
+      
+      // Obtenir l'URL publique du fichier
+      const { data: urlData } = supabase.storage
+        .from('public')
+        .getPublicUrl(filePath);
+        
+      return urlData.publicUrl;
+    } catch (error) {
+      console.error('Erreur lors du téléchargement de l\'image:', error);
+      throw error;
+    }
+  };
+
+  // Soumission du formulaire
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
     
-    setTimeout(() => navigate('/login'), 2000);
+    try {
+      // Vérifier que les mots de passe correspondent (si nécessaire)
+      console.log("Formulaire soumis:", formData);
+      
+      // Télécharger les images
+      let profileImageUrl = null;
+      let vehicleImageUrl = null;
+      
+      if (profileFile) {
+        profileImageUrl = await uploadImage(profileFile, 'profiles');
+      }
+      
+      if (vehicleFile) {
+        vehicleImageUrl = await uploadImage(vehicleFile, 'vehicles');
+      }
+      
+      // 1. Créer un compte utilisateur avec authentification
+      const { data: userData, error: signUpError } = await signUp(formData.email, formData.password, {
+        full_name: formData.name,
+        user_type: "driver",
+        phone_number: formData.phone,
+        driver_license: formData.license,
+        profile_image: profileImageUrl,
+        is_verified: false
+      });
+      
+      if (signUpError) {
+        throw signUpError;
+      }
+      
+      // 2. Si l'inscription réussit, enregistrer les informations du véhicule
+      if (userData?.user?.id) {
+        // Créer l'entrée du véhicule
+        const { error: vehicleError } = await supabase.from('vehicles').insert({
+          driver_id: userData.user.id,
+          brand: formData.vehicleBrand,
+          model: formData.vehicleModel,
+          registration_number: formData.registration,
+          image: vehicleImageUrl
+        });
+        
+        if (vehicleError) {
+          console.error("Erreur lors de l'enregistrement du véhicule:", vehicleError);
+        }
+      }
+      
+      toast.success(t('registerSuccess'), {
+        description: t('registerSuccessMessage'),
+        position: "top-center",
+        duration: 4000,
+        style: {
+          background: "linear-gradient(90deg, hsla(39, 100%, 77%, 1) 0%, hsla(22, 90%, 57%, 1) 100%)",
+          color: "white",
+          border: "none"
+        }
+      });
+      
+      setTimeout(() => navigate('/login'), 2000);
+    } catch (error: any) {
+      console.error("Erreur lors de l'inscription:", error);
+      toast.error(t('registerFailed'), {
+        description: error.message || t('registerFailedMessage'),
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -271,6 +365,7 @@ const RegisterDriver = () => {
             prevStep={prevStep} 
             nextStep={nextStep} 
             isLastStep={step === 3} 
+            isLoading={isLoading}
           />
         </form>
 

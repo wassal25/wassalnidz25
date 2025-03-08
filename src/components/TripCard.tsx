@@ -28,12 +28,37 @@ interface TripCardProps {
  * sous forme de carte avec une image, des détails et un bouton de réservation.
  */
 const TripCard = ({ from, to, date, time, price, image, seats, onReserve }: TripCardProps) => {
+  // Utiliser les images locales au lieu des images Unsplash
+  const getLocalImage = (from: string, to: string) => {
+    // Assigner une image basée sur la destination ou l'origine
+    if (from.includes("Constantine") || to.includes("Constantine")) {
+      return "/images/destination-1.jpg";
+    } else if (from.includes("Ali Mendjeli") || to.includes("Ali Mendjeli")) {
+      return "/images/destination-2.jpg";
+    } else if (from.includes("El Khroub") || to.includes("El Khroub")) {
+      return "/images/destination-3.jpg";
+    } else if (from.includes("Didouche") || to.includes("Didouche")) {
+      return "/images/destination-4.jpg";
+    } else if (from.includes("Hamma") || to.includes("Hamma")) {
+      return "/images/destination-5.jpg";
+    } else if (from.includes("Zighoud") || to.includes("Zighoud")) {
+      return "/images/destination-6.jpg";
+    } else if (from.includes("Ain Smara") || to.includes("Ain Smara")) {
+      return "/images/destination-7.jpg";
+    } else {
+      return "/images/destination-8.jpg"; // Image par défaut
+    }
+  };
+
+  // Obtenir l'image appropriée
+  const displayImage = getLocalImage(from, to);
+
   return (
     <div className="bg-[#FDE1D3]/40 backdrop-blur-sm border border-white/20 shadow-lg rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] animate-fade-up">
       {/* Section image */}
       <div className="w-full h-[300px] overflow-hidden relative group">
         <img 
-          src={image} 
+          src={displayImage} 
           alt={`${from} to ${to}`}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
