@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Session, User } from "@supabase/supabase-js";
+import { Session, User, Provider } from "@supabase/supabase-js";
 
 // Type de contexte d'authentification
 interface AuthContextType {
@@ -13,7 +13,9 @@ interface AuthContextType {
   signUp: (email: string, password: string, userData: any) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  signInWithProvider: (provider: Provider) => Promise<void>;
   userProfile: any | null;
+  updateUserProfile: (data: any) => Promise<void>;
 }
 
 // Création du contexte
@@ -40,6 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Configurer l'écouteur des changements d'authentification
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log("Auth state changed:", event, session);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -138,6 +141,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Connexion avec un fournisseur (Google, Facebook)
+  const signInWithProvider = async (provider: Provider) => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: window.location.origin
+        }
+      });
+
+      if (error) throw error;
+    } catch (error: any) {
+      toast.error(`Erreur de connexion avec ${provider}`, {
+        description: error.message,
+      });
+    }
+  };
+
   // Déconnexion
   const signOut = async () => {
     try {
@@ -145,9 +166,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) throw error;
       
       toast.success("Déconnexion réussie");
+      
+      // Réinitialiser l'état local après la déconnexion
+      setUser(null);
+      setSession(null);
+      setUserProfile(null);
+      
+      // Rediriger vers la page de connexion
       navigate("/login");
     } catch (error: any) {
       toast.error("Erreur de déconnexion", {
+        description: error.message,
+      });
+    }
+  };
+
+  // Mettre à jour le profil utilisateur
+  const updateUserProfile = async (data: any) => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(data)
+        .eq('id', user.id);
+        
+      if (error) throw error;
+      
+      // Mettre à jour l'état local du profil
+      setUserProfile({
+        ...userProfile,
+        ...data
+      });
+      
+      toast.success("Profil mis à jour avec succès");
+    } catch (error: any) {
+      toast.error("Erreur lors de la mise à jour du profil", {
         description: error.message,
       });
     }
@@ -160,7 +214,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp,
     signIn,
     signOut,
+    signInWithProvider,
     userProfile,
+    updateUserProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

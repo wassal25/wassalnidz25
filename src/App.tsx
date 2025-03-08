@@ -1,4 +1,3 @@
-
 // =======================================================
 // Fichier: App.tsx
 // Description: Composant racine App
@@ -27,6 +26,7 @@ import SearchHelp from "./pages/SearchHelp";
 import Map from "./pages/Map";
 import CreateTrip from "./pages/CreateTrip";
 import CommunityChat from "./pages/CommunityChat";
+import UserProfile from "./pages/UserProfile";
 
 // Client React Query pour la gestion d'état et des requêtes
 const queryClient = new QueryClient();
@@ -59,6 +59,7 @@ const App = () => (
                 <Route path="/register-passenger" element={<RegisterPassenger />} />
                 <Route path="/reservation" element={<ReservationPage />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/profile" element={<UserProfile />} />
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/search-help" element={<SearchHelp />} />
