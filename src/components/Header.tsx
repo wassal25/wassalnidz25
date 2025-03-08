@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Moon, Sun, Globe, User, LogOut } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { useLanguage } from "@/context/LanguageContext";
@@ -17,6 +17,7 @@ const Header = () => {
   const { language, setLanguage, t } = useLanguage();
   const { user, signOut, userProfile } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Détection du défilement pour changer l'apparence de l'en-tête
   useEffect(() => {
@@ -34,6 +35,16 @@ const Header = () => {
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location]);
+
+  // Fonction de déconnexion
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      // La navigation sera gérée par le contexte d'authentification
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion:", error);
+    }
+  };
 
   return (
     <header
@@ -129,7 +140,7 @@ const Header = () => {
                 <User size={20} />
               </Link>
               <button
-                onClick={() => signOut()}
+                onClick={handleLogout}
                 className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
                 aria-label={t('logout')}
               >
@@ -213,7 +224,7 @@ const Header = () => {
                       {t('profile')}
                     </Link>
                     <button
-                      onClick={() => signOut()}
+                      onClick={handleLogout}
                       className="w-full px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
                     >
                       {t('logout')}
