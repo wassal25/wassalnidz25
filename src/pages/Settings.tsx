@@ -10,6 +10,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useTheme } from "@/context/ThemeContext";
 import { useLanguage, Language } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { 
   Bell, 
@@ -38,6 +39,7 @@ const Settings = () => {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
+  const { user, userProfile } = useAuth();
   
   // ===== SECTION: ÉTATS LOCAUX =====
   
@@ -142,9 +144,12 @@ const Settings = () => {
             <div className="w-24 h-24 rounded-full bg-gradient-to-r from-[#FEC6A1]/30 to-[#45B39D]/30 flex items-center justify-center mb-4 border-2 border-white/30">
               <User className="text-white" size={48} />
             </div>
-            <h2 className="text-xl font-bold text-white">Utilisateur Wassalni</h2>
-            <p className="text-white/70">utilisateur@example.com</p>
-            <button className={`mt-4 px-6 py-2 ${buttonBgClass} text-white rounded-xl transition-all duration-300`}>
+            <h2 className="text-xl font-bold text-white">{userProfile?.full_name || t('wassalniUser')}</h2>
+            <p className="text-white/70">{user?.email || 'utilisateur@example.com'}</p>
+            <button 
+              onClick={() => navigate('/profile')}
+              className={`mt-4 px-6 py-2 ${buttonBgClass} text-white rounded-xl transition-all duration-300`}
+            >
               {t('editProfile')}
             </button>
           </div>

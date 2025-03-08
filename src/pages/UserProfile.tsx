@@ -147,7 +147,6 @@ const UserProfile = () => {
               placeholder={t('namePlaceholder')}
               value={formData.full_name}
               onChange={handleInputChange}
-              icon={<User className="text-white/50" />}
               required
             />
             <FormField
@@ -157,7 +156,6 @@ const UserProfile = () => {
               placeholder={t('emailPlaceholder')}
               value={formData.email}
               onChange={() => {}}
-              icon={<Mail className="text-white/50" />}
               disabled
             />
             <FormField
@@ -167,7 +165,6 @@ const UserProfile = () => {
               placeholder={t('phoneNumberPlaceholder')}
               value={formData.phone_number}
               onChange={handleInputChange}
-              icon={<Phone className="text-white/50" />}
             />
             <FormField
               id="address"
@@ -176,11 +173,9 @@ const UserProfile = () => {
               placeholder={t('addressPlaceholder')}
               value={formData.address}
               onChange={handleInputChange}
-              icon={<Home className="text-white/50" />}
             />
             
-            <SubmitButton>
-              <Save className="mr-2 w-5 h-5" />
+            <SubmitButton isLoading={isLoading}>
               {isLoading ? t('saving') : t('saveChanges')}
             </SubmitButton>
           </form>

@@ -48,13 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(false);
 
         if (session?.user) {
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", session.user.id)
-            .single();
-          
-          setUserProfile(profile);
+          await fetchUserProfile(session.user.id);
         } else {
           setUserProfile(null);
         }
@@ -68,14 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (session) {
         setSession(session);
         setUser(session.user);
-        
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
-        
-        setUserProfile(profile);
+        await fetchUserProfile(session.user.id);
       }
       
       setLoading(false);
@@ -88,6 +75,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       authListener.subscription.unsubscribe();
     };
   }, [navigate]);
+
+  // Récupérer le profil utilisateur
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
+      
+      if (error) {
+        console.error("Error fetching profile:", error);
+        return;
+      }
+      
+      setUserProfile(profile);
+    } catch (error) {
+      console.error("Error in fetchUserProfile:", error);
+    }
+  };
 
   // Inscription
   const signUp = async (email: string, password: string, userData: any) => {
