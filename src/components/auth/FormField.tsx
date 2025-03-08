@@ -9,6 +9,7 @@ interface FormFieldProps {
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
+  disabled?: boolean;
 }
 
 /**
@@ -22,6 +23,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   value,
   onChange,
   required = false,
+  disabled = false,
 }) => {
   return (
     <div>
@@ -34,8 +36,9 @@ export const FormField: React.FC<FormFieldProps> = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300"
+        className={`w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/50 transition-all duration-300 ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
         required={required}
+        disabled={disabled}
       />
     </div>
   );

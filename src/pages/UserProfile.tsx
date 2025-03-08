@@ -15,7 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
  */
 const UserProfile = () => {
   const { t } = useLanguage();
-  const { user, userProfile, updateUserProfile } = useAuth();
+  const { user, userProfile, updateUserProfile, signOut } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -99,6 +99,16 @@ const UserProfile = () => {
     }
   };
 
+  // Déconnexion
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      // La navigation sera gérée par le composant AuthContext après déconnexion
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion:", error);
+    }
+  };
+
   if (!user || !userProfile) {
     return (
       <AuthBackground>
@@ -119,16 +129,24 @@ const UserProfile = () => {
     <AuthBackground>
       <div className="w-full max-w-md mx-auto">
         <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 shadow-lg">
-          <div className="flex items-center mb-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center">
+              <button
+                onClick={() => navigate("/settings")}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors mr-3"
+              >
+                <ArrowLeft size={20} />
+              </button>
+              <h2 className="text-white text-xl font-semibold">
+                {t('myProfile')}
+              </h2>
+            </div>
             <button
-              onClick={() => navigate("/settings")}
-              className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors mr-3"
+              onClick={handleLogout}
+              className="p-2 px-4 rounded-lg bg-red-500/30 hover:bg-red-500/50 text-white transition-colors"
             >
-              <ArrowLeft size={20} />
+              {t('logout')}
             </button>
-            <h2 className="text-white text-xl font-semibold">
-              {t('myProfile')}
-            </h2>
           </div>
 
           <div className="mb-6 flex justify-center">
