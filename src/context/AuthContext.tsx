@@ -6,10 +6,12 @@ import { toast } from 'sonner';
 // Interface pour le profil utilisateur
 interface UserProfile {
   id: string;
-  first_name: string;
-  last_name: string;
+  first_name?: string;
+  last_name?: string;
+  full_name?: string;
   email: string;
-  phone?: string;
+  phone_number?: string;
+  address?: string;
   avatar_url?: string;
   is_driver: boolean;
 }
@@ -139,6 +141,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       // Créer un profil utilisateur
       if (data.user) {
+        const fullName = `${firstName} ${lastName}`.trim();
         const { error: profileError } = await supabase
           .from('profiles')
           .insert([
@@ -146,6 +149,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
               id: data.user.id, 
               first_name: firstName, 
               last_name: lastName, 
+              full_name: fullName,
               email: email,
               is_driver: false
             }
