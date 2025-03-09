@@ -2,7 +2,6 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
 
 // Interface pour le profil utilisateur
 interface UserProfile {
@@ -84,24 +83,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         
         if (session?.user) {
           await loadUserProfile(session.user.id);
-          
-          // Afficher un message de succès lors de la connexion
-          if (event === 'SIGNED_IN') {
-            toast.success("Vous êtes maintenant connecté!");
-            
-            // Rediriger vers la page d'accueil
-            window.location.href = '/';
-          }
         } else {
           setUserProfile(null);
-          
-          // Afficher un message de succès lors de la déconnexion
-          if (event === 'SIGNED_OUT') {
-            toast.success("Vous avez été déconnecté avec succès!");
-            
-            // Rediriger vers la page d'accueil
-            window.location.href = '/';
-          }
         }
         
         setLoading(false);
@@ -175,11 +158,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (profileError) throw profileError;
       }
 
-      toast.success("Inscription réussie! Vous êtes maintenant connecté.");
-      
-      // Rediriger vers la page d'accueil
-      window.location.href = '/';
-      
       return data;
     } catch (error: any) {
       toast.error(`Erreur d'inscription: ${error.message}`);
@@ -202,10 +180,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Charger le profil utilisateur si la connexion réussit
       if (data.user) {
         await loadUserProfile(data.user.id);
-        toast.success("Connexion réussie!");
-        
-        // Rediriger vers la page d'accueil
-        window.location.href = '/';
       }
       
       return data;
@@ -243,10 +217,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (error) throw error;
       setUser(null);
       setUserProfile(null);
-      toast.success("Vous avez été déconnecté avec succès!");
-      
-      // Rediriger vers la page d'accueil
-      window.location.href = '/';
     } catch (error: any) {
       toast.error(`Erreur de déconnexion: ${error.message}`);
       throw error;
