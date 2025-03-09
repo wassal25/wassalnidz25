@@ -179,7 +179,7 @@ const Feedback = () => {
               <div className="relative h-80 w-full rounded-xl overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-teal-800/70"></div>
                 <img 
-                  src="/images/support-team.jpg" 
+                  src="/lovable-uploads/c8129868-7559-48d2-8f52-11c5e7ba021c.png" 
                   alt={t('ourTeamListening')} 
                   className="h-full w-full object-cover"
                 />

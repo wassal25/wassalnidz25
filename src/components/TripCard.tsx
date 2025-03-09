@@ -28,13 +28,13 @@ interface TripCardProps {
  * sous forme de carte avec une image, des détails et un bouton de réservation.
  */
 const TripCard = ({ from, to, date, time, price, image, seats, onReserve }: TripCardProps) => {
-  // Utiliser les images locales au lieu des images Unsplash
+  // Obtenir l'image appropriée basée sur la destination
   const getLocalImage = (from: string, to: string) => {
     // Assigner une image basée sur la destination ou l'origine
     if (from.includes("Constantine") || to.includes("Constantine")) {
       return "/images/destination-1.jpg";
     } else if (from.includes("Ali Mendjeli") || to.includes("Ali Mendjeli")) {
-      return "/images/destination-2.jpg";
+      return "/images/destination-2.jpg"; 
     } else if (from.includes("El Khroub") || to.includes("El Khroub")) {
       return "/images/destination-3.jpg";
     } else if (from.includes("Didouche") || to.includes("Didouche")) {
@@ -50,8 +50,29 @@ const TripCard = ({ from, to, date, time, price, image, seats, onReserve }: Trip
     }
   };
 
+  // Mapper les images téléchargées aux bonnes destinations
+  const mapDestinationToNewImage = (from: string, to: string) => {
+    if (from.includes("Constantine") || to.includes("Constantine")) {
+      return "/lovable-uploads/488eac09-7d96-4aad-b400-f6fbad5b4094.png";
+    } else if (from.includes("Ali Mendjeli") || to.includes("Ali Mendjeli")) {
+      return "/lovable-uploads/e26c89ad-026b-4725-898c-1334395b3b29.png";
+    } else if (from.includes("El Khroub") || to.includes("El Khroub")) {
+      return "/lovable-uploads/10233626-2686-4fd9-874d-5e6eec39f718.png";
+    } else if (from.includes("Didouche") || to.includes("Didouche")) {
+      return "/lovable-uploads/9b42fa83-4309-47ba-bd7a-281fd656cc2c.png";
+    } else if (from.includes("Hamma") || to.includes("Hamma")) {
+      return "/lovable-uploads/87fe55ad-deb6-4fa6-9322-6ddc53f467aa.png";
+    } else if (from.includes("Zighoud") || to.includes("Zighoud")) {
+      return "/lovable-uploads/0d5c2554-7073-4651-9f9b-1c8075047bfd.png";
+    } else if (from.includes("Ain Smara") || to.includes("Ain Smara")) {
+      return "/lovable-uploads/8e491583-a9ac-4ed5-854f-b9341b0bb63f.png";
+    } else {
+      return "/lovable-uploads/c8129868-7559-48d2-8f52-11c5e7ba021c.png"; // Image par défaut
+    }
+  };
+
   // Obtenir l'image appropriée
-  const displayImage = getLocalImage(from, to);
+  const displayImage = mapDestinationToNewImage(from, to);
 
   return (
     <div className="bg-[#FDE1D3]/40 backdrop-blur-sm border border-white/20 shadow-lg rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] animate-fade-up">

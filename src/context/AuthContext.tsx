@@ -3,26 +3,67 @@ import React, { createContext, useState, useContext, useEffect, ReactNode } from
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 
+// Interface pour le profil utilisateur
+interface UserProfile {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone?: string;
+  avatar_url?: string;
+  is_driver: boolean;
+}
+
 interface AuthContextType {
   user: any | null;
+  userProfile: UserProfile | null;
   loading: boolean;
   signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<any>;
   signIn: (email: string, password: string) => Promise<any>;
+  signInWithProvider: (provider: 'google' | 'facebook') => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  updateUserProfile: (data: Partial<UserProfile>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<any | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Fonction pour charger le profil utilisateur
+  const loadUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error("Erreur lors du chargement du profil:", error);
+        return null;
+      }
+
+      setUserProfile(data as UserProfile);
+      return data;
+    } catch (error) {
+      console.error("Erreur lors du chargement du profil:", error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     const checkUser = async () => {
       try {
         const { data } = await supabase.auth.getSession();
         setUser(data.session?.user || null);
+        
+        if (data.session?.user) {
+          await loadUserProfile(data.session.user.id);
+        }
       } catch (error) {
         console.error("Erreur lors de la vérification de l'utilisateur:", error);
       } finally {
@@ -37,6 +78,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setUser(session?.user || null);
+        
+        if (session?.user) {
+          await loadUserProfile(session.user.id);
+        } else {
+          setUserProfile(null);
+        }
+        
         setLoading(false);
       }
     );
@@ -45,6 +93,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       authListener.subscription.unsubscribe();
     };
   }, []);
+
+  /**
+   * Mise à jour du profil utilisateur
+   */
+  const updateUserProfile = async (data: Partial<UserProfile>) => {
+    try {
+      if (!user) throw new Error("Utilisateur non connecté");
+
+      const { error } = await supabase
+        .from('profiles')
+        .update(data)
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      // Mettre à jour l'état local
+      setUserProfile(prev => prev ? { ...prev, ...data } : null);
+      
+      toast.success("Profil mis à jour avec succès");
+    } catch (error: any) {
+      toast.error(`Erreur de mise à jour: ${error.message}`);
+      throw error;
+    }
+  };
 
   /**
    * Inscription d'un nouvel utilisateur
@@ -100,9 +172,34 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       });
 
       if (error) throw error;
+      
+      // Charger le profil utilisateur si la connexion réussit
+      if (data.user) {
+        await loadUserProfile(data.user.id);
+      }
+      
       return data;
     } catch (error: any) {
       toast.error(`Erreur de connexion: ${error.message}`);
+      throw error;
+    }
+  };
+
+  /**
+   * Connexion avec fournisseur OAuth
+   */
+  const signInWithProvider = async (provider: 'google' | 'facebook') => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) throw error;
+    } catch (error: any) {
+      toast.error(`Erreur d'authentification: ${error.message}`);
       throw error;
     }
   };
@@ -115,6 +212,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       setUser(null);
+      setUserProfile(null);
     } catch (error: any) {
       toast.error(`Erreur de déconnexion: ${error.message}`);
       throw error;
@@ -139,11 +237,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     <AuthContext.Provider
       value={{
         user,
+        userProfile,
         loading,
         signUp,
         signIn,
+        signInWithProvider,
         signOut,
         resetPassword,
+        updateUserProfile,
       }}
     >
       {children}
