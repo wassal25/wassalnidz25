@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
@@ -80,6 +79,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Mettre en place un listener pour les changements d'authentification
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log("Auth state changed:", event, session);
         setUser(session?.user || null);
         
         if (session?.user) {
@@ -88,8 +88,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           // Afficher un message de succès lors de la connexion
           if (event === 'SIGNED_IN') {
             toast.success("Vous êtes maintenant connecté!");
-            
-            // Rediriger vers la page d'accueil
             window.location.href = '/';
           }
         } else {
@@ -98,8 +96,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           // Afficher un message de succès lors de la déconnexion
           if (event === 'SIGNED_OUT') {
             toast.success("Vous avez été déconnecté avec succès!");
-            
-            // Rediriger vers la page d'accueil
             window.location.href = '/';
           }
         }
@@ -203,9 +199,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (data.user) {
         await loadUserProfile(data.user.id);
         toast.success("Connexion réussie!");
-        
-        // Rediriger vers la page d'accueil
-        window.location.href = '/';
       }
       
       return data;
@@ -239,15 +232,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
    */
   const signOut = async () => {
     try {
+      console.log("Attempting logout...");
       const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      setUser(null);
-      setUserProfile(null);
+      
+      if (error) {
+        console.error("Logout error:", error);
+        throw error;
+      }
+      
+      console.log("Logout successful");
       toast.success("Vous avez été déconnecté avec succès!");
       
-      // Rediriger vers la page d'accueil
-      window.location.href = '/';
+      // We'll let the auth state change listener handle the redirect and state cleanup
     } catch (error: any) {
+      console.error("Error during logout:", error);
       toast.error(`Erreur de déconnexion: ${error.message}`);
       throw error;
     }
