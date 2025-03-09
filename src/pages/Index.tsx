@@ -1,4 +1,3 @@
-
 // =======================================================
 // Page d'accueil principale
 // Description: Interface principale de l'application
@@ -86,7 +85,6 @@ const trips = [
     image: "https://images.unsplash.com/photo-1444723121867-7a241cacace9?q=80&w=2000",
     driverName: "Ismail T."
   },
-  // Nouvelles destinations ajoutées
   {
     id: "trip-7",
     from: "Constantine Université",
@@ -444,3 +442,4 @@ const Index = () => {
 };
 
 export default Index;
+

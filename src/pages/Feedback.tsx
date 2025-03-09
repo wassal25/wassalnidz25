@@ -1,4 +1,3 @@
-
 // =======================================================
 // Page de feedback
 // Description: Permet aux utilisateurs de soumettre des commentaires
@@ -176,7 +175,7 @@ const Feedback = () => {
           {/* Colonne de gauche: Image d'équipe et texte explicatif */}
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
             <div className="relative rounded-xl overflow-hidden shadow-lg mb-6 transform transition-transform hover:scale-[1.02]">
-              {/* Image générée représentant une équipe de support client professionnelle */}
+              {/* Image référençant le chemin correct pour support-team.jpg */}
               <div className="relative h-80 w-full rounded-xl overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-teal-800/70"></div>
                 <img 
