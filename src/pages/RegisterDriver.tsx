@@ -1,176 +1,78 @@
 
-import { useState } from "react";
-import { UserCheck } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "@/context/AuthContext";
-import { supabase } from "@/lib/supabase";
-import AuthBackground from "@/components/auth/AuthBackground";
 import AuthContainer from "@/components/auth/AuthContainer";
 import FormField from "@/components/auth/FormField";
 import SubmitButton from "@/components/auth/SubmitButton";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/lib/supabase";
 import ProfilePhotoUpload from "@/components/driver/ProfilePhotoUpload";
 
-/**
- * Composant pour les indicateurs d'étape du formulaire
- */
-const StepIndicator = ({ currentStep }: { currentStep: number }) => (
-  <div className="flex justify-center mb-8">
-    <div className="flex items-center">
-      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${currentStep >= 1 ? 'bg-[#45B39D]' : 'bg-white/20'} text-white font-bold`}>1</div>
-      <div className={`w-16 h-1 ${currentStep >= 2 ? 'bg-[#45B39D]' : 'bg-white/20'}`}></div>
-      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${currentStep >= 2 ? 'bg-[#45B39D]' : 'bg-white/20'} text-white font-bold`}>2</div>
-      <div className={`w-16 h-1 ${currentStep >= 3 ? 'bg-[#45B39D]' : 'bg-white/20'}`}></div>
-      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${currentStep >= 3 ? 'bg-[#45B39D]' : 'bg-white/20'} text-white font-bold`}>3</div>
-    </div>
-  </div>
-);
-
-/**
- * Composant pour les boutons de navigation entre les étapes
- */
-const StepNavigation = ({ 
-  step, 
-  prevStep, 
-  nextStep, 
-  isLastStep,
-  isLoading 
-}: { 
-  step: number;
-  prevStep: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  nextStep: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  isLastStep: boolean;
-  isLoading: boolean;
-}) => {
-  const { t } = useLanguage();
-  
-  return (
-    <div className="flex justify-between">
-      {step > 1 && (
-        <button
-          type="button"
-          onClick={prevStep}
-          className="px-6 py-3 bg-white/10 text-white rounded-xl transition-all duration-300 hover:bg-white/20"
-          disabled={isLoading}
-        >
-          {t('previous')}
-        </button>
-      )}
-      
-      {!isLastStep ? (
-        <button
-          type="button"
-          onClick={nextStep}
-          className="px-6 py-3 bg-gradient-to-r from-[#FEC6A1]/80 to-[#45B39D]/80 hover:from-[#FEC6A1]/90 hover:to-[#45B39D]/90 text-white rounded-xl transition-all duration-300 hover:shadow-lg"
-          style={{ marginLeft: step === 1 ? 'auto' : '0' }}
-          disabled={isLoading}
-        >
-          {t('next')}
-        </button>
-      ) : (
-        <SubmitButton isLoading={isLoading}>
-          <UserCheck className="mr-2 w-4 h-4" />
-          {t('register')}
-        </SubmitButton>
-      )}
-    </div>
-  );
-};
-
-/**
- * Page d'inscription pour les chauffeurs
- */
 const RegisterDriver = () => {
-  const [step, setStep] = useState(1);
-  const [previewVehicle, setPreviewVehicle] = useState<string | null>(null);
-  const [previewProfile, setPreviewProfile] = useState<string | null>(null);
-  const [vehicleFile, setVehicleFile] = useState<File | null>(null);
-  const [profileFile, setProfileFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { t } = useLanguage();
   const { signUp } = useAuth();
-  
-  // Données du formulaire
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    password: "",
-    license: "",
-    vehicleBrand: "",
-    vehicleModel: "",
-    registration: ""
-  });
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [driverLicense, setDriverLicense] = useState("");
+  const [carBrand, setCarBrand] = useState("");
+  const [carModel, setCarModel] = useState("");
+  const [plateNumber, setPlateNumber] = useState("");
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [vehicleImage, setVehicleImage] = useState<File | null>(null);
+  const [profilePreview, setProfilePreview] = useState<string | null>(null);
+  const [vehiclePreview, setVehiclePreview] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleVehicleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setVehicleFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewVehicle(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
+  // Gestionnaire de changement d'image de profil
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setProfileFile(file);
+      setProfileImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewProfile(reader.result as string);
+        setProfilePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  // Gestion des changements de formulaire
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setFormData({
-      ...formData,
-      [id]: value
-    });
+  // Gestionnaire de changement d'image de véhicule
+  const handleVehicleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setVehicleImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setVehiclePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  // Gestion du changement d'étape avec prévention du comportement par défaut
-  const nextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setStep(step + 1);
-    window.scrollTo(0, 0);
-  };
-  
-  const prevStep = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setStep(step - 1);
-    window.scrollTo(0, 0);
-  };
-
-  // Fonction pour télécharger une image sur Supabase
-  const uploadImage = async (file: File, folder: string) => {
+  // Fonction pour télécharger les images dans le bucket supabase
+  const uploadImage = async (file: File, bucket: string, folder: string) => {
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+      const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `${folder}/${fileName}`;
       
-      // Télécharger le fichier dans le bucket 'public'
       const { data, error } = await supabase.storage
-        .from('public')
+        .from(bucket)
         .upload(filePath, file);
-        
+      
       if (error) {
         throw error;
       }
       
-      // Obtenir l'URL publique du fichier
+      // Construire l'URL complète de l'image
       const { data: urlData } = supabase.storage
-        .from('public')
+        .from(bucket)
         .getPublicUrl(filePath);
-        
+      
       return urlData.publicUrl;
     } catch (error) {
       console.error('Erreur lors du téléchargement de l\'image:', error);
@@ -178,205 +80,215 @@ const RegisterDriver = () => {
     }
   };
 
-  // Soumission du formulaire
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Fonction de gestion de la soumission du formulaire
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
-      // Vérifier que les mots de passe correspondent (si nécessaire)
-      console.log("Formulaire soumis:", formData);
+      // 1. Créer le compte utilisateur
+      const userResponse = await signUp(email, password, firstName, lastName);
       
-      // Télécharger les images
-      let profileImageUrl = null;
-      let vehicleImageUrl = null;
-      
-      if (profileFile) {
-        profileImageUrl = await uploadImage(profileFile, 'profiles');
+      if (!userResponse || !userResponse.user) {
+        throw new Error("Échec de l'inscription utilisateur");
       }
       
-      if (vehicleFile) {
-        vehicleImageUrl = await uploadImage(vehicleFile, 'vehicles');
+      const userId = userResponse.user.id;
+      
+      // 2. Télécharger les images si présentes
+      let profileImageUrl = '';
+      let vehicleImageUrl = '';
+      
+      if (profileImage) {
+        profileImageUrl = await uploadImage(profileImage, 'profile-images', 'drivers');
       }
       
-      // 1. Créer un compte utilisateur avec authentification
-      const { data: userData, error: signUpError } = await signUp(formData.email, formData.password, {
-        full_name: formData.name,
-        user_type: "driver",
-        phone_number: formData.phone,
-        driver_license: formData.license,
-        profile_image: profileImageUrl,
-        is_verified: false
-      });
-      
-      if (signUpError) {
-        throw signUpError;
+      if (vehicleImage) {
+        vehicleImageUrl = await uploadImage(vehicleImage, 'vehicle-images', 'vehicles');
       }
       
-      // 2. Si l'inscription réussit, enregistrer les informations du véhicule
-      if (userData?.user?.id) {
-        // Créer l'entrée du véhicule
-        const { error: vehicleError } = await supabase.from('vehicles').insert({
-          driver_id: userData.user.id,
-          brand: formData.vehicleBrand,
-          model: formData.vehicleModel,
-          registration_number: formData.registration,
-          image: vehicleImageUrl
-        });
-        
-        if (vehicleError) {
-          console.error("Erreur lors de l'enregistrement du véhicule:", vehicleError);
-        }
+      // 3. Ajouter les informations du chauffeur dans le profil
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ 
+          phone_number: phone,
+          driver_license: driverLicense,
+          profile_image: profileImageUrl,
+          is_driver: true
+        })
+        .eq('id', userId);
+      
+      if (profileError) {
+        throw profileError;
       }
       
-      toast.success(t('registerSuccess'), {
-        description: t('registerSuccessMessage'),
-        position: "top-center",
-        duration: 4000,
-        style: {
-          background: "linear-gradient(90deg, hsla(39, 100%, 77%, 1) 0%, hsla(22, 90%, 57%, 1) 100%)",
-          color: "white",
-          border: "none"
-        }
-      });
+      // 4. Ajouter les informations du véhicule
+      const { error: vehicleError } = await supabase
+        .from('vehicles')
+        .insert([
+          { 
+            driver_id: userId,
+            brand: carBrand,
+            model: carModel,
+            registration_number: plateNumber,
+            image: vehicleImageUrl
+          }
+        ]);
       
-      setTimeout(() => navigate('/login'), 2000);
+      if (vehicleError) {
+        throw vehicleError;
+      }
+      
+      toast.success("Inscription réussie ! Votre compte chauffeur a été créé.");
+      navigate("/");
     } catch (error: any) {
-      console.error("Erreur lors de l'inscription:", error);
-      toast.error(t('registerFailed'), {
-        description: error.message || t('registerFailedMessage'),
-      });
+      toast.error(`Erreur lors de l'inscription: ${error.message || "Veuillez réessayer."}`);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <AuthBackground>
-      <AuthContainer 
-        title="WASSALNI" 
-        subtitle={t('driverRegistration')}
-      >
-        {/* Indicateur d'étape */}
-        <StepIndicator currentStep={step} />
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {step === 1 && (
-            <>
-              <FormField
-                id="name"
-                label={t('fullName')}
-                type="text"
-                placeholder={t('namePlaceholder')}
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-              />
-              <FormField
-                id="email"
-                label="Email"
-                type="email"
-                placeholder={t('emailPlaceholder')}
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
-              <FormField
-                id="phone"
-                label={t('phoneNumber')}
-                type="tel"
-                placeholder={t('phoneNumberPlaceholder')}
-                value={formData.phone}
-                onChange={handleInputChange}
-                required
-              />
-              <FormField
-                id="password"
-                label={t('password')}
-                type="password"
-                placeholder={t('passwordPlaceholder')}
-                value={formData.password}
-                onChange={handleInputChange}
-                required
-              />
-            </>
-          )}
-
-          {step === 2 && (
-            <>
-              <FormField
-                id="license"
-                label={t('licenseNumber')}
-                type="text"
-                placeholder={t('licenseNumber')}
-                value={formData.license}
-                onChange={handleInputChange}
-                required
-              />
-              <FormField
-                id="vehicleBrand"
-                label={t('vehicleBrand')}
-                type="text"
-                placeholder="Ex: Renault, Peugeot..."
-                value={formData.vehicleBrand}
-                onChange={handleInputChange}
-                required
-              />
-              <FormField
-                id="vehicleModel"
-                label={t('vehicleModel')}
-                type="text"
-                placeholder="Ex: Symbol, 301..."
-                value={formData.vehicleModel}
-                onChange={handleInputChange}
-                required
-              />
-              <FormField
-                id="registration"
-                label={t('registrationNumber')}
-                type="text"
-                placeholder={t('registrationNumber')}
-                value={formData.registration}
-                onChange={handleInputChange}
-                required
-              />
-            </>
-          )}
-
-          {step === 3 && (
-            <>
-              <ProfilePhotoUpload
-                onImageChange={handleProfileImageChange}
-                preview={previewProfile}
-                label={t('profilePicture')}
-              />
-
-              <ProfilePhotoUpload
-                onImageChange={handleVehicleImageChange}
-                preview={previewVehicle}
-                label={t('vehiclePicture')}
-                isVehicle={true}
-              />
-            </>
-          )}
-
-          <StepNavigation 
-            step={step} 
-            prevStep={prevStep} 
-            nextStep={nextStep} 
-            isLastStep={step === 3} 
-            isLoading={isLoading}
+    <AuthContainer
+      title="Devenir Chauffeur"
+      subtitle="Rejoignez notre réseau de chauffeurs et commencez à proposer des trajets."
+    >
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <FormField
+            id="firstName"
+            label="Prénom"
+            type="text"
+            placeholder="Entrez votre prénom"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
           />
-        </form>
-
-        <p className="text-center text-white/90 mt-8">
-          {t('alreadyHaveAccount')}{" "}
-          <a href="/login" className="text-white hover:underline font-medium">
-            {t('login')}
-          </a>
+          
+          <FormField
+            id="lastName"
+            label="Nom"
+            type="text"
+            placeholder="Entrez votre nom"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+          />
+        </div>
+        
+        <FormField
+          id="email"
+          label="Email"
+          type="email"
+          placeholder="Entrez votre adresse email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        
+        <FormField
+          id="phone"
+          label="Téléphone"
+          type="tel"
+          placeholder="Entrez votre numéro de téléphone"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          required
+        />
+        
+        <FormField
+          id="password"
+          label="Mot de passe"
+          type="password"
+          placeholder="Créez un mot de passe sécurisé"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        
+        <FormField
+          id="driverLicense"
+          label="Numéro de permis de conduire"
+          type="text"
+          placeholder="Entrez votre numéro de permis"
+          value={driverLicense}
+          onChange={(e) => setDriverLicense(e.target.value)}
+          required
+        />
+        
+        <div className="pt-4 border-t border-white/10">
+          <h3 className="text-white text-lg font-medium mb-4">Information sur le véhicule</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+            <FormField
+              id="carBrand"
+              label="Marque du véhicule"
+              type="text"
+              placeholder="Ex: Renault, Peugeot, Toyota..."
+              value={carBrand}
+              onChange={(e) => setCarBrand(e.target.value)}
+              required
+            />
+            
+            <FormField
+              id="carModel"
+              label="Modèle du véhicule"
+              type="text"
+              placeholder="Ex: Clio, 308, Corolla..."
+              value={carModel}
+              onChange={(e) => setCarModel(e.target.value)}
+              required
+            />
+          </div>
+          
+          <FormField
+            id="plateNumber"
+            label="Numéro d'immatriculation"
+            type="text"
+            placeholder="Entrez le numéro d'immatriculation"
+            value={plateNumber}
+            onChange={(e) => setPlateNumber(e.target.value)}
+            required
+          />
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4">
+          <ProfilePhotoUpload 
+            onImageChange={handleProfileImageChange}
+            preview={profilePreview}
+            label="Photo de profil"
+          />
+          
+          <ProfilePhotoUpload 
+            onImageChange={handleVehicleImageChange}
+            preview={vehiclePreview}
+            label="Photo du véhicule"
+            isVehicle={true}
+          />
+        </div>
+        
+        <SubmitButton isLoading={isLoading}>S'inscrire comme chauffeur</SubmitButton>
+      </form>
+      
+      <div className="mt-6">
+        <p className="text-center text-white/70">
+          Vous avez déjà un compte ?{" "}
+          <Link to="/login" className="text-white hover:underline">
+            Connectez-vous
+          </Link>
         </p>
-      </AuthContainer>
-    </AuthBackground>
+      </div>
+      
+      <div className="mt-3">
+        <p className="text-center text-white/70">
+          Vous êtes un passager ?{" "}
+          <Link to="/register" className="text-white hover:underline">
+            Inscrivez-vous en tant que passager
+          </Link>
+        </p>
+      </div>
+    </AuthContainer>
   );
 };
 
