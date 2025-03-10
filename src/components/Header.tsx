@@ -46,6 +46,13 @@ const Header = () => {
     }
   };
 
+  // Get display name - use full_name or first name from profile if available, otherwise use email
+  const getDisplayName = () => {
+    if (userProfile?.full_name) return userProfile.full_name;
+    if (userProfile?.first_name) return userProfile.first_name;
+    return user?.email?.split('@')[0] || '';
+  };
+
   return (
     <header
       className={`fixed w-full z-50 transition-all duration-300 ${
@@ -130,10 +137,10 @@ const Header = () => {
           {user ? (
             <div className="flex items-center space-x-3">
               <div className="text-white text-sm">
-                {userProfile?.full_name || user.email}
+                {getDisplayName()}
               </div>
               <Link
-                to="/settings"
+                to="/profile"
                 className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
                 aria-label={t('profile')}
               >
@@ -165,7 +172,7 @@ const Header = () => {
           )}
         </div>
 
-        {/* Menu Mobile */}
+        {/* Mobile menu button */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="md:hidden p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
@@ -175,7 +182,7 @@ const Header = () => {
         </button>
       </div>
 
-      {/* Menu Mobile Overlay */}
+      {/* Mobile menu overlay */}
       {isMenuOpen && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden">
           <div className="h-full w-3/4 bg-gradient-to-b from-[#45B39D]/90 to-[#FEC6A1]/90 p-6 flex flex-col justify-between">
@@ -215,10 +222,10 @@ const Header = () => {
                 {user ? (
                   <>
                     <div className="text-white mb-2">
-                      {userProfile?.full_name || user.email}
+                      {getDisplayName()}
                     </div>
                     <Link
-                      to="/settings"
+                      to="/profile"
                       className="block px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors text-center"
                     >
                       {t('profile')}

@@ -27,6 +27,7 @@ import Map from "./pages/Map";
 import CreateTrip from "./pages/CreateTrip";
 import CommunityChat from "./pages/CommunityChat";
 import UserProfile from "./pages/UserProfile";
+import RequireAuth from "./components/auth/RequireAuth";
 
 // Client React Query pour la gestion d'état et des requêtes
 const queryClient = new QueryClient();
@@ -57,9 +58,23 @@ const App = () => (
                 <Route path="/register" element={<Register />} />
                 <Route path="/register-driver" element={<RegisterDriver />} />
                 <Route path="/register-passenger" element={<RegisterPassenger />} />
-                <Route path="/reservation" element={<ReservationPage />} />
+                <Route 
+                  path="/reservation" 
+                  element={
+                    <RequireAuth>
+                      <ReservationPage />
+                    </RequireAuth>
+                  } 
+                />
+                <Route 
+                  path="/profile" 
+                  element={
+                    <RequireAuth>
+                      <UserProfile />
+                    </RequireAuth>
+                  } 
+                />
                 <Route path="/settings" element={<Settings />} />
-                <Route path="/profile" element={<UserProfile />} />
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/search-help" element={<SearchHelp />} />

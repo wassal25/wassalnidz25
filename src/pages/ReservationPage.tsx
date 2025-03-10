@@ -1,4 +1,3 @@
-
 // =======================================================
 // Page de réservation
 // Description: Page permettant aux utilisateurs de finaliser leur réservation
@@ -9,6 +8,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Check, Calendar, Clock, MapPin, Users, CreditCard, ChevronLeft, User, Settings, Shield, CreditCardIcon, Truck, Star, Phone } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { supabase } from "@/lib/supabase";
+import { toast } from "react-toastify";
 
 // Interface pour le type de voyage
 interface TripDetails {
@@ -65,20 +66,56 @@ const ReservationPage = () => {
   // Calculer le prix total
   const totalPrice = trip ? trip.price * seatCount : 0;
 
+  // Function to handle reservation completion
+  const completeReservation = async () => {
+    if (!trip || !trip.id) {
+      toast.error("Impossible de compléter la réservation: détails du voyage manquants");
+      return;
+    }
+    
+    try {
+      setIsLoading(true);
+      
+      // Save reservation to Supabase
+      const { error } = await supabase.from('reservations').insert({
+        trip_id: trip.id,
+        seats_booked: seatCount,
+        payment_method: paymentMethod,
+        phone_number: phoneNumber,
+        notes: notes,
+        status: 'confirmed'
+      });
+      
+      if (error) throw error;
+      
+      // Update trip's available seats
+      const { error: updateError } = await supabase
+        .from('trips')
+        .update({ seats: trip.seats - seatCount })
+        .eq('id', trip.id);
+      
+      if (updateError) throw updateError;
+      
+      // Continue with confirmation process
+      setIsLoading(false);
+      setStep('confirmation');
+      setReservationComplete(true);
+      window.scrollTo(0, 0);
+      
+    } catch (error) {
+      console.error("Erreur lors de la réservation:", error);
+      setIsLoading(false);
+      toast.error("Une erreur est survenue lors de la réservation. Veuillez réessayer.");
+    }
+  };
+
   // Gestionnaire pour passer à l'étape suivante
   const nextStep = () => {
     if (step === 'details') {
       setStep('payment');
       window.scrollTo(0, 0);
     } else if (step === 'payment') {
-      setIsLoading(true);
-      // Simuler un temps de chargement pour le traitement du paiement
-      setTimeout(() => {
-        setIsLoading(false);
-        setStep('confirmation');
-        setReservationComplete(true);
-        window.scrollTo(0, 0);
-      }, 1500);
+      completeReservation();
     } else if (step === 'confirmation') {
       navigate('/');
     }

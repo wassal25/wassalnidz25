@@ -19,6 +19,7 @@ const UserProfile = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
   
   // États du formulaire
   const [formData, setFormData] = useState({
@@ -37,6 +38,11 @@ const UserProfile = () => {
         phone_number: userProfile.phone_number || "",
         address: userProfile.address || "",
       });
+      
+      // Set profile image if available
+      if (userProfile.avatar_url) {
+        setProfileImage(userProfile.avatar_url);
+      }
     }
   }, [user, userProfile]);
 
@@ -71,13 +77,27 @@ const UserProfile = () => {
 
     // Télécharger l'image vers Supabase Storage
     try {
-      const { error } = await supabase.storage
+      const { error: storageError, data } = await supabase.storage
         .from('avatars')
         .upload(filePath, file);
 
-      if (error) throw error;
+      if (storageError) throw storageError;
+      
+      // Get the public URL
+      const { data: urlData } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+        
+      if (urlData?.publicUrl) {
+        // Update profile with new avatar URL
+        await updateUserProfile({
+          avatar_url: urlData.publicUrl
+        });
+      }
+      
     } catch (error) {
       console.error("Erreur lors du téléchargement de l'image:", error);
+      toast.error("Erreur lors du téléchargement de l'image");
     }
   };
 
@@ -92,8 +112,18 @@ const UserProfile = () => {
         phone_number: formData.phone_number,
         address: formData.address,
       });
+      
+      setUpdateSuccess(true);
+      toast.success("Profil mis à jour avec succès");
+      
+      // Reset success message after 3 seconds
+      setTimeout(() => {
+        setUpdateSuccess(false);
+      }, 3000);
+      
     } catch (error) {
       console.error("Erreur lors de la mise à jour du profil:", error);
+      toast.error("Erreur lors de la mise à jour du profil");
     } finally {
       setIsLoading(false);
     }
@@ -132,7 +162,7 @@ const UserProfile = () => {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
               <button
-                onClick={() => navigate("/settings")}
+                onClick={() => navigate("/")}
                 className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors mr-3"
               >
                 <ArrowLeft size={20} />
@@ -148,6 +178,12 @@ const UserProfile = () => {
               {t('logout')}
             </button>
           </div>
+
+          {updateSuccess && (
+            <div className="mb-4 p-3 bg-green-500/20 text-white rounded-lg">
+              Profil mis à jour avec succès!
+            </div>
+          )}
 
           <div className="mb-6 flex justify-center">
             <ProfilePhotoUpload

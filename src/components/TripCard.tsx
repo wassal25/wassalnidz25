@@ -1,4 +1,3 @@
-
 // =======================================================
 // Composant TripCard
 // Description: Carte affichant les détails d'un trajet disponible
@@ -6,11 +5,16 @@
 
 import { formatDate } from "@/lib/utils";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/context/LanguageContext";
+import { toast } from "react-toastify";
 
 /**
  * Interface définissant les propriétés du composant TripCard
  */
 interface TripCardProps {
+  id: string;          // Identifiant du trajet
   from: string;         // Lieu de départ
   to: string;           // Destination
   date: string;         // Date du trajet
@@ -18,6 +22,7 @@ interface TripCardProps {
   price: number;        // Prix en DZD
   image: string;        // URL de l'image
   seats: number;        // Nombre de places disponibles
+  driverName: string;   // Nom du conducteur
   onReserve?: () => void; // Fonction de callback pour la réservation
 }
 
@@ -27,7 +32,33 @@ interface TripCardProps {
  * Ce composant présente les informations d'un trajet disponible
  * sous forme de carte avec une image, des détails et un bouton de réservation.
  */
-const TripCard = ({ from, to, date, time, price, image, seats, onReserve }: TripCardProps) => {
+const TripCard = ({ id, from, to, date, time, price, image, seats, driverName, onReserve }: TripCardProps) => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { t } = useLanguage();
+  
+  // Format the date to a more readable format
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  // Handle reservation button click
+  const handleReservation = () => {
+    if (!user) {
+      toast.error("Veuillez vous connecter pour réserver ce trajet");
+      navigate('/login');
+      return;
+    }
+    
+    if (onReserve) {
+      onReserve();
+    }
+  };
+
   // Obtenir l'image appropriée basée sur la destination
   const getLocalImage = (from: string, to: string) => {
     // Assigner une image basée sur la destination ou l'origine
@@ -118,7 +149,7 @@ const TripCard = ({ from, to, date, time, price, image, seats, onReserve }: Trip
           <button 
             onClick={(e) => {
               e.stopPropagation();
-              if (onReserve) onReserve();
+              handleReservation();
             }}
             className="px-6 py-3 bg-[#FEC6A1]/50 text-white rounded-full hover:bg-[#FEC6A1]/60 transition-all duration-300 hover:shadow-lg hover:scale-105"
           >
