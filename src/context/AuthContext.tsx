@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
@@ -193,6 +194,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Charger le profil utilisateur si la connexion réussit
       if (data.user) {
         await loadUserProfile(data.user.id);
+        toast.success("Connecté avec succès!");
       }
       
       return data;
@@ -234,7 +236,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         throw error;
       }
       
-      console.log("Déconnexion réussie");
+      // La redirection et le message de succès sont gérés par l'écouteur onAuthStateChange
+      console.log("Déconnexion réussie côté API");
     } catch (error: any) {
       console.error("Erreur lors de la déconnexion:", error);
       toast.error(`Erreur de déconnexion: ${error.message}`);
