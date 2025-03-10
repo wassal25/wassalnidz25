@@ -1,11 +1,10 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import AuthContainer from "@/components/auth/AuthContainer";
 import FormField from "@/components/auth/FormField";
 import SubmitButton from "@/components/auth/SubmitButton";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth/useAuth";
 
 const Register = () => {
   const { signUp } = useAuth();
@@ -15,14 +14,12 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fonction de gestion de la soumission du formulaire
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
       await signUp(email, password, firstName, lastName);
-      // Les messages et redirections sont maintenant gérés dans AuthContext
     } catch (error) {
       console.error(error);
     } finally {

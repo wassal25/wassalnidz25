@@ -6,9 +6,9 @@
 import { formatDate } from "@/lib/utils";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth/useAuth";
 import { useLanguage } from "@/context/LanguageContext";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 /**
  * Interface définissant les propriétés du composant TripCard

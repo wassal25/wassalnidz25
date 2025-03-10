@@ -1,3 +1,4 @@
+
 // =======================================================
 // Fichier: App.tsx
 // Description: Composant racine App
@@ -11,7 +12,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { LanguageProvider } from "@/context/LanguageContext";
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider } from "@/context/auth/AuthProvider";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";

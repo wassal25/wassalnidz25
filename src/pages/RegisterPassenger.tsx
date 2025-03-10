@@ -1,11 +1,10 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import AuthContainer from "@/components/auth/AuthContainer";
 import FormField from "@/components/auth/FormField";
 import SubmitButton from "@/components/auth/SubmitButton";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth/useAuth";
 import { supabase } from "@/lib/supabase";
 import ProfilePhotoUpload from "@/components/driver/ProfilePhotoUpload";
 

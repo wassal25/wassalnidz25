@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { Car, User, Facebook, Mail, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth/useAuth";
 import AuthBackground from "@/components/auth/AuthBackground";
 import AuthContainer from "@/components/auth/AuthContainer";
 import FormField from "@/components/auth/FormField";
