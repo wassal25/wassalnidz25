@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Moon, Sun, Globe, User, LogOut } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { useLanguage } from "@/context/LanguageContext";
@@ -17,7 +17,6 @@ const Header = () => {
   const { language, setLanguage, t } = useLanguage();
   const { user, signOut, userProfile } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
 
   // Détection du défilement pour changer l'apparence de l'en-tête
   useEffect(() => {
@@ -39,8 +38,9 @@ const Header = () => {
   // Fonction de déconnexion
   const handleLogout = async () => {
     try {
+      console.log("Clic sur le bouton de déconnexion");
       await signOut();
-      // La navigation sera gérée par le contexte d'authentification
+      // La navigation sera gérée par le contexte d'authentification dans l'écouteur d'événements d'authentification
     } catch (error) {
       console.error("Erreur lors de la déconnexion:", error);
     }

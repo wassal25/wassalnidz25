@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import AuthContainer from "@/components/auth/AuthContainer";
 import FormField from "@/components/auth/FormField";
@@ -8,7 +8,6 @@ import SubmitButton from "@/components/auth/SubmitButton";
 import { useAuth } from "@/context/AuthContext";
 
 const Register = () => {
-  const navigate = useNavigate();
   const { signUp } = useAuth();
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -23,10 +22,8 @@ const Register = () => {
 
     try {
       await signUp(email, password, firstName, lastName);
-      toast.success("Inscription réussie ! Vous êtes maintenant connecté.");
-      navigate("/");
+      // Les messages et redirections sont maintenant gérés dans AuthContext
     } catch (error) {
-      toast.error("Erreur lors de l'inscription. Veuillez réessayer.");
       console.error(error);
     } finally {
       setIsLoading(false);

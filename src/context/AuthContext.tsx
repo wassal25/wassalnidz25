@@ -1,7 +1,7 @@
-
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 // Interface pour le profil utilisateur
 interface UserProfile {
@@ -34,6 +34,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<any | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Fonction pour charger le profil utilisateur
   const loadUserProfile = async (userId: string) => {
@@ -79,12 +80,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Mettre en place un listener pour les changements d'authentification
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log("Auth event:", event);
         setUser(session?.user || null);
         
         if (session?.user) {
           await loadUserProfile(session.user.id);
+          if (event === 'SIGNED_IN') {
+            toast.success("Connecté avec succès!");
+            navigate('/');
+          }
         } else {
           setUserProfile(null);
+          if (event === 'SIGNED_OUT') {
+            toast.success("Déconnecté avec succès!");
+            navigate('/');
+          }
         }
         
         setLoading(false);
@@ -94,7 +104,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, [navigate]);
 
   /**
    * Mise à jour du profil utilisateur
@@ -156,6 +166,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           ]);
 
         if (profileError) throw profileError;
+        
+        toast.success("Inscription réussie! Vous êtes maintenant connecté.");
+        navigate('/');
       }
 
       return data;
@@ -213,11 +226,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
    */
   const signOut = async () => {
     try {
+      console.log("Tentative de déconnexion...");
       const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      setUser(null);
-      setUserProfile(null);
+      
+      if (error) {
+        console.error("Erreur de déconnexion:", error);
+        throw error;
+      }
+      
+      console.log("Déconnexion réussie");
     } catch (error: any) {
+      console.error("Erreur lors de la déconnexion:", error);
       toast.error(`Erreur de déconnexion: ${error.message}`);
       throw error;
     }
