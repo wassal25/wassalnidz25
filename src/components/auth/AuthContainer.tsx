@@ -14,8 +14,8 @@ interface AuthContainerProps {
  */
 const AuthContainer: React.FC<AuthContainerProps> = ({ title, subtitle, children }) => {
   return (
-    <div className="min-h-screen relative flex flex-col items-center justify-center w-full">
-      {/* Fond animé */}
+    <div className="min-h-screen w-full">
+      {/* Fond animé avec tout le contenu à l'intérieur */}
       <AuthBackground>
         {/* Contenu principal */}
         <div className="z-10 w-full max-w-md px-6 py-8 bg-black/30 backdrop-blur-md rounded-2xl shadow-2xl border border-white/10">

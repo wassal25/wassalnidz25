@@ -16,7 +16,7 @@ export const AuthBackground: React.FC<AuthBackgroundProps> = ({ children }) => {
   const { t } = useLanguage();
   
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden">
       {/* Bouton de retour à l'accueil */}
       <Link 
         to="/" 
@@ -28,7 +28,7 @@ export const AuthBackground: React.FC<AuthBackgroundProps> = ({ children }) => {
       
       {/* Image d'arrière-plan de Constantine */}
       <div 
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-0 w-full h-full"
         style={{
           backgroundImage: 'url("https://images.unsplash.com/photo-1466442929976-97f336a657be?q=80&w=2070")',
           backgroundSize: 'cover',
