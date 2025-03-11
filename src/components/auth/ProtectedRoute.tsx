@@ -1,7 +1,7 @@
 
 import { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth/useAuth";
 import { toast } from "sonner";
 
 interface ProtectedRouteProps {

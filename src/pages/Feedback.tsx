@@ -1,3 +1,4 @@
+
 // =======================================================
 // Page de feedback
 // Description: Permet aux utilisateurs de soumettre des commentaires
@@ -10,7 +11,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { MessageSquare, Send, Mail, User, Phone } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "@/context/AuthContext"; 
+import { useAuth } from "@/context/auth/useAuth"; 
 import { supabase } from "@/lib/supabase";
 
 const Feedback = () => {
