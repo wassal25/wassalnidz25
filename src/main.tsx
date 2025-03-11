@@ -20,6 +20,9 @@ window.addEventListener('unhandledrejection', (event) => {
   console.error('Unhandled promise rejection:', event.reason);
 });
 
+// Add timing logs to track rendering performance
+console.time('Initial render');
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ThemeProvider>
@@ -28,4 +31,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       </LanguageProvider>
     </ThemeProvider>
   </React.StrictMode>,
-)
+);
+
+// Log after render
+window.addEventListener('load', () => {
+  console.timeEnd('Initial render');
+  console.log('Application fully loaded');
+});

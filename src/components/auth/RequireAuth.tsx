@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/auth/useAuth';
 import { toast } from 'sonner';
@@ -16,19 +16,37 @@ interface RequireAuthProps {
 const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
+  const [isTimeout, setIsTimeout] = useState(false);
 
-  // Si l'authentification est en cours de chargement, afficher un indicateur de chargement
+  // Add a timeout to prevent infinite loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (loading) {
+        setIsTimeout(true);
+      }
+    }, 5000); // 5 seconds timeout
+
+    return () => clearTimeout(timer);
+  }, [loading]);
+
+  // If loading has timed out, redirect to login
+  if (isTimeout) {
+    toast.error("Problème de connexion. Veuillez vous reconnecter.");
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // If still loading, show loading indicator
   if (loading) {
     return <Loading fullScreen text="Vérification de l'authentification..." />;
   }
 
-  // Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
+  // If the user isn't logged in, redirect to the login page
   if (!user) {
     toast.error("Vous devez être connecté pour accéder à cette page");
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Si l'utilisateur est connecté, afficher le contenu protégé
+  // If the user is logged in, show the protected content
   return <>{children}</>;
 };
 

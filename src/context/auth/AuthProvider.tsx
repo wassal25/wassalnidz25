@@ -32,7 +32,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const checkUser = async () => {
       try {
         console.log("Checking user session...");
+        setLoading(true);
+        
         const { data } = await supabase.auth.getSession();
+        console.log("Session data:", data);
+        
         setUser(data.session?.user || null);
         
         if (data.session?.user) {
@@ -42,6 +46,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           console.log("Profile loaded:", profile);
         } else {
           console.log("No user session found");
+          setUserProfile(null);
         }
       } catch (error) {
         console.error("Erreur lors de la vérification de l'utilisateur:", error);
@@ -61,11 +66,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(session?.user || null);
         
         if (session?.user) {
-          const profile = await loadUserProfile(session.user.id);
-          setUserProfile(profile);
-          if (event === 'SIGNED_IN') {
-            toast.success("Connecté avec succès!");
-            navigate('/');
+          try {
+            const profile = await loadUserProfile(session.user.id);
+            setUserProfile(profile);
+            if (event === 'SIGNED_IN') {
+              toast.success("Connecté avec succès!");
+              navigate('/');
+            }
+          } catch (error) {
+            console.error("Error loading profile:", error);
           }
         } else {
           setUserProfile(null);
@@ -154,12 +163,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // If authentication is still initializing, show a loading spinner
   if (!authInitialized) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-teal-500/80 to-teal-600/90">
         <div className="p-4 rounded-xl bg-white/10 backdrop-blur-md text-center">
           <div className="w-10 h-10 border-4 border-t-transparent border-white rounded-full animate-spin mx-auto"></div>
           <p className="text-white font-medium mt-4">Initialisation de l'authentification...</p>
+          <p className="text-white/70 text-sm mt-2">Veuillez patienter un instant...</p>
         </div>
       </div>
     );
