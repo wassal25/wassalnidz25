@@ -3,6 +3,7 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/auth/useAuth';
 import { toast } from 'sonner';
+import { Loading } from '@/components/ui/loading';
 
 interface RequireAuthProps {
   children: React.ReactNode;
@@ -18,14 +19,7 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
 
   // Si l'authentification est en cours de chargement, afficher un indicateur de chargement
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-teal-500/80 to-teal-600/90">
-        <div className="p-4 rounded-xl bg-white/10 backdrop-blur-md">
-          <div className="w-8 h-8 border-4 border-t-transparent border-white rounded-full animate-spin mx-auto"></div>
-          <p className="text-white mt-4">Chargement...</p>
-        </div>
-      </div>
-    );
+    return <Loading fullScreen text="Vérification de l'authentification..." />;
   }
 
   // Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion

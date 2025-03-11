@@ -9,7 +9,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { AuthProvider } from "@/context/auth/AuthProvider";
@@ -31,7 +32,38 @@ import UserProfile from "./pages/UserProfile";
 import RequireAuth from "./components/auth/RequireAuth";
 
 // Client React Query pour la gestion d'état et des requêtes
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
+
+// ScrollToTop component to scroll to top on route change
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  
+  return null;
+};
+
+// Router navigation tracking
+const NavigationHandler = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    console.log('Navigation to:', location.pathname);
+  }, [location]);
+  
+  return null;
+};
 
 /**
  * Composant principal de l'application
@@ -52,6 +84,8 @@ const App = () => (
           
           {/* Configuration du routeur avec les différentes routes de l'application */}
           <BrowserRouter>
+            <ScrollToTop />
+            <NavigationHandler />
             <AuthProvider>
               <Routes>
                 <Route path="/" element={<Index />} />
