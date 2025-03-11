@@ -1,3 +1,4 @@
+
 // =======================================================
 // Composant TripCard
 // Description: Carte affichant les détails d'un trajet disponible
@@ -48,36 +49,22 @@ const TripCard = ({ id, from, to, date, time, price, image, seats, driverName, o
 
   // Handle reservation button click
   const handleReservation = () => {
+    // Check if there are seats available
+    if (seats <= 0) {
+      toast.error("Ce trajet est complet");
+      return;
+    }
+    
+    // Check if user is logged in
     if (!user) {
       toast.error("Veuillez vous connecter pour réserver ce trajet");
       navigate('/login');
       return;
     }
     
+    // Proceed with reservation
     if (onReserve) {
       onReserve();
-    }
-  };
-
-  // Obtenir l'image appropriée basée sur la destination
-  const getLocalImage = (from: string, to: string) => {
-    // Assigner une image basée sur la destination ou l'origine
-    if (from.includes("Constantine") || to.includes("Constantine")) {
-      return "/images/destination-1.jpg";
-    } else if (from.includes("Ali Mendjeli") || to.includes("Ali Mendjeli")) {
-      return "/images/destination-2.jpg"; 
-    } else if (from.includes("El Khroub") || to.includes("El Khroub")) {
-      return "/images/destination-3.jpg";
-    } else if (from.includes("Didouche") || to.includes("Didouche")) {
-      return "/images/destination-4.jpg";
-    } else if (from.includes("Hamma") || to.includes("Hamma")) {
-      return "/images/destination-5.jpg";
-    } else if (from.includes("Zighoud") || to.includes("Zighoud")) {
-      return "/images/destination-6.jpg";
-    } else if (from.includes("Ain Smara") || to.includes("Ain Smara")) {
-      return "/images/destination-7.jpg";
-    } else {
-      return "/images/destination-8.jpg"; // Image par défaut
     }
   };
 
@@ -104,6 +91,11 @@ const TripCard = ({ id, from, to, date, time, price, image, seats, driverName, o
 
   // Obtenir l'image appropriée
   const displayImage = mapDestinationToNewImage(from, to);
+
+  // Determine button status based on seats availability
+  const reservationButtonClass = seats <= 0 
+    ? "px-6 py-3 bg-gray-500/50 text-white/70 rounded-full cursor-not-allowed"
+    : "px-6 py-3 bg-[#FEC6A1]/50 text-white rounded-full hover:bg-[#FEC6A1]/60 transition-all duration-300 hover:shadow-lg hover:scale-105";
 
   return (
     <div className="bg-[#FDE1D3]/40 backdrop-blur-sm border border-white/20 shadow-lg rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] animate-fade-up">
@@ -138,9 +130,11 @@ const TripCard = ({ id, from, to, date, time, price, image, seats, driverName, o
         </div>
 
         {/* Ligne places disponibles */}
-        <div className="flex items-center gap-2 mb-6 text-white/90">
-          <Users className="w-5 h-5" />
-          <span className="text-base">{seats} places disponibles</span>
+        <div className="flex items-center gap-2 mb-6">
+          <Users className="w-5 h-5 text-white" />
+          <span className={`text-base ${seats <= 0 ? 'text-red-300' : 'text-white/90'}`}>
+            {seats <= 0 ? 'Complet' : `${seats} places disponibles`}
+          </span>
         </div>
         
         {/* Ligne prix et bouton */}
@@ -151,9 +145,10 @@ const TripCard = ({ id, from, to, date, time, price, image, seats, driverName, o
               e.stopPropagation();
               handleReservation();
             }}
-            className="px-6 py-3 bg-[#FEC6A1]/50 text-white rounded-full hover:bg-[#FEC6A1]/60 transition-all duration-300 hover:shadow-lg hover:scale-105"
+            className={reservationButtonClass}
+            disabled={seats <= 0}
           >
-            Réserver
+            {seats <= 0 ? "Complet" : "Réserver"}
           </button>
         </div>
       </div>
