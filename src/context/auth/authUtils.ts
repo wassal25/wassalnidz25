@@ -1,5 +1,4 @@
-
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { UserProfile } from './types';
 import { toast } from 'sonner';
 
@@ -17,7 +16,28 @@ export const loadUserProfile = async (userId: string): Promise<UserProfile | nul
       return null;
     }
 
-    return data as UserProfile;
+    if (!data) return null;
+
+    // Map the database fields to the UserProfile type
+    const userProfile: UserProfile = {
+      id: data.id,
+      email: '', // Will be populated from auth user
+      first_name: data.full_name ? data.full_name.split(' ')[0] : undefined,
+      last_name: data.full_name ? data.full_name.split(' ')[1] : undefined,
+      full_name: data.full_name || undefined,
+      phone_number: data.phone_number || undefined,
+      address: data.address || undefined,
+      avatar_url: data.profile_image || undefined,
+      is_driver: data.user_type === 'driver',
+    };
+
+    // Get the user's email from auth
+    const { data: userData } = await supabase.auth.getUser();
+    if (userData?.user) {
+      userProfile.email = userData.user.email || '';
+    }
+
+    return userProfile;
   } catch (error) {
     console.error("Erreur lors du chargement du profil:", error);
     return null;
@@ -148,9 +168,21 @@ export const updateProfile = async (userId: string, data: Partial<UserProfile>) 
   try {
     if (!userId) throw new Error("Utilisateur non connecté");
 
+    // Convert from UserProfile structure to database structure
+    const dbData: any = {
+      full_name: data.full_name,
+      phone_number: data.phone_number,
+      address: data.address,
+    };
+    
+    // Map avatar_url to profile_image if it exists
+    if (data.avatar_url) {
+      dbData.profile_image = data.avatar_url;
+    }
+
     const { error } = await supabase
       .from('profiles')
-      .update(data)
+      .update(dbData)
       .eq('id', userId);
 
     if (error) throw error;
