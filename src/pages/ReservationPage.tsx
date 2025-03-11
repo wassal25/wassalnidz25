@@ -43,13 +43,52 @@ const ReservationPage = () => {
     }
 
     setLoading(true);
-
+    
     try {
+      // For the demo data trips, convert the ID to a UUID if it's not already
+      let tripId = trip.id;
+      // Check if it's a demo trip with format "trip-N"
+      if (trip.id && trip.id.startsWith('trip-')) {
+        // For demo data, we'll generate a UUID
+        tripId = crypto.randomUUID();
+        
+        // First, insert the trip into the trips table if it doesn't exist
+        const { data: existingTrip, error: checkError } = await supabase
+          .from('trips')
+          .select('id')
+          .eq('id', tripId)
+          .single();
+        
+        if (checkError && checkError.code !== 'PGRST116') {
+          // If error is not "no rows returned", it's a real error
+          throw checkError;
+        }
+        
+        if (!existingTrip) {
+          // Insert the trip data first
+          const { error: tripError } = await supabase
+            .from('trips')
+            .insert({
+              id: tripId,
+              from_location: trip.from,
+              to_location: trip.to,
+              date: trip.date,
+              time: trip.time,
+              price: trip.price,
+              seats: trip.seats,
+              image: trip.image || 'default.jpg',
+              driver_id: user.id // Using current user as driver for demo
+            });
+            
+          if (tripError) throw tripError;
+        }
+      }
+
       // 1. Create the reservation in the database
       const { data: reservation, error: reservationError } = await supabase
         .from('reservations')
         .insert({
-          trip_id: trip.id,
+          trip_id: tripId,
           passenger_id: user.id,
           seats_booked: seatsToBook,
           phone_number: phoneNumber,
@@ -66,7 +105,7 @@ const ReservationPage = () => {
       const { error: tripUpdateError } = await supabase
         .from('trips')
         .update({ seats: trip.seats - seatsToBook })
-        .eq('id', trip.id);
+        .eq('id', tripId);
 
       if (tripUpdateError) throw tripUpdateError;
 
@@ -146,7 +185,7 @@ const ReservationPage = () => {
                 <MapPin className="w-5 h-5 text-[#FEC6A1]" />
                 <div>
                   <p className="text-sm text-white/70">Départ</p>
-                  <p className="font-medium">{trip.from}</p>
+                  <p className="font-medium">{trip?.from}</p>
                 </div>
               </div>
               
@@ -154,7 +193,7 @@ const ReservationPage = () => {
                 <MapPin className="w-5 h-5 text-[#FEC6A1]" />
                 <div>
                   <p className="text-sm text-white/70">Destination</p>
-                  <p className="font-medium">{trip.to}</p>
+                  <p className="font-medium">{trip?.to}</p>
                 </div>
               </div>
               
@@ -162,7 +201,7 @@ const ReservationPage = () => {
                 <Calendar className="w-5 h-5 text-[#FEC6A1]" />
                 <div>
                   <p className="text-sm text-white/70">Date</p>
-                  <p className="font-medium">{new Date(trip.date).toLocaleDateString('fr-FR')}</p>
+                  <p className="font-medium">{trip?.date ? new Date(trip.date).toLocaleDateString('fr-FR') : ''}</p>
                 </div>
               </div>
               
@@ -170,7 +209,7 @@ const ReservationPage = () => {
                 <Clock className="w-5 h-5 text-[#FEC6A1]" />
                 <div>
                   <p className="text-sm text-white/70">Heure</p>
-                  <p className="font-medium">{trip.time}</p>
+                  <p className="font-medium">{trip?.time}</p>
                 </div>
               </div>
               
@@ -178,7 +217,7 @@ const ReservationPage = () => {
                 <Users className="w-5 h-5 text-[#FEC6A1]" />
                 <div>
                   <p className="text-sm text-white/70">Places disponibles</p>
-                  <p className="font-medium">{trip.seats}</p>
+                  <p className="font-medium">{trip?.seats}</p>
                 </div>
               </div>
               
@@ -186,7 +225,7 @@ const ReservationPage = () => {
                 <CreditCard className="w-5 h-5 text-[#FEC6A1]" />
                 <div>
                   <p className="text-sm text-white/70">Prix</p>
-                  <p className="font-medium">{trip.price} DZD</p>
+                  <p className="font-medium">{trip?.price} DZD</p>
                 </div>
               </div>
             </div>
@@ -206,7 +245,7 @@ const ReservationPage = () => {
                 className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-[#FEC6A1]/70"
                 disabled={loading}
               >
-                {[...Array(trip.seats)].map((_, i) => (
+                {trip && [...Array(trip.seats)].map((_, i) => (
                   <option key={i} value={i + 1} className="bg-teal-700">
                     {i + 1}
                   </option>
@@ -269,11 +308,11 @@ const ReservationPage = () => {
             <div className="mb-6 p-4 bg-white/5 rounded-lg">
               <div className="flex justify-between items-center">
                 <span className="text-white/80">Prix par place:</span>
-                <span className="text-white font-medium">{trip.price} DZD</span>
+                <span className="text-white font-medium">{trip?.price} DZD</span>
               </div>
               <div className="flex justify-between items-center font-bold mt-2 pt-2 border-t border-white/10">
                 <span className="text-white">Total:</span>
-                <span className="text-[#FEC6A1] text-xl">{trip.price * seatsToBook} DZD</span>
+                <span className="text-[#FEC6A1] text-xl">{trip?.price * seatsToBook} DZD</span>
               </div>
             </div>
             
