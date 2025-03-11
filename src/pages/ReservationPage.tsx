@@ -45,10 +45,15 @@ const ReservationPage = () => {
     setLoading(true);
     
     try {
+      console.log("Starting reservation process for trip:", trip);
+      console.log("User ID:", user.id);
+      
       // For the demo data trips, convert the ID to a UUID if it's not already
       let tripId = trip.id;
+      
       // Check if it's a demo trip with format "trip-N"
-      if (trip.id && trip.id.startsWith('trip-')) {
+      if (typeof trip.id === 'string' && trip.id.startsWith('trip-')) {
+        console.log("This is a demo trip, generating a UUID");
         // For demo data, we'll generate a UUID
         tripId = crypto.randomUUID();
         
@@ -61,10 +66,12 @@ const ReservationPage = () => {
         
         if (checkError && checkError.code !== 'PGRST116') {
           // If error is not "no rows returned", it's a real error
+          console.error("Error checking for existing trip:", checkError);
           throw checkError;
         }
         
         if (!existingTrip) {
+          console.log("Saving demo trip to database with ID:", tripId);
           // Insert the trip data first
           const { error: tripError } = await supabase
             .from('trips')
@@ -80,9 +87,22 @@ const ReservationPage = () => {
               driver_id: user.id // Using current user as driver for demo
             });
             
-          if (tripError) throw tripError;
+          if (tripError) {
+            console.error("Error saving trip to database:", tripError);
+            throw tripError;
+          }
         }
       }
+
+      console.log("Final trip ID for reservation:", tripId);
+      console.log("Creating reservation with data:", {
+        trip_id: tripId,
+        passenger_id: user.id,
+        seats_booked: seatsToBook,
+        phone_number: phoneNumber,
+        notes: notes,
+        payment_method: paymentMethod
+      });
 
       // 1. Create the reservation in the database
       const { data: reservation, error: reservationError } = await supabase
@@ -99,7 +119,12 @@ const ReservationPage = () => {
         .select()
         .single();
 
-      if (reservationError) throw reservationError;
+      if (reservationError) {
+        console.error("Reservation error:", reservationError);
+        throw reservationError;
+      }
+
+      console.log("Reservation created successfully:", reservation);
 
       // 2. Update the available seats in the trip
       const { error: tripUpdateError } = await supabase
@@ -107,7 +132,12 @@ const ReservationPage = () => {
         .update({ seats: trip.seats - seatsToBook })
         .eq('id', tripId);
 
-      if (tripUpdateError) throw tripUpdateError;
+      if (tripUpdateError) {
+        console.error("Trip update error:", tripUpdateError);
+        throw tripUpdateError;
+      }
+
+      console.log("Trip seats updated successfully, remaining seats:", (trip.seats - seatsToBook));
 
       toast.success("Réservation confirmée !", {
         description: `Vous avez réservé ${seatsToBook} place(s) pour ce trajet`
