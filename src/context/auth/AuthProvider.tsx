@@ -27,6 +27,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [authInitialized, setAuthInitialized] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,9 +39,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.log("Checking user session...");
         setLoading(true);
         
-        // Add a timeout to prevent endless checking
+        // Shorter timeout (5 seconds) to prevent long waiting
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error("Auth session check timed out")), 10000)
+          setTimeout(() => reject(new Error("Auth session check timed out")), 5000)
         );
         
         // Race the session check with a timeout
@@ -66,10 +67,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           } catch (profileError) {
             console.error("Error loading profile:", profileError);
             if (mounted) {
-              setAuthError("Error loading user profile");
+              // Don't set auth error for profile loading issues
               // Continue the flow even with profile error
-              setAuthInitialized(true);
-              setLoading(false);
+              console.log("Continuing despite profile error");
             }
           }
         } else {
@@ -78,16 +78,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUserProfile(null);
           }
         }
+        
+        // Always complete initialization regardless of errors
+        if (mounted) {
+          setAuthInitialized(true);
+          setLoading(false);
+          setAuthError(null);
+        }
       } catch (error) {
         console.error("Auth initialization error:", error);
         if (mounted) {
+          // Set error but don't block the app
           setAuthError(error instanceof Error ? error.message : "Unknown authentication error");
-        }
-      } finally {
-        if (mounted) {
-          setLoading(false);
+          
+          // Let the app continue anyway
           setAuthInitialized(true);
-          console.log("Auth initialization completed");
+          setLoading(false);
+          
+          // Auto-retry once for connectivity issues
+          if (retryCount < 1) {
+            setRetryCount(prev => prev + 1);
+            setTimeout(() => checkUser(), 1000);
+          }
         }
       }
     };
@@ -134,7 +146,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       mounted = false;
       authListener.subscription.unsubscribe();
     };
-  }, [navigate]);
+  }, [navigate, retryCount]);
 
   // Update user profile
   const updateUserProfile = async (data: Partial<UserProfile>) => {
@@ -218,7 +230,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     );
   }
 
-  // Show error state if there was an authentication error
+  // Show error state if there was an authentication error, but with a continue option
   if (authError) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-teal-500/80 to-teal-600/90">
@@ -233,12 +245,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           <div className="bg-white/10 p-3 rounded text-left mb-4">
             <p className="text-white/90 text-sm">{authError}</p>
           </div>
-          <button 
-            onClick={() => window.location.reload()}
-            className="w-full py-2 px-4 bg-white/20 hover:bg-white/30 text-white font-medium rounded-lg transition-colors"
-          >
-            Réessayer
-          </button>
+          <div className="grid grid-cols-2 gap-3">
+            <button 
+              onClick={() => window.location.reload()}
+              className="py-2 px-4 bg-white/20 hover:bg-white/30 text-white font-medium rounded-lg transition-colors"
+            >
+              Réessayer
+            </button>
+            <button 
+              onClick={() => {
+                setAuthError(null);
+                setLoading(false);
+              }}
+              className="py-2 px-4 bg-teal-500/30 hover:bg-teal-500/50 text-white font-medium rounded-lg transition-colors"
+            >
+              Continuer quand même
+            </button>
+          </div>
         </div>
       </div>
     );

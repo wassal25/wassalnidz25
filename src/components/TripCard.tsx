@@ -1,4 +1,3 @@
-
 // =======================================================
 // Composant TripCard
 // Description: Carte affichant les détails d'un trajet disponible
@@ -40,6 +39,7 @@ const TripCard = ({ id, from, to, date, time, price, image, seats: initialSeats,
   const { t } = useLanguage();
   const [seats, setSeats] = useState(initialSeats);
   const [isReserving, setIsReserving] = useState(false);
+  const [dbTripId, setDbTripId] = useState<string | null>(null);
   
   // Format the date to a more readable format
   const formatDate = (dateString: string) => {
@@ -50,10 +50,42 @@ const TripCard = ({ id, from, to, date, time, price, image, seats: initialSeats,
     });
   };
 
-  // Update seats when initialSeats prop changes
+  // Initialize trip data - important for handling both demo and real trips
   useEffect(() => {
+    // Always keep local state in sync with props
     setSeats(initialSeats);
-  }, [initialSeats]);
+    
+    // Check if this is a demo trip and if it already exists in DB
+    const checkTripInDatabase = async () => {
+      if (typeof id === 'string' && id.startsWith('trip-')) {
+        try {
+          const { data: existingTrip, error } = await supabase
+            .from('trips')
+            .select('id, seats')
+            .eq('from_location', from)
+            .eq('to_location', to)
+            .eq('date', date)
+            .eq('time', time)
+            .maybeSingle();
+          
+          if (existingTrip) {
+            // If trip exists in database, use its ID and seats count
+            setDbTripId(existingTrip.id);
+            // Update seats to match what's in the database
+            setSeats(existingTrip.seats);
+            console.log(`Trip found in DB with ID: ${existingTrip.id}, seats: ${existingTrip.seats}`);
+          }
+        } catch (error) {
+          console.error("Error checking trip in database:", error);
+        }
+      } else {
+        // This is already a DB trip with a UUID
+        setDbTripId(id);
+      }
+    };
+    
+    checkTripInDatabase();
+  }, [id, initialSeats, from, to, date, time]);
 
   // Handle reservation button click
   const handleReservation = async () => {
@@ -77,57 +109,88 @@ const TripCard = ({ id, from, to, date, time, price, image, seats: initialSeats,
       const newSeatCount = Math.max(0, seats - 1);
       setSeats(newSeatCount);
       
-      // For demo trips (with id format "trip-N"), need to generate a UUID
-      let tripId = id;
-      if (typeof id === 'string' && id.startsWith('trip-')) {
-        // For demo data, we'll check if this trip has already been saved to DB
-        const { data: existingTrip, error: checkError } = await supabase
+      let tripId = dbTripId || id;
+      
+      // For demo trips (with id format "trip-N"), we need a real DB ID
+      if (typeof id === 'string' && id.startsWith('trip-') && !dbTripId) {
+        // This trip doesn't exist in database yet, create it
+        const tripData = {
+          from_location: from,
+          to_location: to,
+          date: date,
+          time: time,
+          price: price,
+          image: image,
+          seats: newSeatCount,
+          driver_id: user.id // Current user becomes the driver
+        };
+        
+        const { data: newTrip, error: createError } = await supabase
           .from('trips')
-          .select('id, seats')
-          .eq('from_location', from)
-          .eq('to_location', to)
-          .eq('date', date)
-          .eq('time', time)
+          .insert([tripData])
+          .select('id')
           .single();
         
-        if (existingTrip) {
-          // Trip exists in database, use its ID and update seats
-          tripId = existingTrip.id;
-          
-          // Update the trip seats in the database
-          const { error: updateError } = await supabase
-            .from('trips')
-            .update({ seats: newSeatCount })
-            .eq('id', tripId);
-
-          if (updateError) {
-            console.error("Error updating trip seats:", updateError);
-            throw updateError;
-          }
-        } else {
-          // Trip doesn't exist in database yet, it will be created during reservation
-          console.log("Trip will be created during reservation process");
+        if (createError) {
+          console.error("Error creating trip in database:", createError);
+          throw createError;
+        }
+        
+        if (newTrip) {
+          console.log("Created new trip with ID:", newTrip.id);
+          tripId = newTrip.id;
+          setDbTripId(newTrip.id);
         }
       } else {
-        // This is a regular trip with UUID, update seats directly
+        // Update existing trip seats in database
         const { error: updateError } = await supabase
           .from('trips')
           .update({ seats: newSeatCount })
           .eq('id', tripId);
-
+        
         if (updateError) {
           console.error("Error updating trip seats:", updateError);
           throw updateError;
         }
+        
+        console.log(`Successfully updated seats for trip ${tripId} to ${newSeatCount}`);
       }
       
-      // Proceed with reservation
+      // Create reservation in database
+      const reservationData = {
+        trip_id: tripId,
+        passenger_id: user.id,
+        seats_booked: 1,
+        status: 'confirmed',
+        phone_number: user.phone_number || '',
+        notes: `Réservation de ${from} à ${to}`
+      };
+      
+      const { error: reservationError } = await supabase
+        .from('reservations')
+        .insert([reservationData]);
+      
+      if (reservationError) {
+        console.error("Error creating reservation:", reservationError);
+        // If reservation fails, restore the seat count in the database
+        const { error: restoreError } = await supabase
+          .from('trips')
+          .update({ seats: seats })
+          .eq('id', tripId);
+          
+        if (restoreError) {
+          console.error("Error restoring seats after reservation failure:", restoreError);
+        }
+        
+        throw reservationError;
+      }
+      
+      // Proceed with reservation callback if provided
       if (onReserve) {
         onReserve();
       }
       
-      toast.success("Places mises à jour avec succès");
-      
+      toast.success("Réservation confirmée ! Places mises à jour avec succès");
     } catch (error) {
       console.error("Erreur lors de la réservation:", error);
       toast.error("Une erreur est survenue lors de la réservation");

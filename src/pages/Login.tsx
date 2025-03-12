@@ -1,6 +1,7 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Car, User, Facebook, Mail, Lock } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/auth/useAuth";
 import AuthBackground from "@/components/auth/AuthBackground";
@@ -17,8 +18,13 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useLanguage();
   const { signIn, signInWithProvider } = useAuth();
+
+  // Get redirect URL from query parameters if it exists
+  const query = new URLSearchParams(location.search);
+  const redirectTo = query.get('redirect') || '/';
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,7 +32,8 @@ const Login = () => {
     
     try {
       await signIn(email, password);
-      // La redirection est gérée dans le contexte d'authentification
+      // Navigate to the redirect URL after successful login
+      navigate(redirectTo);
     } catch (error) {
       console.error("Erreur de connexion:", error);
     } finally {
@@ -71,6 +78,13 @@ const Login = () => {
             {t('driver')}
           </button>
         </div>
+
+        {/* Redirection message if applicable */}
+        {redirectTo !== '/' && (
+          <div className="mb-4 p-3 bg-white/10 rounded-lg text-white/90 text-sm">
+            Vous devez vous connecter pour accéder à la page demandée.
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <FormField
