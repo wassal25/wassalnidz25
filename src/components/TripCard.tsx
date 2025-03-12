@@ -4,12 +4,13 @@
 // Description: Carte affichant les détails d'un trajet disponible
 // =======================================================
 
-import { formatDate } from "@/lib/utils";
+import { useState } from "react";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth/useAuth";
 import { useLanguage } from "@/context/LanguageContext";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Interface définissant les propriétés du composant TripCard
@@ -33,10 +34,12 @@ interface TripCardProps {
  * Ce composant présente les informations d'un trajet disponible
  * sous forme de carte avec une image, des détails et un bouton de réservation.
  */
-const TripCard = ({ id, from, to, date, time, price, image, seats, driverName, onReserve }: TripCardProps) => {
+const TripCard = ({ id, from, to, date, time, price, image, seats: initialSeats, driverName, onReserve }: TripCardProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { t } = useLanguage();
+  const [seats, setSeats] = useState(initialSeats);
+  const [isReserving, setIsReserving] = useState(false);
   
   // Format the date to a more readable format
   const formatDate = (dateString: string) => {
@@ -48,7 +51,7 @@ const TripCard = ({ id, from, to, date, time, price, image, seats, driverName, o
   };
 
   // Handle reservation button click
-  const handleReservation = () => {
+  const handleReservation = async () => {
     // Check if there are seats available
     if (seats <= 0) {
       toast.error("Ce trajet est complet");
@@ -62,9 +65,23 @@ const TripCard = ({ id, from, to, date, time, price, image, seats, driverName, o
       return;
     }
     
-    // Proceed with reservation
-    if (onReserve) {
-      onReserve();
+    try {
+      setIsReserving(true);
+      
+      // Update the local state to show seats reduction immediately
+      setSeats(currentSeats => Math.max(0, currentSeats - 1));
+      
+      // Proceed with reservation
+      if (onReserve) {
+        onReserve();
+      }
+    } catch (error) {
+      console.error("Erreur lors de la réservation:", error);
+      toast.error("Une erreur est survenue lors de la réservation");
+      // Restore the seat count if there was an error
+      setSeats(initialSeats);
+    } finally {
+      setIsReserving(false);
     }
   };
 
@@ -93,7 +110,7 @@ const TripCard = ({ id, from, to, date, time, price, image, seats, driverName, o
   const displayImage = mapDestinationToNewImage(from, to);
 
   // Determine button status based on seats availability
-  const reservationButtonClass = seats <= 0 
+  const reservationButtonClass = seats <= 0 || isReserving
     ? "px-6 py-3 bg-gray-500/50 text-white/70 rounded-full cursor-not-allowed"
     : "px-6 py-3 bg-[#FEC6A1]/50 text-white rounded-full hover:bg-[#FEC6A1]/60 transition-all duration-300 hover:shadow-lg hover:scale-105";
 
@@ -146,9 +163,9 @@ const TripCard = ({ id, from, to, date, time, price, image, seats, driverName, o
               handleReservation();
             }}
             className={reservationButtonClass}
-            disabled={seats <= 0}
+            disabled={seats <= 0 || isReserving}
           >
-            {seats <= 0 ? "Complet" : "Réserver"}
+            {isReserving ? "En cours..." : seats <= 0 ? "Complet" : "Réserver"}
           </button>
         </div>
       </div>
