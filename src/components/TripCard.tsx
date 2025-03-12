@@ -4,7 +4,7 @@
 // Description: Carte affichant les détails d'un trajet disponible
 // =======================================================
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth/useAuth";
@@ -50,6 +50,11 @@ const TripCard = ({ id, from, to, date, time, price, image, seats: initialSeats,
     });
   };
 
+  // Update seats when initialSeats prop changes
+  useEffect(() => {
+    setSeats(initialSeats);
+  }, [initialSeats]);
+
   // Handle reservation button click
   const handleReservation = async () => {
     // Check if there are seats available
@@ -69,12 +74,60 @@ const TripCard = ({ id, from, to, date, time, price, image, seats: initialSeats,
       setIsReserving(true);
       
       // Update the local state to show seats reduction immediately
-      setSeats(currentSeats => Math.max(0, currentSeats - 1));
+      const newSeatCount = Math.max(0, seats - 1);
+      setSeats(newSeatCount);
+      
+      // For demo trips (with id format "trip-N"), need to generate a UUID
+      let tripId = id;
+      if (typeof id === 'string' && id.startsWith('trip-')) {
+        // For demo data, we'll check if this trip has already been saved to DB
+        const { data: existingTrip, error: checkError } = await supabase
+          .from('trips')
+          .select('id, seats')
+          .eq('from_location', from)
+          .eq('to_location', to)
+          .eq('date', date)
+          .eq('time', time)
+          .single();
+        
+        if (existingTrip) {
+          // Trip exists in database, use its ID and update seats
+          tripId = existingTrip.id;
+          
+          // Update the trip seats in the database
+          const { error: updateError } = await supabase
+            .from('trips')
+            .update({ seats: newSeatCount })
+            .eq('id', tripId);
+
+          if (updateError) {
+            console.error("Error updating trip seats:", updateError);
+            throw updateError;
+          }
+        } else {
+          // Trip doesn't exist in database yet, it will be created during reservation
+          console.log("Trip will be created during reservation process");
+        }
+      } else {
+        // This is a regular trip with UUID, update seats directly
+        const { error: updateError } = await supabase
+          .from('trips')
+          .update({ seats: newSeatCount })
+          .eq('id', tripId);
+
+        if (updateError) {
+          console.error("Error updating trip seats:", updateError);
+          throw updateError;
+        }
+      }
       
       // Proceed with reservation
       if (onReserve) {
         onReserve();
       }
+      
+      toast.success("Places mises à jour avec succès");
+      
     } catch (error) {
       console.error("Erreur lors de la réservation:", error);
       toast.error("Une erreur est survenue lors de la réservation");
