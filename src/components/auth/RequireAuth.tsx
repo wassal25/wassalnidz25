@@ -4,44 +4,82 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/auth/useAuth';
 import { toast } from 'sonner';
 import { Loading } from '@/components/ui/loading';
+import { supabase } from '@/integrations/supabase/client';
 
 interface RequireAuthProps {
   children: React.ReactNode;
 }
 
-/**
- * Composant pour protéger les routes qui nécessitent une authentification
- * Redirige vers la page de connexion si l'utilisateur n'est pas connecté
- */
 const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
   const [isTimeout, setIsTimeout] = useState(false);
   const [loadingDuration, setLoadingDuration] = useState(0);
+  const [retryCount, setRetryCount] = useState(0);
+  const maxRetries = 3;
 
-  // Add a progressive timeout to prevent infinite loading
+  // Handle authentication check with retries
+  const checkAuth = async () => {
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      return session;
+    } catch (error) {
+      console.error("Auth check error:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
-    if (!loading) return;
-    
-    const startTime = Date.now();
-    const interval = setInterval(() => {
-      const duration = Math.floor((Date.now() - startTime) / 1000);
-      setLoadingDuration(duration);
+    let mounted = true;
+    let timeoutId: NodeJS.Timeout;
+    let intervalId: NodeJS.Timeout;
+
+    const initAuth = async () => {
+      if (!loading) return;
+
+      const startTime = Date.now();
       
-      // Reduce timeout to 5 seconds
-      if (duration >= 5) {
-        setIsTimeout(true);
-        clearInterval(interval);
+      // Set a shorter timeout (3 seconds)
+      timeoutId = setTimeout(() => {
+        if (mounted) {
+          if (retryCount < maxRetries) {
+            console.log(`Retrying auth check (${retryCount + 1}/${maxRetries})`);
+            setRetryCount(prev => prev + 1);
+            initAuth();
+          } else {
+            setIsTimeout(true);
+            toast.error("Problème d'authentification. Veuillez réessayer.");
+          }
+        }
+      }, 3000);
+
+      // Update loading duration
+      intervalId = setInterval(() => {
+        if (mounted) {
+          const duration = Math.floor((Date.now() - startTime) / 1000);
+          setLoadingDuration(duration);
+        }
+      }, 1000);
+
+      // Try to check authentication
+      const session = await checkAuth();
+      if (mounted && session) {
+        clearTimeout(timeoutId);
+        clearInterval(intervalId);
       }
-    }, 1000);
+    };
 
-    return () => clearInterval(interval);
-  }, [loading]);
+    initAuth();
 
-  // If loading has timed out, allow user to continue without authentication
-  // or redirect to login based on their choice
+    return () => {
+      mounted = false;
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
+    };
+  }, [loading, retryCount]);
+
   if (isTimeout) {
-    // Give user options instead of automatic redirect
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-teal-500/80 to-teal-600/90">
         <div className="p-6 rounded-xl bg-white/10 backdrop-blur-md text-center max-w-md">
@@ -50,23 +88,26 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <h2 className="text-white text-xl font-bold mb-2">Temps d'attente dépassé</h2>
-          <p className="text-white/80 mb-4">La vérification de l'authentification prend plus de temps que prévu.</p>
+          <h2 className="text-white text-xl font-bold mb-2">Problème d'authentification</h2>
+          <p className="text-white/80 mb-4">Impossible de vérifier votre authentification.</p>
           <div className="grid grid-cols-2 gap-3">
             <button 
               onClick={() => {
-                toast.error("Veuillez vous connecter pour accéder à cette page");
-                window.location.href = `/login?redirect=${encodeURIComponent(location.pathname)}`;
+                setIsTimeout(false);
+                setRetryCount(0);
+                window.location.reload();
               }}
               className="py-2 px-4 bg-white/20 hover:bg-white/30 text-white font-medium rounded-lg transition-colors"
             >
-              Se connecter
+              Réessayer
             </button>
             <button 
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                window.location.href = `/login?redirect=${encodeURIComponent(location.pathname)}`;
+              }}
               className="py-2 px-4 bg-teal-500/30 hover:bg-teal-500/50 text-white font-medium rounded-lg transition-colors"
             >
-              Réessayer
+              Se connecter
             </button>
           </div>
         </div>
@@ -74,23 +115,20 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
     );
   }
 
-  // If still loading, show loading indicator with progress feedback
   if (loading) {
     return (
       <Loading 
         fullScreen 
-        text={`Vérification de l'authentification${loadingDuration > 2 ? ` (${loadingDuration}s)` : '...'}`} 
+        text={`Vérification de l'authentification${loadingDuration > 1 ? ` (${loadingDuration}s)` : '...'}`}
       />
     );
   }
 
-  // If the user isn't logged in, redirect to the login page
   if (!user) {
     toast.error("Vous devez être connecté pour accéder à cette page");
     return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }
 
-  // If the user is logged in, show the protected content
   return <>{children}</>;
 };
 
