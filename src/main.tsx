@@ -10,6 +10,9 @@ import { setupStorage } from './integrations/supabase/setupStorage';
 // Initialize Supabase storage
 setupStorage().catch(console.error);
 
+// Log important app events for debugging
+console.log("Application starting...");
+
 // Set error event listener for debugging
 window.addEventListener('error', (event) => {
   console.error('Global error caught:', event.error);
@@ -22,6 +25,25 @@ window.addEventListener('unhandledrejection', (event) => {
 
 // Add timing logs to track rendering performance
 console.time('Initial render');
+
+// Check for Supabase connectivity
+const checkSupabaseConnection = async () => {
+  try {
+    const { supabase } = await import('@/integrations/supabase/client');
+    const startTime = Date.now();
+    const { error } = await supabase.from('profiles').select('count').limit(1);
+    const endTime = Date.now();
+    console.log(`Supabase connection test: ${error ? 'Failed' : 'Success'} (${endTime - startTime}ms)`);
+    if (error) {
+      console.error('Supabase connection error:', error);
+    }
+  } catch (err) {
+    console.error('Supabase import or connection error:', err);
+  }
+};
+
+// Run connection test in background
+checkSupabaseConnection();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

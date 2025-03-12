@@ -17,16 +17,24 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
   const [isTimeout, setIsTimeout] = useState(false);
+  const [loadingDuration, setLoadingDuration] = useState(0);
 
-  // Add a timeout to prevent infinite loading
+  // Add a progressive timeout to prevent infinite loading
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (loading) {
+    if (!loading) return;
+    
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      const duration = Math.floor((Date.now() - startTime) / 1000);
+      setLoadingDuration(duration);
+      
+      if (duration >= 8) {
         setIsTimeout(true);
+        clearInterval(interval);
       }
-    }, 5000); // 5 seconds timeout
+    }, 1000);
 
-    return () => clearTimeout(timer);
+    return () => clearInterval(interval);
   }, [loading]);
 
   // If loading has timed out, redirect to login
@@ -35,9 +43,14 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // If still loading, show loading indicator
+  // If still loading, show loading indicator with progress feedback
   if (loading) {
-    return <Loading fullScreen text="Vérification de l'authentification..." />;
+    return (
+      <Loading 
+        fullScreen 
+        text={`Vérification de l'authentification${loadingDuration > 3 ? ` (${loadingDuration}s)` : '...'}`} 
+      />
+    );
   }
 
   // If the user isn't logged in, redirect to the login page

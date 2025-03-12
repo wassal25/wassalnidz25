@@ -26,33 +26,69 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [authInitialized, setAuthInitialized] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("Starting auth initialization process...");
+    let mounted = true;
+    
     const checkUser = async () => {
       try {
         console.log("Checking user session...");
         setLoading(true);
         
-        const { data } = await supabase.auth.getSession();
-        console.log("Session data:", data);
+        // Add a timeout to prevent endless checking
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error("Auth session check timed out")), 10000)
+        );
         
-        setUser(data.session?.user || null);
+        // Race the session check with a timeout
+        const { data } = await Promise.race([
+          supabase.auth.getSession(),
+          timeoutPromise
+        ]) as any;
         
-        if (data.session?.user) {
+        console.log("Session data received:", data ? "Yes" : "No");
+        
+        if (!mounted) return;
+        
+        setUser(data?.session?.user || null);
+        
+        if (data?.session?.user) {
           console.log("User found, loading profile...");
-          const profile = await loadUserProfile(data.session.user.id);
-          setUserProfile(profile);
-          console.log("Profile loaded:", profile);
+          try {
+            const profile = await loadUserProfile(data.session.user.id);
+            if (mounted) {
+              setUserProfile(profile);
+              console.log("Profile loaded successfully");
+            }
+          } catch (profileError) {
+            console.error("Error loading profile:", profileError);
+            if (mounted) {
+              setAuthError("Error loading user profile");
+              // Continue the flow even with profile error
+              setAuthInitialized(true);
+              setLoading(false);
+            }
+          }
         } else {
           console.log("No user session found");
-          setUserProfile(null);
+          if (mounted) {
+            setUserProfile(null);
+          }
         }
       } catch (error) {
-        console.error("Erreur lors de la vérification de l'utilisateur:", error);
+        console.error("Auth initialization error:", error);
+        if (mounted) {
+          setAuthError(error instanceof Error ? error.message : "Unknown authentication error");
+        }
       } finally {
-        setLoading(false);
-        setAuthInitialized(true);
+        if (mounted) {
+          setLoading(false);
+          setAuthInitialized(true);
+          console.log("Auth initialization completed");
+        }
       }
     };
 
@@ -63,18 +99,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log("Auth event:", event);
+        
+        if (!mounted) return;
+        
         setUser(session?.user || null);
         
         if (session?.user) {
           try {
             const profile = await loadUserProfile(session.user.id);
+            if (!mounted) return;
+            
             setUserProfile(profile);
             if (event === 'SIGNED_IN') {
               toast.success("Connecté avec succès!");
               navigate('/');
             }
           } catch (error) {
-            console.error("Error loading profile:", error);
+            console.error("Error loading profile on auth change:", error);
+            // Continue even with profile error
           }
         } else {
           setUserProfile(null);
@@ -85,11 +127,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
         
         setLoading(false);
-        setAuthInitialized(true);
       }
     );
 
     return () => {
+      mounted = false;
       authListener.subscription.unsubscribe();
     };
   }, [navigate]);
@@ -171,6 +213,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           <div className="w-10 h-10 border-4 border-t-transparent border-white rounded-full animate-spin mx-auto"></div>
           <p className="text-white font-medium mt-4">Initialisation de l'authentification...</p>
           <p className="text-white/70 text-sm mt-2">Veuillez patienter un instant...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if there was an authentication error
+  if (authError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-teal-500/80 to-teal-600/90">
+        <div className="p-6 rounded-xl bg-white/10 backdrop-blur-md text-center max-w-md">
+          <div className="w-16 h-16 bg-red-100/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h2 className="text-white text-xl font-bold mb-2">Problème d'authentification</h2>
+          <p className="text-white/80 mb-4">Une erreur est survenue lors de l'initialisation de l'authentification.</p>
+          <div className="bg-white/10 p-3 rounded text-left mb-4">
+            <p className="text-white/90 text-sm">{authError}</p>
+          </div>
+          <button 
+            onClick={() => window.location.reload()}
+            className="w-full py-2 px-4 bg-white/20 hover:bg-white/30 text-white font-medium rounded-lg transition-colors"
+          >
+            Réessayer
+          </button>
         </div>
       </div>
     );
