@@ -1,6 +1,6 @@
 
-import { useState, useEffect } from "react";
-import { Car, User, Facebook, Mail, Lock } from "lucide-react";
+import { useState } from "react";
+import { Car, User, Facebook, Mail } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/auth/useAuth";
@@ -61,6 +61,7 @@ const Login = () => {
             } transition-all duration-300`}
             onClick={() => setUserType('passenger')}
             type="button"
+            aria-pressed={userType === 'passenger'}
           >
             <User className="mr-2 w-4 h-4" />
             {t('passenger')}
@@ -73,6 +74,7 @@ const Login = () => {
             } transition-all duration-300`}
             onClick={() => setUserType('driver')}
             type="button"
+            aria-pressed={userType === 'driver'}
           >
             <Car className="mr-2 w-4 h-4" />
             {t('driver')}
@@ -116,7 +118,7 @@ const Login = () => {
             </a>
           </div>
           
-          <SubmitButton>
+          <SubmitButton isLoading={isLoading}>
             <Mail className="mr-2 w-4 h-4" />
             {isLoading ? "Connexion..." : t('login')}
           </SubmitButton>
