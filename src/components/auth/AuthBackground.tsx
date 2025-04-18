@@ -21,8 +21,6 @@ export const AuthBackground: React.FC<AuthBackgroundProps> = ({ children }) => {
         <Home className="w-6 h-6 text-white" />
       </Link>
       
-      {/* ... keep existing code (background image and overlay) ... */}
-      
       {/* Image d'arrière-plan de Constantine */}
       <div 
         className="absolute inset-0 z-0 w-full h-full"
