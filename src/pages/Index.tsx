@@ -1,8 +1,3 @@
-// =======================================================
-// Page d'accueil principale
-// Description: Interface principale de l'application
-// =======================================================
-
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -442,4 +437,3 @@ const Index = () => {
 };
 
 export default Index;
-
