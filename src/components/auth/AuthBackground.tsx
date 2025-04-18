@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Home } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -8,16 +7,12 @@ interface AuthBackgroundProps {
   children: React.ReactNode;
 }
 
-/**
- * Composant d'arrière-plan pour les pages d'authentification
- * Inclut l'image de fond, le dégradé et le bouton de retour à l'accueil
- */
 export const AuthBackground: React.FC<AuthBackgroundProps> = ({ children }) => {
   const { t } = useLanguage();
   
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Bouton de retour à l'accueil */}
+      {/* Home button remains */}
       <Link 
         to="/" 
         className="absolute top-4 left-4 z-20 bg-white/20 p-2 rounded-full backdrop-blur-sm hover:bg-white/30 transition-all duration-300"
@@ -25,6 +20,8 @@ export const AuthBackground: React.FC<AuthBackgroundProps> = ({ children }) => {
       >
         <Home className="w-6 h-6 text-white" />
       </Link>
+      
+      {/* ... keep existing code (background image and overlay) ... */}
       
       {/* Image d'arrière-plan de Constantine */}
       <div 
