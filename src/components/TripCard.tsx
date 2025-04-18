@@ -201,24 +201,57 @@ const TripCard = ({ id, from, to, date, time, price, image, seats: initialSeats,
     }
   };
 
-  // Mapper les images téléchargées aux bonnes destinations
+  // Mapper les images téléchargées aux bonnes destinations avec plusieurs options
   const mapDestinationToNewImage = (from: string, to: string) => {
+    const getRandomImage = (images: string[]) => {
+      const randomIndex = Math.floor(Math.random() * images.length);
+      return images[randomIndex];
+    };
+
     if (from.includes("Constantine") || to.includes("Constantine")) {
-      return "/lovable-uploads/488eac09-7d96-4aad-b400-f6fbad5b4094.png";
+      return getRandomImage([
+        "/lovable-uploads/488eac09-7d96-4aad-b400-f6fbad5b4094.png",
+        "/lovable-uploads/c8129868-7559-48d2-8f52-11c5e7ba021c.png",
+        "/lovable-uploads/935fdad3-49cd-43e7-87a7-c532e68ba0c0.png"
+      ]);
     } else if (from.includes("Ali Mendjeli") || to.includes("Ali Mendjeli")) {
-      return "/lovable-uploads/e26c89ad-026b-4725-898c-1334395b3b29.png";
+      return getRandomImage([
+        "/lovable-uploads/e26c89ad-026b-4725-898c-1334395b3b29.png",
+        "/lovable-uploads/a5974721-6a83-40c5-8a16-dcfb7657615c.png",
+        "/lovable-uploads/c4210440-d310-4d38-87b8-3de8cf89dd76.png"
+      ]);
     } else if (from.includes("El Khroub") || to.includes("El Khroub")) {
-      return "/lovable-uploads/10233626-2686-4fd9-874d-5e6eec39f718.png";
+      return getRandomImage([
+        "/lovable-uploads/10233626-2686-4fd9-874d-5e6eec39f718.png",
+        "/lovable-uploads/f4bfb0ca-890b-4d1c-a6d4-4e02fc042ff9.png"
+      ]);
     } else if (from.includes("Didouche") || to.includes("Didouche")) {
-      return "/lovable-uploads/9b42fa83-4309-47ba-bd7a-281fd656cc2c.png";
+      return getRandomImage([
+        "/lovable-uploads/9b42fa83-4309-47ba-bd7a-281fd656cc2c.png",
+        "/lovable-uploads/488eac09-7d96-4aad-b400-f6fbad5b4094.png"
+      ]);
     } else if (from.includes("Hamma") || to.includes("Hamma")) {
-      return "/lovable-uploads/87fe55ad-deb6-4fa6-9322-6ddc53f467aa.png";
+      return getRandomImage([
+        "/lovable-uploads/87fe55ad-deb6-4fa6-9322-6ddc53f467aa.png",
+        "/lovable-uploads/e26c89ad-026b-4725-898c-1334395b3b29.png"
+      ]);
     } else if (from.includes("Zighoud") || to.includes("Zighoud")) {
-      return "/lovable-uploads/0d5c2554-7073-4651-9f9b-1c8075047bfd.png";
+      return getRandomImage([
+        "/lovable-uploads/0d5c2554-7073-4651-9f9b-1c8075047bfd.png",
+        "/lovable-uploads/10233626-2686-4fd9-874d-5e6eec39f718.png"
+      ]);
     } else if (from.includes("Ain Smara") || to.includes("Ain Smara")) {
-      return "/lovable-uploads/8e491583-a9ac-4ed5-854f-b9341b0bb63f.png";
+      return getRandomImage([
+        "/lovable-uploads/8e491583-a9ac-4ed5-854f-b9341b0bb63f.png",
+        "/lovable-uploads/9b42fa83-4309-47ba-bd7a-281fd656cc2c.png"
+      ]);
     } else {
-      return "/lovable-uploads/c8129868-7559-48d2-8f52-11c5e7ba021c.png"; // Image par défaut
+      // Images par défaut en rotation
+      return getRandomImage([
+        "/lovable-uploads/c8129868-7559-48d2-8f52-11c5e7ba021c.png",
+        "/lovable-uploads/488eac09-7d96-4aad-b400-f6fbad5b4094.png",
+        "/lovable-uploads/e26c89ad-026b-4725-898c-1334395b3b29.png"
+      ]);
     }
   };
 
