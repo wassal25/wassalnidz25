@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Home } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -12,7 +13,7 @@ export const AuthBackground: React.FC<AuthBackgroundProps> = ({ children }) => {
   
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Home button remains */}
+      {/* Home button */}
       <Link 
         to="/" 
         className="absolute top-4 left-4 z-20 bg-white/20 p-2 rounded-full backdrop-blur-sm hover:bg-white/30 transition-all duration-300"
