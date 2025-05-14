@@ -1,6 +1,7 @@
 
 import { Download, QrCode } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useTheme } from "@/context/ThemeContext";
 
 interface AppDownloadQRProps {
   qrImagePath: string;
@@ -8,32 +9,36 @@ interface AppDownloadQRProps {
 
 const AppDownloadQR = ({ qrImagePath }: AppDownloadQRProps) => {
   const { t } = useLanguage();
+  const { theme } = useTheme();
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col sm:flex-row items-center gap-6">
+    <div className="backdrop-blur-sm bg-gradient-to-r from-teal-600/20 to-teal-500/30 rounded-2xl shadow-lg p-6 flex flex-col sm:flex-row items-center gap-6 border border-white/20">
       <div className="flex flex-col items-center sm:items-start">
-        <h3 className="text-xl font-bold text-gray-800 mb-2 flex items-center gap-2">
+        <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
           <QrCode size={20} />
           {t('downloadApp')}
         </h3>
-        <p className="text-gray-600 text-center sm:text-left mb-4">
+        <p className="text-gray-100 text-center sm:text-left mb-4">
           {t('scanToDownload')}
         </p>
         <a 
           href="#" 
-          className="bg-gradient-to-r from-[#45B39D] to-[#FEC6A1] text-white px-6 py-2 rounded-xl flex items-center gap-2 hover:opacity-90 transition-opacity"
+          className="bg-gradient-to-r from-[#45B39D] to-[#FEC6A1] text-white px-6 py-2 rounded-xl flex items-center gap-2 hover:opacity-90 transition-opacity shadow-md"
         >
           <Download size={18} />
           {t('downloadNow')}
         </a>
       </div>
       
-      <div className="flex-shrink-0 border-4 border-white bg-white rounded-lg shadow-md overflow-hidden">
-        <img 
-          src={qrImagePath} 
-          alt="QR Code pour télécharger l'application" 
-          className="w-32 h-32 object-contain"
-        />
+      <div className="flex-shrink-0 relative group">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#45B39D]/50 to-[#FEC6A1]/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -m-1"></div>
+        <div className={`border-4 ${theme === 'dark' ? 'border-gray-800 bg-gray-900' : 'border-white bg-gray-100'} rounded-lg shadow-lg overflow-hidden p-2`}>
+          <img 
+            src={qrImagePath} 
+            alt={t('downloadApp')}
+            className="w-32 h-32 object-contain"
+          />
+        </div>
       </div>
     </div>
   );
