@@ -1,57 +1,61 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Définition du type pour le contexte de langue
+// Define Language type to be exported
+export type Language = 'fr' | 'ar' | 'en';
+
+// Update the type for the context props using the Language type
 interface LanguageContextProps {
-  language: string;
-  setLanguage: (language: string) => void;
+  language: Language;
+  setLanguage: (language: Language) => void;
   t: (key: string) => string;
 }
 
-// Création du contexte de langue avec une valeur par défaut
+// Creation of the language context with default values
 const LanguageContext = createContext<LanguageContextProps>({
-  language: 'fr', // Langue par défaut
+  language: 'fr', // Default language
   setLanguage: () => {},
-  t: (key: string) => key, // Retourne la clé si la traduction n'est pas trouvée
+  t: (key: string) => key, // Return the key if translation is not found
 });
 
-// Hook personnalisé pour accéder au contexte de langue
+// Custom hook to access the language context
 const useLanguage = () => useContext(LanguageContext);
 
-// Définition du composant fournisseur de langue
+// Language provider component definition
 interface LanguageProviderProps {
   children: React.ReactNode;
 }
 
 const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  const [language, setLanguage] = useState<string>(localStorage.getItem('language') || 'fr');
+  const [language, setLanguage] = useState<Language>(localStorage.getItem('language') as Language || 'fr');
 
   useEffect(() => {
     localStorage.setItem('language', language);
   }, [language]);
 
-  // Fonction de traduction
+  // Translation function
   const t = (key: string): string => {
     try {
-      // Vérifie si la langue existe dans les traductions
+      // Check if the language exists in translations
       if (!translations[language]) {
         console.warn(`Language '${language}' not found in translations.`);
-        return key; // Retourne la clé si la langue n'est pas trouvée
+        return key; // Return the key if the language is not found
       }
       
-      // Vérifie si la clé existe dans la langue actuelle
+      // Check if the key exists in the current language
       if (typeof translations[language][key] === 'undefined') {
         console.warn(`Translation key '${key}' not found in language '${language}'.`);
-        return key; // Retourne la clé si la traduction n'est pas trouvée
+        return key; // Return the key if the translation is not found
       }
       
       return translations[language][key] || key;
     } catch (error) {
       console.error(`Error translating key '${key}':`, error);
-      return key; // Retourne la clé en cas d'erreur
+      return key; // Return the key in case of error
     }
   };
 
-  // Dictionnaires de traduction
+  // Translation dictionaries
   const translations = {
     fr: {
       travelTogether: "Voyagez Ensemble",
