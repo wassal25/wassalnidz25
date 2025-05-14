@@ -273,7 +273,7 @@ const Index = () => {
 
         {/* Section Téléchargement App Mobile */}
         <div className="mb-12 animate-fade-up">
-          <AppDownloadQR qrImagePath="/lovable-uploads/ac447bcf-0214-4d13-839c-f67663f4d57b.png" />
+          <AppDownloadQR qrImagePath="/lovable-uploads/ae2fb072-5f36-4d52-a73a-c89f61ee2018.png" />
         </div>
 
         {/* ==== SEARCH SECTION ==== */}
