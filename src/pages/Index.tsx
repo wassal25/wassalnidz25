@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import TripCard from "@/components/TripCard";
 import Map from "@/components/Map";
 import GroupChat from "@/components/GroupChat";
+import AppDownloadQR from "@/components/AppDownloadQR";
 import { Search, MapPin, Calendar, Clock, MessageSquare, Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -246,7 +247,7 @@ const Index = () => {
       
       {/* ==== MAIN CONTENT ==== */}
       <main className="container mx-auto px-4 pt-32 pb-16 flex-grow">
-        {/* Section titre - Rendue interactive, cliquable pour aller à l'À propos */}
+        {/* Section titre */}
         <div 
           className="text-center mb-8 animate-fade-up cursor-pointer hover:scale-105 transition-transform"
           onClick={() => navigate("/about")}
@@ -268,6 +269,11 @@ const Index = () => {
             <Plus size={20} />
             {t('offerTrip')}
           </button>
+        </div>
+
+        {/* Section Téléchargement App Mobile */}
+        <div className="mb-12 animate-fade-up">
+          <AppDownloadQR qrImagePath="/lovable-uploads/ac447bcf-0214-4d13-839c-f67663f4d57b.png" />
         </div>
 
         {/* ==== SEARCH SECTION ==== */}
