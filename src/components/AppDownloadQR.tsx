@@ -22,7 +22,7 @@ const AppDownloadQR = ({ qrImagePath }: AppDownloadQRProps) => {
           {t('scanToDownload')}
         </p>
         <a 
-          href="https://gofile.io/d/obF8bQ" 
+          href="https://www.mediafire.com/file/neu4a4ts5o25zyb/wassalni.apk/file" 
           target="_blank"
           rel="noopener noreferrer"
           className="bg-gradient-to-r from-[#45B39D] to-[#FEC6A1] text-white px-6 py-2 rounded-xl flex items-center gap-2 hover:opacity-90 transition-opacity shadow-md"
@@ -36,7 +36,7 @@ const AppDownloadQR = ({ qrImagePath }: AppDownloadQRProps) => {
         <div className="absolute inset-0 bg-gradient-to-r from-[#45B39D]/50 to-[#FEC6A1]/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -m-1"></div>
         <div className={`border-4 ${theme === 'dark' ? 'border-gray-800 bg-gray-900' : 'border-white bg-gray-100'} rounded-lg shadow-lg overflow-hidden p-2`}>
           <img 
-            src="/lovable-uploads/ae2fb072-5f36-4d52-a73a-c89f61ee2018.png" 
+            src="/lovable-uploads/b0cc1eb7-c975-40c9-befa-815964eca18d.png" 
             alt={t('downloadApp')}
             className="w-32 h-32 object-contain"
           />
