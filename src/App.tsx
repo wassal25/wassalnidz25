@@ -1,4 +1,3 @@
-
 // =======================================================
 // Fichier: App.tsx
 // Description: Composant racine App
@@ -29,6 +28,7 @@ import Map from "./pages/Map";
 import CreateTrip from "./pages/CreateTrip";
 import CommunityChat from "./pages/CommunityChat";
 import UserProfile from "./pages/UserProfile";
+import CartInteractive from "./pages/CartInteractive";
 import RequireAuth from "./components/auth/RequireAuth";
 
 // Client React Query pour la gestion d'état et des requêtes
@@ -116,6 +116,7 @@ const App = () => (
                 <Route path="/map" element={<Map />} />
                 <Route path="/create-trip" element={<CreateTrip />} />
                 <Route path="/community-chat" element={<CommunityChat />} />
+                <Route path="/cart-interactive" element={<CartInteractive />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </AuthProvider>

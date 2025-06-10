@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Moon, Sun, Globe, User, LogOut } from "lucide-react";
@@ -82,6 +83,9 @@ const Header = () => {
           </Link>
           <Link to="/feedback" className="text-white/90 hover:text-white transition-colors">
             {t('feedback')}
+          </Link>
+          <Link to="/cart-interactive" className="text-white/90 hover:text-white transition-colors">
+            Cart Interactive
           </Link>
         </nav>
 
@@ -213,6 +217,12 @@ const Header = () => {
                   className="text-white/90 hover:text-white transition-colors text-lg"
                 >
                   {t('feedback')}
+                </Link>
+                <Link
+                  to="/cart-interactive"
+                  className="text-white/90 hover:text-white transition-colors text-lg"
+                >
+                  Cart Interactive
                 </Link>
               </nav>
 
