@@ -1,69 +1,195 @@
 
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
-        <meta name="mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <link rel="stylesheet" href="./resources/ol.css">
-        <link rel="stylesheet" href="resources/fontawesome-all.min.css">
-        <link rel="stylesheet" href="./resources/ol-layerswitcher.css">
-        <link rel="stylesheet" href="./resources/qgis2web.css">
-        <style>
-        html, body {
-            background-color: #ffffff;
-        }
-        .ol-control > * {
-            background-color: #f8f8f8!important;
-            color: #444444!important;
-            border-radius: 0px;
-        }
-        .ol-attribution a, .gcd-gl-input::placeholder, .search-layer-input-search::placeholder {
-            color: #444444!important;
-        }
-        .search-layer-input-search {
-            background-color: #f8f8f8!important;
-        }
-        .ol-control > *:focus, .ol-control >*:hover {
-            background-color: rgba(248, 248, 248, 0.7)!important;
-        } 
-        .ol-control {
-            background-color: rgba(255,255,255,.4) !important;
-            padding: 2px !important;
-        } 
-        </style>
-
-        <style>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte Interactive Constantine</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
         html, body, #map {
             width: 100%;
             height: 100%;
-            padding: 0;
             margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
         }
-        </style>
-        <title>Carte Interactive Constantine</title>
-    </head>
-    <body>
-        <div id="map">
-            <div id="popup" class="ol-popup">
-                <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-                <div id="popup-content"></div>
-            </div>
-        </div>
-        <script src="resources/qgis2web_expressions.js"></script>
-        <script src="./resources/functions.js"></script>
-        <script src="./resources/ol.js"></script>
-        <script src="./resources/ol-layerswitcher.js"></script>
-        <script src="layers/ARRETBUS_1.js"></script>
-        <script src="layers/ARRETTAXI_2.js"></script>
-        <script src="layers/AREETTAXIIRRIGULIER_3.js"></script>
-        <script src="styles/ARRETBUS_1_style.js"></script>
-        <script src="styles/ARRETTAXI_2_style.js"></script>
-        <script src="styles/AREETTAXIIRRIGULIER_3_style.js"></script>
-        <script src="./layers/layers.js" type="text/javascript"></script> 
-        <script src="./resources/Autolinker.min.js"></script>
-        <script src="./resources/qgis2web.js"></script>
-    </body>
+        
+        .legend {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            line-height: 18px;
+            color: #555;
+        }
+        
+        .legend h4 {
+            margin: 0 0 5px;
+            color: #777;
+        }
+        
+        .legend-item {
+            margin: 5px 0;
+        }
+        
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            display: inline-block;
+            margin-right: 8px;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
+        
+        .popup-content h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+        
+        .popup-content p {
+            margin: 5px 0;
+            color: #555;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            text-align: center;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" class="loading">
+        <div>🗺️ Chargement de la carte...</div>
+    </div>
+    <div id="map"></div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Données des arrêts
+        const arretsBus = [
+            { lat: 36.365, lng: 6.6147, nom: "Arrêt Bus Centre", type: "bus" },
+            { lat: 36.3650, lng: 6.6180, nom: "Arrêt Bus Université", type: "bus" },
+            { lat: 36.3600, lng: 6.6100, nom: "Arrêt Bus Gare", type: "bus" }
+        ];
+        
+        const arretsTaxi = [
+            { lat: 36.3660, lng: 6.6160, nom: "Station Taxi Place", type: "taxi" },
+            { lat: 36.3620, lng: 6.6200, nom: "Station Taxi Aéroport", type: "taxi" },
+            { lat: 36.3640, lng: 6.6120, nom: "Station Taxi Hôtel", type: "taxi" }
+        ];
+        
+        const taxisIrreguliers = [
+            { lat: 36.3670, lng: 6.6130, nom: "Taxi Irrégulier A", type: "taxi_irreg" },
+            { lat: 36.3610, lng: 6.6170, nom: "Taxi Irrégulier B", type: "taxi_irreg" }
+        ];
+        
+        // Configuration des styles
+        const styles = {
+            bus: { color: '#ff0000', fillColor: '#ff0000', radius: 8 },
+            taxi: { color: '#ffff00', fillColor: '#ffff00', radius: 8 },
+            taxi_irreg: { color: '#ff8000', fillColor: '#ff8000', radius: 8 }
+        };
+        
+        // Initialisation de la carte
+        function initMap() {
+            // Masquer le loading
+            document.getElementById('loading').style.display = 'none';
+            
+            // Créer la carte centrée sur Constantine
+            const map = L.map('map').setView([36.365, 6.6147], 13);
+            
+            // Ajouter les tuiles OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Fonction pour créer un marqueur
+            function createMarker(point, style) {
+                const marker = L.circleMarker([point.lat, point.lng], {
+                    color: '#333',
+                    weight: 2,
+                    fillColor: style.fillColor,
+                    fillOpacity: 0.8,
+                    radius: style.radius
+                });
+                
+                // Popup avec informations
+                const popupContent = `
+                    <div class="popup-content">
+                        <h3>${point.nom}</h3>
+                        <p><strong>Type:</strong> ${getTypeLabel(point.type)}</p>
+                        <p><strong>Coordonnées:</strong> ${point.lat.toFixed(4)}, ${point.lng.toFixed(4)}</p>
+                    </div>
+                `;
+                
+                marker.bindPopup(popupContent);
+                return marker;
+            }
+            
+            // Fonction pour obtenir le label du type
+            function getTypeLabel(type) {
+                switch(type) {
+                    case 'bus': return 'Arrêt de Bus';
+                    case 'taxi': return 'Station de Taxi';
+                    case 'taxi_irreg': return 'Taxi Irrégulier';
+                    default: return 'Inconnu';
+                }
+            }
+            
+            // Ajouter les marqueurs pour chaque type
+            arretsBus.forEach(point => {
+                createMarker(point, styles.bus).addTo(map);
+            });
+            
+            arretsTaxi.forEach(point => {
+                createMarker(point, styles.taxi).addTo(map);
+            });
+            
+            taxisIrreguliers.forEach(point => {
+                createMarker(point, styles.taxi_irreg).addTo(map);
+            });
+            
+            // Ajouter la légende
+            const legend = L.control({ position: 'bottomright' });
+            legend.onAdd = function() {
+                const div = L.DomUtil.create('div', 'legend');
+                div.innerHTML = `
+                    <h4>Légende</h4>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background-color: #ff0000;"></span>
+                        Arrêts de Bus
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background-color: #ffff00; border: 1px solid #ccc;"></span>
+                        Stations de Taxi
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background-color: #ff8000;"></span>
+                        Taxis Irréguliers
+                    </div>
+                `;
+                return div;
+            };
+            legend.addTo(map);
+            
+            // Ajouter un contrôle d'échelle
+            L.control.scale().addTo(map);
+            
+            console.log('Carte interactive chargée avec succès');
+        }
+        
+        // Initialiser la carte quand la page est chargée
+        document.addEventListener('DOMContentLoaded', initMap);
+    </script>
+</body>
 </html>
