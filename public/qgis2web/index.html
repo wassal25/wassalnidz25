@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -74,27 +73,66 @@
     
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Données réelles des arrêts de bus (depuis ARRETBUS_1.js)
+        // Données étendues des arrêts de bus (en bleu)
         const arretsBus = [
-            { lat: 36.365, lng: 6.6147, nom: "Arrêt Bus Centre", type: "bus", id: 1 },
+            { lat: 36.365, lng: 6.6147, nom: "Arrêt Bus Centre-Ville", type: "bus", id: 1 },
             { lat: 36.3650, lng: 6.6180, nom: "Arrêt Bus Université", type: "bus", id: 2 },
-            { lat: 36.3600, lng: 6.6100, nom: "Arrêt Bus Gare", type: "bus", id: 3 }
+            { lat: 36.3600, lng: 6.6100, nom: "Arrêt Bus Gare", type: "bus", id: 3 },
+            { lat: 36.3680, lng: 6.6200, nom: "Arrêt Bus Ciloc", type: "bus", id: 4 },
+            { lat: 36.3620, lng: 6.6160, nom: "Arrêt Bus Zouaghi", type: "bus", id: 5 },
+            { lat: 36.3640, lng: 6.6180, nom: "Arrêt Bus Bardo", type: "bus", id: 6 },
+            { lat: 36.3590, lng: 6.6120, nom: "Arrêt Bus Sidi Mabrouk", type: "bus", id: 7 },
+            { lat: 36.3670, lng: 6.6150, nom: "Arrêt Bus Bellevue", type: "bus", id: 8 },
+            { lat: 36.3630, lng: 6.6190, nom: "Arrêt Bus Plateau", type: "bus", id: 9 },
+            { lat: 36.3610, lng: 6.6140, nom: "Arrêt Bus Souika", type: "bus", id: 10 },
+            { lat: 36.3580, lng: 6.6170, nom: "Arrêt Bus Boumerzoug", type: "bus", id: 11 },
+            { lat: 36.3690, lng: 6.6130, nom: "Arrêt Bus Mansourah", type: "bus", id: 12 },
+            { lat: 36.3660, lng: 6.6110, nom: "Arrêt Bus Daksi", type: "bus", id: 13 },
+            { lat: 36.3570, lng: 6.6150, nom: "Arrêt Bus Kitouni", type: "bus", id: 14 },
+            { lat: 36.3700, lng: 6.6170, nom: "Arrêt Bus Nouveau Pole", type: "bus", id: 15 },
+            { lat: 36.3550, lng: 6.6130, nom: "Arrêt Bus Ziadia", type: "bus", id: 16 },
+            { lat: 36.3720, lng: 6.6160, nom: "Arrêt Bus Fadila Saadane", type: "bus", id: 17 },
+            { lat: 36.3540, lng: 6.6110, nom: "Arrêt Bus Boudraa Salah", type: "bus", id: 18 },
+            { lat: 36.3710, lng: 6.6140, nom: "Arrêt Bus Cite Aadl", type: "bus", id: 19 },
+            { lat: 36.3530, lng: 6.6180, nom: "Arrêt Bus Belle Vue", type: "bus", id: 20 }
         ];
         
-        // Données réelles des stations de taxi (depuis ARRETTAXI_2.js)
+        // Données étendues des stations de taxi (en jaune)
         const arretsTaxi = [
-            { lat: 36.3660, lng: 6.6160, nom: "Station Taxi Place", type: "taxi", id: 1 },
+            { lat: 36.3660, lng: 6.6160, nom: "Station Taxi Place 1er Nov", type: "taxi", id: 1 },
             { lat: 36.3620, lng: 6.6200, nom: "Station Taxi Aéroport", type: "taxi", id: 2 },
-            { lat: 36.3640, lng: 6.6120, nom: "Station Taxi Hôtel", type: "taxi", id: 3 }
+            { lat: 36.3640, lng: 6.6120, nom: "Station Taxi Hôtel", type: "taxi", id: 3 },
+            { lat: 36.3580, lng: 6.6140, nom: "Station Taxi Gare", type: "taxi", id: 4 },
+            { lat: 36.3690, lng: 6.6180, nom: "Station Taxi Université", type: "taxi", id: 5 },
+            { lat: 36.3650, lng: 6.6100, nom: "Station Taxi Centre", type: "taxi", id: 6 },
+            { lat: 36.3610, lng: 6.6170, nom: "Station Taxi Bardo", type: "taxi", id: 7 },
+            { lat: 36.3670, lng: 6.6130, nom: "Station Taxi Ciloc", type: "taxi", id: 8 },
+            { lat: 36.3630, lng: 6.6150, nom: "Station Taxi Zouaghi", type: "taxi", id: 9 },
+            { lat: 36.3590, lng: 6.6190, nom: "Station Taxi Plateau", type: "taxi", id: 10 },
+            { lat: 36.3560, lng: 6.6160, nom: "Station Taxi Sidi Mabrouk", type: "taxi", id: 11 },
+            { lat: 36.3700, lng: 6.6150, nom: "Station Taxi Mansourah", type: "taxi", id: 12 },
+            { lat: 36.3680, lng: 6.6110, nom: "Station Taxi Bellevue", type: "taxi", id: 13 },
+            { lat: 36.3550, lng: 6.6140, nom: "Station Taxi Boumerzoug", type: "taxi", id: 14 },
+            { lat: 36.3720, lng: 6.6180, nom: "Station Taxi Fadila Saadane", type: "taxi", id: 15 }
         ];
         
-        // Données réelles des taxis irréguliers (depuis AREETTAXIIRRIGULIER_3.js)
+        // Données étendues des taxis irréguliers (en rouge)
         const taxisIrreguliers = [
-            { lat: 36.3670, lng: 6.6130, nom: "Taxi Irrégulier A", type: "taxi_irreg", id: 1 },
-            { lat: 36.3610, lng: 6.6170, nom: "Taxi Irrégulier B", type: "taxi_irreg", id: 2 }
+            { lat: 36.3670, lng: 6.6130, nom: "Taxi Irrégulier Ciloc", type: "taxi_irreg", id: 1 },
+            { lat: 36.3610, lng: 6.6170, nom: "Taxi Irrégulier Bardo", type: "taxi_irreg", id: 2 },
+            { lat: 36.3590, lng: 6.6150, nom: "Taxi Irrégulier Sidi Mabrouk", type: "taxi_irreg", id: 3 },
+            { lat: 36.3650, lng: 6.6190, nom: "Taxi Irrégulier Université", type: "taxi_irreg", id: 4 },
+            { lat: 36.3630, lng: 6.6110, nom: "Taxi Irrégulier Centre", type: "taxi_irreg", id: 5 },
+            { lat: 36.3680, lng: 6.6170, nom: "Taxi Irrégulier Zouaghi", type: "taxi_irreg", id: 6 },
+            { lat: 36.3600, lng: 6.6130, nom: "Taxi Irrégulier Gare", type: "taxi_irreg", id: 7 },
+            { lat: 36.3570, lng: 6.6180, nom: "Taxi Irrégulier Plateau", type: "taxi_irreg", id: 8 },
+            { lat: 36.3690, lng: 6.6140, nom: "Taxi Irrégulier Mansourah", type: "taxi_irreg", id: 9 },
+            { lat: 36.3660, lng: 6.6100, nom: "Taxi Irrégulier Daksi", type: "taxi_irreg", id: 10 },
+            { lat: 36.3540, lng: 6.6160, nom: "Taxi Irrégulier Boumerzoug", type: "taxi_irreg", id: 11 },
+            { lat: 36.3710, lng: 6.6120, nom: "Taxi Irrégulier Bellevue", type: "taxi_irreg", id: 12 }
         ];
         
-        // Configuration des styles avec les nouvelles couleurs
+        // Configuration des styles avec les couleurs demandées
         const styles = {
             bus: { color: '#0066ff', fillColor: '#0066ff', radius: 8 }, // Bleu pour les bus
             taxi: { color: '#ffff00', fillColor: '#ffff00', radius: 8 }, // Jaune pour les taxis
