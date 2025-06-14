@@ -1,0 +1,60 @@
+
+/* Layer Switcher CSS */
+.layer-switcher {
+    position: absolute;
+    top: 3.5em;
+    right: 0.5em;
+    text-align: left;
+}
+
+.layer-switcher.shown.layer-switcher > button {
+    display: none;
+}
+
+.layer-switcher button {
+    float: right;
+    background-color: rgba(0,60,136,.5);
+    color: white;
+    width: 1.375em;
+    height: 1.375em;
+    border: none;
+    border-radius: 2px;
+    margin: 1px;
+}
+
+.layer-switcher button:hover,
+.layer-switcher button:focus {
+    background-color: rgba(0,60,136,.7);
+}
+
+.layer-switcher .panel {
+    clear: right;
+    background-color: white;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    padding: 5px;
+    font-family: sans-serif;
+    font-size: 13px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.layer-switcher .panel .layer {
+    margin: 4px 0;
+    font-weight: bold;
+}
+
+.layer-switcher .panel .layer label {
+    display: block;
+    font-weight: normal;
+    margin-left: 20px;
+}
+
+.layer-switcher .panel .layer input[type="radio"],
+.layer-switcher .panel .layer input[type="checkbox"] {
+    margin-right: 6px;
+}
+
+.layer-switcher .panel .layer .layer {
+    margin-left: 20px;
+}
