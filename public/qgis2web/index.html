@@ -127,12 +127,30 @@
             { lat: 36.2695, lng: 6.5845, nom: "Arrêt Bus Ali Mendjli Sud 2", type: "bus", id: 40 },
             { lat: 36.2690, lng: 6.5850, nom: "Arrêt Bus Ali Mendjli Sud 3", type: "bus", id: 41 },
             
-            // El Khroub
+            // ===== EL KHROUB - NOMBREUX POINTS AJOUTÉS =====
+            // Centre d'El Khroub
             { lat: 36.4560, lng: 6.6920, nom: "Arrêt Bus El Khroub Centre", type: "bus", id: 60 },
-            { lat: 36.4540, lng: 6.6900, nom: "Arrêt Bus El Khroub Gare", type: "bus", id: 61 }
+            { lat: 36.4540, lng: 6.6900, nom: "Arrêt Bus El Khroub Gare", type: "bus", id: 61 },
+            { lat: 36.4580, lng: 6.6940, nom: "Arrêt Bus El Khroub Souk", type: "bus", id: 62 },
+            { lat: 36.4520, lng: 6.6880, nom: "Arrêt Bus El Khroub Sud", type: "bus", id: 63 },
+            { lat: 36.4600, lng: 6.6960, nom: "Arrêt Bus El Khroub Nord", type: "bus", id: 64 },
+            
+            // Quartiers d'El Khroub
+            { lat: 36.4570, lng: 6.6930, nom: "Arrêt Bus El Khroub Cité", type: "bus", id: 65 },
+            { lat: 36.4550, lng: 6.6910, nom: "Arrêt Bus El Khroub Résidentiel", type: "bus", id: 66 },
+            { lat: 36.4590, lng: 6.6950, nom: "Arrêt Bus El Khroub Commercial", type: "bus", id: 67 },
+            { lat: 36.4530, lng: 6.6890, nom: "Arrêt Bus El Khroub Industriel", type: "bus", id: 68 },
+            { lat: 36.4610, lng: 6.6970, nom: "Arrêt Bus El Khroub Université", type: "bus", id: 69 },
+            
+            // Points périphériques d'El Khroub
+            { lat: 36.4575, lng: 6.6925, nom: "Arrêt Bus El Khroub Est", type: "bus", id: 70 },
+            { lat: 36.4545, lng: 6.6905, nom: "Arrêt Bus El Khroub Ouest", type: "bus", id: 71 },
+            { lat: 36.4585, lng: 6.6945, nom: "Arrêt Bus El Khroub Terminal", type: "bus", id: 72 },
+            { lat: 36.4535, lng: 6.6885, nom: "Arrêt Bus El Khroub Périphérie", type: "bus", id: 73 },
+            { lat: 36.4565, lng: 6.6935, nom: "Arrêt Bus El Khroub Principal", type: "bus", id: 74 }
         ];
         
-        // Données des stations de taxi (points jaunes) - ALI MENDJLI REPOSITIONNÉ
+        // Données des stations de taxi (points jaunes) - ALI MENDJLI REPOSITIONNÉ + EL KHROUB AJOUTÉ
         const arretsTaxi = [
             // Constantine Centre
             { lat: 36.3665, lng: 6.6150, nom: "Station Taxi Place 1er Nov", type: "taxi", id: 1 },
@@ -163,11 +181,20 @@
             { lat: 36.2760, lng: 6.5857, nom: "Station Taxi Ali Mendjli Résidentiel", type: "taxi", id: 22 },
             { lat: 36.2710, lng: 6.5867, nom: "Station Taxi Ali Mendjli Express", type: "taxi", id: 23 },
             
-            // El Khroub
-            { lat: 36.4550, lng: 6.6910, nom: "Station Taxi El Khroub Centre", type: "taxi", id: 30 }
+            // ===== EL KHROUB STATIONS DE TAXI =====
+            { lat: 36.4550, lng: 6.6910, nom: "Station Taxi El Khroub Centre", type: "taxi", id: 30 },
+            { lat: 36.4570, lng: 6.6930, nom: "Station Taxi El Khroub Gare", type: "taxi", id: 31 },
+            { lat: 36.4590, lng: 6.6950, nom: "Station Taxi El Khroub Nord", type: "taxi", id: 32 },
+            { lat: 36.4530, lng: 6.6890, nom: "Station Taxi El Khroub Sud", type: "taxi", id: 33 },
+            { lat: 36.4580, lng: 6.6940, nom: "Station Taxi El Khroub Commercial", type: "taxi", id: 34 },
+            { lat: 36.4540, lng: 6.6900, nom: "Station Taxi El Khroub Terminal", type: "taxi", id: 35 },
+            { lat: 36.4560, lng: 6.6920, nom: "Station Taxi El Khroub Principal", type: "taxi", id: 36 },
+            { lat: 36.4575, lng: 6.6935, nom: "Station Taxi El Khroub Express", type: "taxi", id: 37 },
+            { lat: 36.4545, lng: 6.6905, nom: "Station Taxi El Khroub Urbain", type: "taxi", id: 38 },
+            { lat: 36.4565, lng: 6.6925, nom: "Station Taxi El Khroub Intercommunal", type: "taxi", id: 39 }
         ];
         
-        // Données des taxis irréguliers (points rouges) - ALI MENDJLI REPOSITIONNÉ
+        // Données des taxis irréguliers (points rouges) - ALI MENDJLI REPOSITIONNÉ + EL KHROUB AJOUTÉ
         const taxisIrreguliers = [
             // Constantine Centre
             { lat: 36.3675, lng: 6.6135, nom: "Taxi Irrégulier Pont Sidi M'Cid", type: "taxi_irreg", id: 1 },
@@ -197,8 +224,20 @@
             { lat: 36.2737, lng: 6.5839, nom: "Taxi Irrégulier Ali Mendjli Ouest 2", type: "taxi_irreg", id: 23 },
             { lat: 36.2757, lng: 6.5849, nom: "Taxi Irrégulier Ali Mendjli Université", type: "taxi_irreg", id: 24 },
             
-            // El Khroub
-            { lat: 36.4545, lng: 6.6905, nom: "Taxi Irrégulier El Khroub Centre", type: "taxi_irreg", id: 25 }
+            // ===== EL KHROUB TAXIS IRRÉGULIERS =====
+            { lat: 36.4545, lng: 6.6905, nom: "Taxi Irrégulier El Khroub Centre 1", type: "taxi_irreg", id: 25 },
+            { lat: 36.4555, lng: 6.6915, nom: "Taxi Irrégulier El Khroub Centre 2", type: "taxi_irreg", id: 26 },
+            { lat: 36.4565, lng: 6.6925, nom: "Taxi Irrégulier El Khroub Centre 3", type: "taxi_irreg", id: 27 },
+            { lat: 36.4575, lng: 6.6935, nom: "Taxi Irrégulier El Khroub Nord 1", type: "taxi_irreg", id: 28 },
+            { lat: 36.4585, lng: 6.6945, nom: "Taxi Irrégulier El Khroub Nord 2", type: "taxi_irreg", id: 29 },
+            { lat: 36.4525, lng: 6.6885, nom: "Taxi Irrégulier El Khroub Sud 1", type: "taxi_irreg", id: 30 },
+            { lat: 36.4535, lng: 6.6895, nom: "Taxi Irrégulier El Khroub Sud 2", type: "taxi_irreg", id: 31 },
+            { lat: 36.4580, lng: 6.6940, nom: "Taxi Irrégulier El Khroub Commercial", type: "taxi_irreg", id: 32 },
+            { lat: 36.4570, lng: 6.6930, nom: "Taxi Irrégulier El Khroub Gare", type: "taxi_irreg", id: 33 },
+            { lat: 36.4590, lng: 6.6950, nom: "Taxi Irrégulier El Khroub Terminal", type: "taxi_irreg", id: 34 },
+            { lat: 36.4540, lng: 6.6900, nom: "Taxi Irrégulier El Khroub Périphérie 1", type: "taxi_irreg", id: 35 },
+            { lat: 36.4560, lng: 6.6920, nom: "Taxi Irrégulier El Khroub Périphérie 2", type: "taxi_irreg", id: 36 },
+            { lat: 36.4550, lng: 6.6910, nom: "Taxi Irrégulier El Khroub Express", type: "taxi_irreg", id: 37 }
         ];
         
         // Configuration des styles avec les couleurs demandées
