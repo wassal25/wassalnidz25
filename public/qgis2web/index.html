@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -73,8 +74,9 @@
     
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Données étendues des arrêts de bus (en bleu)
+        // Données étendues des arrêts de bus (en bleu) - Constantine, Ali Mendjli, El Khroub
         const arretsBus = [
+            // Constantine Centre
             { lat: 36.365, lng: 6.6147, nom: "Arrêt Bus Centre-Ville", type: "bus", id: 1 },
             { lat: 36.3650, lng: 6.6180, nom: "Arrêt Bus Université", type: "bus", id: 2 },
             { lat: 36.3600, lng: 6.6100, nom: "Arrêt Bus Gare", type: "bus", id: 3 },
@@ -85,20 +87,31 @@
             { lat: 36.3670, lng: 6.6150, nom: "Arrêt Bus Bellevue", type: "bus", id: 8 },
             { lat: 36.3630, lng: 6.6190, nom: "Arrêt Bus Plateau", type: "bus", id: 9 },
             { lat: 36.3610, lng: 6.6140, nom: "Arrêt Bus Souika", type: "bus", id: 10 },
-            { lat: 36.3580, lng: 6.6170, nom: "Arrêt Bus Boumerzoug", type: "bus", id: 11 },
-            { lat: 36.3690, lng: 6.6130, nom: "Arrêt Bus Mansourah", type: "bus", id: 12 },
-            { lat: 36.3660, lng: 6.6110, nom: "Arrêt Bus Daksi", type: "bus", id: 13 },
-            { lat: 36.3570, lng: 6.6150, nom: "Arrêt Bus Kitouni", type: "bus", id: 14 },
-            { lat: 36.3700, lng: 6.6170, nom: "Arrêt Bus Nouveau Pole", type: "bus", id: 15 },
-            { lat: 36.3550, lng: 6.6130, nom: "Arrêt Bus Ziadia", type: "bus", id: 16 },
-            { lat: 36.3720, lng: 6.6160, nom: "Arrêt Bus Fadila Saadane", type: "bus", id: 17 },
-            { lat: 36.3540, lng: 6.6110, nom: "Arrêt Bus Boudraa Salah", type: "bus", id: 18 },
-            { lat: 36.3710, lng: 6.6140, nom: "Arrêt Bus Cite Aadl", type: "bus", id: 19 },
-            { lat: 36.3530, lng: 6.6180, nom: "Arrêt Bus Belle Vue", type: "bus", id: 20 }
+            
+            // Ali Mendjli (Nouvelle Ville)
+            { lat: 36.2800, lng: 6.6400, nom: "Arrêt Bus Ali Mendjli Centre", type: "bus", id: 11 },
+            { lat: 36.2820, lng: 6.6380, nom: "Arrêt Bus Ali Mendjli Université", type: "bus", id: 12 },
+            { lat: 36.2780, lng: 6.6420, nom: "Arrêt Bus Ali Mendjli Résidentiel", type: "bus", id: 13 },
+            { lat: 36.2760, lng: 6.6450, nom: "Arrêt Bus Ali Mendjli Sud", type: "bus", id: 14 },
+            { lat: 36.2840, lng: 6.6360, nom: "Arrêt Bus Ali Mendjli Nord", type: "bus", id: 15 },
+            { lat: 36.2790, lng: 6.6390, nom: "Arrêt Bus Ali Mendjli Est", type: "bus", id: 16 },
+            { lat: 36.2810, lng: 6.6410, nom: "Arrêt Bus Ali Mendjli Ouest", type: "bus", id: 17 },
+            { lat: 36.2770, lng: 6.6380, nom: "Arrêt Bus Ali Mendjli Commercial", type: "bus", id: 18 },
+            
+            // El Khroub
+            { lat: 36.4550, lng: 6.6900, nom: "Arrêt Bus El Khroub Centre", type: "bus", id: 19 },
+            { lat: 36.4520, lng: 6.6880, nom: "Arrêt Bus El Khroub Gare", type: "bus", id: 20 },
+            { lat: 36.4580, lng: 6.6920, nom: "Arrêt Bus El Khroub Nord", type: "bus", id: 21 },
+            { lat: 36.4500, lng: 6.6860, nom: "Arrêt Bus El Khroub Sud", type: "bus", id: 22 },
+            { lat: 36.4560, lng: 6.6940, nom: "Arrêt Bus El Khroub Est", type: "bus", id: 23 },
+            { lat: 36.4540, lng: 6.6850, nom: "Arrêt Bus El Khroub Ouest", type: "bus", id: 24 },
+            { lat: 36.4590, lng: 6.6910, nom: "Arrêt Bus El Khroub Industriel", type: "bus", id: 25 },
+            { lat: 36.4510, lng: 6.6890, nom: "Arrêt Bus El Khroub Résidentiel", type: "bus", id: 26 }
         ];
         
         // Données étendues des stations de taxi (en jaune)
         const arretsTaxi = [
+            // Constantine Centre
             { lat: 36.3660, lng: 6.6160, nom: "Station Taxi Place 1er Nov", type: "taxi", id: 1 },
             { lat: 36.3620, lng: 6.6200, nom: "Station Taxi Aéroport", type: "taxi", id: 2 },
             { lat: 36.3640, lng: 6.6120, nom: "Station Taxi Hôtel", type: "taxi", id: 3 },
@@ -107,29 +120,43 @@
             { lat: 36.3650, lng: 6.6100, nom: "Station Taxi Centre", type: "taxi", id: 6 },
             { lat: 36.3610, lng: 6.6170, nom: "Station Taxi Bardo", type: "taxi", id: 7 },
             { lat: 36.3670, lng: 6.6130, nom: "Station Taxi Ciloc", type: "taxi", id: 8 },
-            { lat: 36.3630, lng: 6.6150, nom: "Station Taxi Zouaghi", type: "taxi", id: 9 },
-            { lat: 36.3590, lng: 6.6190, nom: "Station Taxi Plateau", type: "taxi", id: 10 },
-            { lat: 36.3560, lng: 6.6160, nom: "Station Taxi Sidi Mabrouk", type: "taxi", id: 11 },
-            { lat: 36.3700, lng: 6.6150, nom: "Station Taxi Mansourah", type: "taxi", id: 12 },
-            { lat: 36.3680, lng: 6.6110, nom: "Station Taxi Bellevue", type: "taxi", id: 13 },
-            { lat: 36.3550, lng: 6.6140, nom: "Station Taxi Boumerzoug", type: "taxi", id: 14 },
-            { lat: 36.3720, lng: 6.6180, nom: "Station Taxi Fadila Saadane", type: "taxi", id: 15 }
+            
+            // Ali Mendjli
+            { lat: 36.2800, lng: 6.6400, nom: "Station Taxi Ali Mendjli Centre", type: "taxi", id: 9 },
+            { lat: 36.2780, lng: 6.6420, nom: "Station Taxi Ali Mendjli Résidentiel", type: "taxi", id: 10 },
+            { lat: 36.2820, lng: 6.6380, nom: "Station Taxi Ali Mendjli Université", type: "taxi", id: 11 },
+            { lat: 36.2760, lng: 6.6450, nom: "Station Taxi Ali Mendjli Sud", type: "taxi", id: 12 },
+            { lat: 36.2840, lng: 6.6360, nom: "Station Taxi Ali Mendjli Nord", type: "taxi", id: 13 },
+            
+            // El Khroub
+            { lat: 36.4550, lng: 6.6900, nom: "Station Taxi El Khroub Centre", type: "taxi", id: 14 },
+            { lat: 36.4520, lng: 6.6880, nom: "Station Taxi El Khroub Gare", type: "taxi", id: 15 },
+            { lat: 36.4580, lng: 6.6920, nom: "Station Taxi El Khroub Nord", type: "taxi", id: 16 },
+            { lat: 36.4500, lng: 6.6860, nom: "Station Taxi El Khroub Sud", type: "taxi", id: 17 },
+            { lat: 36.4560, lng: 6.6940, nom: "Station Taxi El Khroub Est", type: "taxi", id: 18 }
         ];
         
         // Données étendues des taxis irréguliers (en rouge)
         const taxisIrreguliers = [
+            // Constantine Centre
             { lat: 36.3670, lng: 6.6130, nom: "Taxi Irrégulier Ciloc", type: "taxi_irreg", id: 1 },
             { lat: 36.3610, lng: 6.6170, nom: "Taxi Irrégulier Bardo", type: "taxi_irreg", id: 2 },
             { lat: 36.3590, lng: 6.6150, nom: "Taxi Irrégulier Sidi Mabrouk", type: "taxi_irreg", id: 3 },
             { lat: 36.3650, lng: 6.6190, nom: "Taxi Irrégulier Université", type: "taxi_irreg", id: 4 },
             { lat: 36.3630, lng: 6.6110, nom: "Taxi Irrégulier Centre", type: "taxi_irreg", id: 5 },
             { lat: 36.3680, lng: 6.6170, nom: "Taxi Irrégulier Zouaghi", type: "taxi_irreg", id: 6 },
-            { lat: 36.3600, lng: 6.6130, nom: "Taxi Irrégulier Gare", type: "taxi_irreg", id: 7 },
-            { lat: 36.3570, lng: 6.6180, nom: "Taxi Irrégulier Plateau", type: "taxi_irreg", id: 8 },
-            { lat: 36.3690, lng: 6.6140, nom: "Taxi Irrégulier Mansourah", type: "taxi_irreg", id: 9 },
-            { lat: 36.3660, lng: 6.6100, nom: "Taxi Irrégulier Daksi", type: "taxi_irreg", id: 10 },
-            { lat: 36.3540, lng: 6.6160, nom: "Taxi Irrégulier Boumerzoug", type: "taxi_irreg", id: 11 },
-            { lat: 36.3710, lng: 6.6120, nom: "Taxi Irrégulier Bellevue", type: "taxi_irreg", id: 12 }
+            
+            // Ali Mendjli
+            { lat: 36.2790, lng: 6.6390, nom: "Taxi Irrégulier Ali Mendjli Est", type: "taxi_irreg", id: 7 },
+            { lat: 36.2810, lng: 6.6410, nom: "Taxi Irrégulier Ali Mendjli Ouest", type: "taxi_irreg", id: 8 },
+            { lat: 36.2770, lng: 6.6380, nom: "Taxi Irrégulier Ali Mendjli Commercial", type: "taxi_irreg", id: 9 },
+            { lat: 36.2850, lng: 6.6370, nom: "Taxi Irrégulier Ali Mendjli Nord", type: "taxi_irreg", id: 10 },
+            
+            // El Khroub
+            { lat: 36.4540, lng: 6.6850, nom: "Taxi Irrégulier El Khroub Ouest", type: "taxi_irreg", id: 11 },
+            { lat: 36.4590, lng: 6.6910, nom: "Taxi Irrégulier El Khroub Industriel", type: "taxi_irreg", id: 12 },
+            { lat: 36.4510, lng: 6.6890, nom: "Taxi Irrégulier El Khroub Résidentiel", type: "taxi_irreg", id: 13 },
+            { lat: 36.4570, lng: 6.6930, nom: "Taxi Irrégulier El Khroub Est", type: "taxi_irreg", id: 14 }
         ];
         
         // Configuration des styles avec les couleurs demandées
@@ -144,8 +171,8 @@
             // Masquer le loading
             document.getElementById('loading').style.display = 'none';
             
-            // Créer la carte centrée sur Constantine
-            const map = L.map('map').setView([36.365, 6.6147], 13);
+            // Créer la carte centrée sur Constantine avec zoom ajusté pour voir toute la région
+            const map = L.map('map').setView([36.365, 6.6147], 11);
             
             // Ajouter les tuiles OpenStreetMap
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -203,7 +230,7 @@
                 createMarker(point, styles.taxi_irreg).addTo(map);
             });
             
-            // Ajouter la légende avec les nouvelles couleurs
+            // Ajouter la légende sans les nombres
             const legend = L.control({ position: 'bottomright' });
             legend.onAdd = function() {
                 const div = L.DomUtil.create('div', 'legend');
@@ -211,18 +238,15 @@
                     <h4>Légende</h4>
                     <div class="legend-item">
                         <span class="legend-color" style="background-color: #0066ff;"></span>
-                        Arrêts de Bus (${arretsBus.length})
+                        Arrêts de Bus
                     </div>
                     <div class="legend-item">
                         <span class="legend-color" style="background-color: #ffff00; border: 1px solid #ccc;"></span>
-                        Stations de Taxi (${arretsTaxi.length})
+                        Stations de Taxi
                     </div>
                     <div class="legend-item">
                         <span class="legend-color" style="background-color: #ff0000;"></span>
-                        Taxis Irréguliers (${taxisIrreguliers.length})
-                    </div>
-                    <div style="margin-top: 10px; font-size: 12px; color: #666;">
-                        Total: ${arretsBus.length + arretsTaxi.length + taxisIrreguliers.length} points
+                        Taxis Irréguliers
                     </div>
                 `;
                 return div;
