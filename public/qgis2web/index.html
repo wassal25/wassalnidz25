@@ -74,29 +74,31 @@
     
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Données des arrêts
+        // Données réelles des arrêts de bus (depuis ARRETBUS_1.js)
         const arretsBus = [
-            { lat: 36.365, lng: 6.6147, nom: "Arrêt Bus Centre", type: "bus" },
-            { lat: 36.3650, lng: 6.6180, nom: "Arrêt Bus Université", type: "bus" },
-            { lat: 36.3600, lng: 6.6100, nom: "Arrêt Bus Gare", type: "bus" }
+            { lat: 36.365, lng: 6.6147, nom: "Arrêt Bus Centre", type: "bus", id: 1 },
+            { lat: 36.3650, lng: 6.6180, nom: "Arrêt Bus Université", type: "bus", id: 2 },
+            { lat: 36.3600, lng: 6.6100, nom: "Arrêt Bus Gare", type: "bus", id: 3 }
         ];
         
+        // Données réelles des stations de taxi (depuis ARRETTAXI_2.js)
         const arretsTaxi = [
-            { lat: 36.3660, lng: 6.6160, nom: "Station Taxi Place", type: "taxi" },
-            { lat: 36.3620, lng: 6.6200, nom: "Station Taxi Aéroport", type: "taxi" },
-            { lat: 36.3640, lng: 6.6120, nom: "Station Taxi Hôtel", type: "taxi" }
+            { lat: 36.3660, lng: 6.6160, nom: "Station Taxi Place", type: "taxi", id: 1 },
+            { lat: 36.3620, lng: 6.6200, nom: "Station Taxi Aéroport", type: "taxi", id: 2 },
+            { lat: 36.3640, lng: 6.6120, nom: "Station Taxi Hôtel", type: "taxi", id: 3 }
         ];
         
+        // Données réelles des taxis irréguliers (depuis AREETTAXIIRRIGULIER_3.js)
         const taxisIrreguliers = [
-            { lat: 36.3670, lng: 6.6130, nom: "Taxi Irrégulier A", type: "taxi_irreg" },
-            { lat: 36.3610, lng: 6.6170, nom: "Taxi Irrégulier B", type: "taxi_irreg" }
+            { lat: 36.3670, lng: 6.6130, nom: "Taxi Irrégulier A", type: "taxi_irreg", id: 1 },
+            { lat: 36.3610, lng: 6.6170, nom: "Taxi Irrégulier B", type: "taxi_irreg", id: 2 }
         ];
         
-        // Configuration des styles
+        // Configuration des styles avec les nouvelles couleurs
         const styles = {
-            bus: { color: '#ff0000', fillColor: '#ff0000', radius: 8 },
-            taxi: { color: '#ffff00', fillColor: '#ffff00', radius: 8 },
-            taxi_irreg: { color: '#ff8000', fillColor: '#ff8000', radius: 8 }
+            bus: { color: '#0066ff', fillColor: '#0066ff', radius: 8 }, // Bleu pour les bus
+            taxi: { color: '#ffff00', fillColor: '#ffff00', radius: 8 }, // Jaune pour les taxis
+            taxi_irreg: { color: '#ff0000', fillColor: '#ff0000', radius: 8 } // Rouge pour les taxis irréguliers
         };
         
         // Initialisation de la carte
@@ -123,10 +125,11 @@
                     radius: style.radius
                 });
                 
-                // Popup avec informations
+                // Popup avec informations détaillées
                 const popupContent = `
                     <div class="popup-content">
                         <h3>${point.nom}</h3>
+                        <p><strong>ID:</strong> ${point.id}</p>
                         <p><strong>Type:</strong> ${getTypeLabel(point.type)}</p>
                         <p><strong>Coordonnées:</strong> ${point.lat.toFixed(4)}, ${point.lng.toFixed(4)}</p>
                     </div>
@@ -146,36 +149,42 @@
                 }
             }
             
-            // Ajouter les marqueurs pour chaque type
+            // Ajouter tous les marqueurs pour chaque type
+            console.log('Ajout des arrêts de bus:', arretsBus.length);
             arretsBus.forEach(point => {
                 createMarker(point, styles.bus).addTo(map);
             });
             
+            console.log('Ajout des stations de taxi:', arretsTaxi.length);
             arretsTaxi.forEach(point => {
                 createMarker(point, styles.taxi).addTo(map);
             });
             
+            console.log('Ajout des taxis irréguliers:', taxisIrreguliers.length);
             taxisIrreguliers.forEach(point => {
                 createMarker(point, styles.taxi_irreg).addTo(map);
             });
             
-            // Ajouter la légende
+            // Ajouter la légende avec les nouvelles couleurs
             const legend = L.control({ position: 'bottomright' });
             legend.onAdd = function() {
                 const div = L.DomUtil.create('div', 'legend');
                 div.innerHTML = `
                     <h4>Légende</h4>
                     <div class="legend-item">
-                        <span class="legend-color" style="background-color: #ff0000;"></span>
-                        Arrêts de Bus
+                        <span class="legend-color" style="background-color: #0066ff;"></span>
+                        Arrêts de Bus (${arretsBus.length})
                     </div>
                     <div class="legend-item">
                         <span class="legend-color" style="background-color: #ffff00; border: 1px solid #ccc;"></span>
-                        Stations de Taxi
+                        Stations de Taxi (${arretsTaxi.length})
                     </div>
                     <div class="legend-item">
-                        <span class="legend-color" style="background-color: #ff8000;"></span>
-                        Taxis Irréguliers
+                        <span class="legend-color" style="background-color: #ff0000;"></span>
+                        Taxis Irréguliers (${taxisIrreguliers.length})
+                    </div>
+                    <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                        Total: ${arretsBus.length + arretsTaxi.length + taxisIrreguliers.length} points
                     </div>
                 `;
                 return div;
@@ -185,7 +194,20 @@
             // Ajouter un contrôle d'échelle
             L.control.scale().addTo(map);
             
+            // Calculer les limites pour centrer la vue sur tous les points
+            const allPoints = [...arretsBus, ...arretsTaxi, ...taxisIrreguliers];
+            if (allPoints.length > 0) {
+                const group = new L.featureGroup(
+                    allPoints.map(point => L.marker([point.lat, point.lng]))
+                );
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+            
             console.log('Carte interactive chargée avec succès');
+            console.log(`Total des points affichés: ${allPoints.length}`);
+            console.log('- Arrêts de bus:', arretsBus.length);
+            console.log('- Stations de taxi:', arretsTaxi.length);
+            console.log('- Taxis irréguliers:', taxisIrreguliers.length);
         }
         
         // Initialiser la carte quand la page est chargée
