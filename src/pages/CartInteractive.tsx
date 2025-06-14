@@ -1,5 +1,6 @@
 
 import { useLanguage } from "@/context/LanguageContext";
+import { useState, useEffect } from "react";
 
 /**
  * Page Cart Interactive - Accès à la carte interactive locale
@@ -9,27 +10,38 @@ import { useLanguage } from "@/context/LanguageContext";
  */
 const CartInteractive = () => {
   const { t } = useLanguage();
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapError, setMapError] = useState(false);
 
-  const mapPath = "qgis2web/qgis2web_2025_06_10-21_05_38_996880/index.html";
+  // Chemin vers la carte - essayer différents chemins possibles
+  const mapPaths = [
+    "/qgis2web/qgis2web_2025_06_10-21_05_38_996880/index.html",
+    "qgis2web/qgis2web_2025_06_10-21_05_38_996880/index.html",
+    "./qgis2web/qgis2web_2025_06_10-21_05_38_996880/index.html"
+  ];
 
-  const handleOpenMap = () => {
-    // Essayer d'ouvrir la carte dans un nouvel onglet
-    const newWindow = window.open(mapPath, '_blank');
-    if (!newWindow) {
-      // Si bloqué par le navigateur, afficher le lien pour copie manuelle
-      navigator.clipboard.writeText(mapPath).then(() => {
-        alert("Le lien a été copié dans le presse-papier. Collez-le dans la barre d'adresse de votre navigateur.");
-      }).catch(() => {
-        alert("Veuillez copier manuellement ce lien dans votre navigateur : " + mapPath);
-      });
-    }
+  const handleMapLoad = () => {
+    setMapLoaded(true);
+    setMapError(false);
   };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(mapPath).then(() => {
+  const handleMapError = () => {
+    setMapError(true);
+    setMapLoaded(false);
+  };
+
+  const handleOpenInNewTab = (path: string) => {
+    // Essayer d'ouvrir dans un nouvel onglet
+    const fullPath = window.location.origin + "/" + path.replace(/^\//, "");
+    window.open(fullPath, '_blank');
+  };
+
+  const handleCopyLink = (path: string) => {
+    const fullPath = window.location.origin + "/" + path.replace(/^\//, "");
+    navigator.clipboard.writeText(fullPath).then(() => {
       alert("Lien copié dans le presse-papier !");
     }).catch(() => {
-      alert("Impossible de copier automatiquement. Veuillez copier manuellement le lien ci-dessous.");
+      alert("Veuillez copier manuellement ce lien : " + fullPath);
     });
   };
 
@@ -38,74 +50,139 @@ const CartInteractive = () => {
       <div className="container mx-auto px-4 pt-20 pb-8 flex-grow">
         <div className="text-center text-white mb-8">
           <h1 className="text-3xl font-bold mb-4">Carte Interactive de Constantine</h1>
-          <p className="text-lg mb-6">Accédez à la carte interactive pour visualiser les trajets disponibles</p>
+          <p className="text-lg mb-6">Visualisez les trajets et les points d'intérêt de Constantine</p>
         </div>
         
-        {/* Tentative d'affichage direct de la carte */}
-        <div className="max-w-6xl mx-auto mb-8">
+        {/* Affichage principal de la carte */}
+        <div className="max-w-7xl mx-auto mb-8">
           <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
-            <h2 className="text-xl font-semibold text-white mb-4 text-center">Carte Interactive</h2>
-            <div className="w-full h-96 md:h-[600px] rounded-lg overflow-hidden bg-white/5 border border-white/20">
+            <h2 className="text-xl font-semibold text-white mb-4 text-center">Carte Interactive - Constantine</h2>
+            
+            {/* Container pour la carte avec les bonnes proportions */}
+            <div className="relative w-full bg-white rounded-lg overflow-hidden shadow-2xl" style={{ height: '600px' }}>
+              {/* Essayer d'afficher la carte avec le premier chemin */}
               <iframe
-                src={mapPath}
+                src={mapPaths[0]}
                 className="w-full h-full border-0"
                 title="Carte Interactive de Constantine"
-                sandbox="allow-scripts allow-same-origin"
+                onLoad={handleMapLoad}
+                onError={handleMapError}
+                sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                allow="geolocation"
+                style={{ 
+                  minHeight: '600px',
+                  backgroundColor: '#f0f9ff'
+                }}
               />
+              
+              {/* Overlay si la carte ne charge pas */}
+              {mapError && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-50 to-green-50">
+                  <div className="text-center p-8">
+                    <div className="text-6xl mb-4">🗺️</div>
+                    <h3 className="text-xl font-semibold text-gray-700 mb-4">Carte Interactive</h3>
+                    <p className="text-gray-600 mb-6">La carte ne peut pas être chargée directement dans cette vue.</p>
+                    <div className="space-y-3">
+                      {mapPaths.map((path, index) => (
+                        <div key={index} className="flex gap-2">
+                          <button
+                            onClick={() => handleOpenInNewTab(path)}
+                            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm flex-1"
+                          >
+                            🔗 Ouvrir (Option {index + 1})
+                          </button>
+                          <button
+                            onClick={() => handleCopyLink(path)}
+                            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm"
+                          >
+                            📋
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Indicateur de chargement si la carte se charge */}
+              {!mapLoaded && !mapError && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-50 to-green-50">
+                  <div className="text-center">
+                    <div className="animate-spin text-4xl mb-4">🔄</div>
+                    <p className="text-gray-600">Chargement de la carte...</p>
+                  </div>
+                </div>
+              )}
             </div>
-            <p className="text-white/70 text-sm mt-2 text-center">
-              Si la carte ne s'affiche pas, utilisez les options ci-dessous
-            </p>
+            
+            {mapLoaded && (
+              <p className="text-green-200 text-sm mt-2 text-center">
+                ✅ Carte chargée avec succès !
+              </p>
+            )}
           </div>
         </div>
 
-        {/* Méthodes d'accès alternatives */}
+        {/* Options d'accès alternatives */}
         <div className="max-w-4xl mx-auto space-y-6">
           
-          {/* Bouton principal pour ouvrir la carte */}
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-center">
-            <h2 className="text-xl font-semibold text-white mb-4">Ouvrir dans un Nouvel Onglet</h2>
-            <button
-              onClick={handleOpenMap}
-              className="px-8 py-4 bg-gradient-to-r from-[#45B39D] to-[#FEC6A1] text-white rounded-xl hover:opacity-90 transition-opacity text-lg font-semibold shadow-lg mb-4"
-            >
-              🗺️ Ouvrir la Carte
-            </button>
-            <p className="text-white/70 text-sm">
-              Cliquez pour ouvrir la carte dans un nouvel onglet
-            </p>
+          {/* Boutons d'accès direct */}
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
+            <h3 className="text-xl font-semibold text-white mb-4 text-center">Accès Direct à la Carte</h3>
+            <div className="grid md:grid-cols-3 gap-4">
+              {mapPaths.map((path, index) => (
+                <div key={index} className="text-center">
+                  <button
+                    onClick={() => handleOpenInNewTab(path)}
+                    className="w-full px-6 py-4 bg-gradient-to-r from-[#45B39D] to-[#FEC6A1] text-white rounded-xl hover:opacity-90 transition-opacity font-semibold shadow-lg mb-2"
+                  >
+                    🗺️ Option {index + 1}
+                  </button>
+                  <button
+                    onClick={() => handleCopyLink(path)}
+                    className="w-full px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors text-sm"
+                  >
+                    📋 Copier le lien
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Lien direct */}
+          {/* Instructions détaillées */}
           <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">Lien direct :</h3>
-              <button
-                onClick={handleCopyLink}
-                className="px-4 py-2 bg-[#FEC6A1]/80 text-white rounded-lg hover:bg-[#FEC6A1] transition-colors text-sm"
-              >
-                📋 Copier le lien
-              </button>
+            <h3 className="text-lg font-semibold text-white mb-3">📋 Instructions d'utilisation :</h3>
+            <div className="space-y-3 text-white/80 text-sm">
+              <div className="flex items-start space-x-2">
+                <span className="text-green-300 font-bold">1.</span>
+                <span>La carte devrait s'afficher automatiquement ci-dessus</span>
+              </div>
+              <div className="flex items-start space-x-2">
+                <span className="text-green-300 font-bold">2.</span>
+                <span>Si elle ne s'affiche pas, cliquez sur les boutons "Option 1, 2 ou 3" pour ouvrir dans un nouvel onglet</span>
+              </div>
+              <div className="flex items-start space-x-2">
+                <span className="text-green-300 font-bold">3.</span>
+                <span>Vous pouvez copier le lien et le coller directement dans votre navigateur</span>
+              </div>
+              <div className="flex items-start space-x-2">
+                <span className="text-yellow-300 font-bold">⚠️</span>
+                <span>Assurez-vous que le dossier qgis2web est accessible depuis votre serveur web</span>
+              </div>
             </div>
-            <div className="bg-black/20 rounded-lg p-3 break-all">
-              <code className="text-white/60 text-xs">
-                {mapPath}
-              </code>
-            </div>
-            <p className="text-white/70 text-sm mt-2">
-              Copiez ce lien et collez-le directement dans votre navigateur
-            </p>
           </div>
 
-          {/* Instructions */}
+          {/* Informations techniques */}
           <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-3">📋 Instructions :</h3>
-            <ol className="space-y-2 text-white/80 text-sm list-decimal list-inside">
-              <li>La carte devrait s'afficher directement ci-dessus</li>
-              <li>Si elle ne s'affiche pas, cliquez sur "Ouvrir la Carte" pour un nouvel onglet</li>
-              <li>Vous pouvez aussi copier le lien et le coller dans votre navigateur</li>
-              <li>Assurez-vous que le dossier qgis2web est dans le même répertoire que votre application</li>
-            </ol>
+            <h3 className="text-lg font-semibold text-white mb-3">🔧 Informations techniques :</h3>
+            <div className="space-y-2 text-white/70 text-xs">
+              <p><strong>Chemins testés :</strong></p>
+              {mapPaths.map((path, index) => (
+                <div key={index} className="bg-black/20 rounded p-2 font-mono break-all">
+                  {window.location.origin}/{path.replace(/^\//, "")}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
