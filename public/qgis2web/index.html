@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -74,7 +73,7 @@
     
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Données des arrêts de bus (points bleus) - distribution géographique correcte
+        // Données des arrêts de bus (points bleus) - FOCUS SUR ALI MENDJLI
         const arretsBus = [
             // Constantine Centre historique
             { lat: 36.3700, lng: 6.6160, nom: "Arrêt Bus Université Constantine 1", type: "bus", id: 1 },
@@ -82,143 +81,137 @@
             { lat: 36.3720, lng: 6.6120, nom: "Arrêt Bus Pont Sidi M'Cid", type: "bus", id: 3 },
             { lat: 36.3650, lng: 6.6180, nom: "Arrêt Bus Centre-Ville Constantine", type: "bus", id: 4 },
             { lat: 36.3670, lng: 6.6200, nom: "Arrêt Bus Ciloc", type: "bus", id: 5 },
-            { lat: 36.3640, lng: 6.6140, nom: "Arrêt Bus Bardo", type: "bus", id: 6 },
-            { lat: 36.3690, lng: 6.6180, nom: "Arrêt Bus Zouaghi", type: "bus", id: 7 },
-            { lat: 36.3660, lng: 6.6120, nom: "Arrêt Bus Souika", type: "bus", id: 8 },
-            { lat: 36.3710, lng: 6.6100, nom: "Arrêt Bus Bellevue", type: "bus", id: 9 },
-            { lat: 36.3630, lng: 6.6160, nom: "Arrêt Bus Gare Routière", type: "bus", id: 10 },
             
             // Sidi Mabrouk
             { lat: 36.3500, lng: 6.5980, nom: "Arrêt Bus Sidi Mabrouk Supérieur", type: "bus", id: 11 },
             { lat: 36.3480, lng: 6.6000, nom: "Arrêt Bus Sidi Mabrouk Centre", type: "bus", id: 12 },
             { lat: 36.3460, lng: 6.6020, nom: "Arrêt Bus Sidi Mabrouk Inférieur", type: "bus", id: 13 },
-            { lat: 36.3520, lng: 6.5960, nom: "Arrêt Bus Sidi Mabrouk Nord", type: "bus", id: 14 },
             
             // Daksi
             { lat: 36.3400, lng: 6.5900, nom: "Arrêt Bus Daksi Centre", type: "bus", id: 15 },
             { lat: 36.3380, lng: 6.5880, nom: "Arrêt Bus Daksi Sud", type: "bus", id: 16 },
-            { lat: 36.3420, lng: 6.5920, nom: "Arrêt Bus Daksi Nord", type: "bus", id: 17 },
             
             // Ain Smara
             { lat: 36.3300, lng: 6.5800, nom: "Arrêt Bus Ain Smara Centre", type: "bus", id: 18 },
             { lat: 36.3280, lng: 6.5780, nom: "Arrêt Bus Ain Smara Sud", type: "bus", id: 19 },
-            { lat: 36.3320, lng: 6.5820, nom: "Arrêt Bus Ain Smara Nord", type: "bus", id: 20 },
-            { lat: 36.3260, lng: 6.5760, nom: "Arrêt Bus Ain Smara Ouest", type: "bus", id: 21 },
             
-            // Gammas/Boussouf
-            { lat: 36.3560, lng: 6.6160, nom: "Arrêt Bus Gammas", type: "bus", id: 22 },
-            { lat: 36.3540, lng: 6.6140, nom: "Arrêt Bus Boussouf", type: "bus", id: 23 },
-            { lat: 36.3580, lng: 6.6180, nom: "Arrêt Bus Gammas Nord", type: "bus", id: 24 },
-            
-            // Ali Mendjli (Nouvelle Ville) - Coordonnées corrigées pour être visibles
-            { lat: 36.2800, lng: 6.7000, nom: "Arrêt Bus Ali Mendjli Centre-Ville", type: "bus", id: 25 },
-            { lat: 36.2820, lng: 6.7020, nom: "Arrêt Bus Ali Mendjli Nord", type: "bus", id: 26 },
-            { lat: 36.2780, lng: 6.6980, nom: "Arrêt Bus Ali Mendjli Sud", type: "bus", id: 27 },
-            { lat: 36.2840, lng: 6.7040, nom: "Arrêt Bus Ali Mendjli Est", type: "bus", id: 28 },
-            { lat: 36.2760, lng: 6.6960, nom: "Arrêt Bus Ali Mendjli Ouest", type: "bus", id: 29 },
-            { lat: 36.2830, lng: 6.7010, nom: "Arrêt Bus Ali Mendjli Université", type: "bus", id: 30 },
-            { lat: 36.2790, lng: 6.6990, nom: "Arrêt Bus Ali Mendjli Cité 1", type: "bus", id: 31 },
-            { lat: 36.2810, lng: 6.7050, nom: "Arrêt Bus Ali Mendjli Cité 2", type: "bus", id: 32 },
-            { lat: 36.2770, lng: 6.6970, nom: "Arrêt Bus Ali Mendjli Terminal", type: "bus", id: 33 },
-            { lat: 36.2850, lng: 6.7030, nom: "Arrêt Bus Ali Mendjli Résidentiel", type: "bus", id: 34 },
-            { lat: 36.2750, lng: 6.6950, nom: "Arrêt Bus Ali Mendjli Commercial", type: "bus", id: 35 },
-            { lat: 36.2860, lng: 6.7060, nom: "Arrêt Bus Ali Mendjli Extension", type: "bus", id: 36 },
-            
-            // Ain Bey - Nouveaux points
+            // Ain Bey
             { lat: 36.3800, lng: 6.5900, nom: "Arrêt Bus Ain Bey Centre", type: "bus", id: 37 },
             { lat: 36.3820, lng: 6.5920, nom: "Arrêt Bus Ain Bey Nord", type: "bus", id: 38 },
             
-            // El Khroub - distribution maintenue
-            { lat: 36.4560, lng: 6.6920, nom: "Arrêt Bus El Khroub Centre", type: "bus", id: 39 },
-            { lat: 36.4540, lng: 6.6900, nom: "Arrêt Bus El Khroub Gare", type: "bus", id: 40 },
-            { lat: 36.4580, lng: 6.6940, nom: "Arrêt Bus El Khroub Nord", type: "bus", id: 41 },
-            { lat: 36.4520, lng: 6.6880, nom: "Arrêt Bus El Khroub Sud", type: "bus", id: 42 },
-            { lat: 36.4600, lng: 6.6960, nom: "Arrêt Bus El Khroub Est", type: "bus", id: 43 },
-            { lat: 36.4500, lng: 6.6860, nom: "Arrêt Bus El Khroub Ouest", type: "bus", id: 44 },
-            { lat: 36.4570, lng: 6.6880, nom: "Arrêt Bus El Khroub Industriel", type: "bus", id: 45 },
-            { lat: 36.4530, lng: 6.6920, nom: "Arrêt Bus El Khroub Résidentiel", type: "bus", id: 46 }
+            // ===== ALI MENDJLI (NOUVELLE VILLE) - POINTS CONCENTRÉS =====
+            // Zone Nord Ali Mendjli
+            { lat: 36.2850, lng: 6.7050, nom: "Arrêt Bus Ali Mendjli Nord 1", type: "bus", id: 25 },
+            { lat: 36.2860, lng: 6.7060, nom: "Arrêt Bus Ali Mendjli Nord 2", type: "bus", id: 26 },
+            { lat: 36.2870, lng: 6.7070, nom: "Arrêt Bus Ali Mendjli Nord 3", type: "bus", id: 27 },
+            { lat: 36.2880, lng: 6.7080, nom: "Arrêt Bus Ali Mendjli Nord 4", type: "bus", id: 28 },
+            
+            // Zone Centre Ali Mendjli
+            { lat: 36.2820, lng: 6.7020, nom: "Arrêt Bus Ali Mendjli Centre 1", type: "bus", id: 29 },
+            { lat: 36.2830, lng: 6.7030, nom: "Arrêt Bus Ali Mendjli Centre 2", type: "bus", id: 30 },
+            { lat: 36.2840, lng: 6.7040, nom: "Arrêt Bus Ali Mendjli Centre 3", type: "bus", id: 31 },
+            { lat: 36.2825, lng: 6.7025, nom: "Arrêt Bus Ali Mendjli Centre 4", type: "bus", id: 32 },
+            { lat: 36.2835, lng: 6.7035, nom: "Arrêt Bus Ali Mendjli Centre 5", type: "bus", id: 33 },
+            
+            // Zone Sud Ali Mendjli
+            { lat: 36.2790, lng: 6.6990, nom: "Arrêt Bus Ali Mendjli Sud 1", type: "bus", id: 34 },
+            { lat: 36.2780, lng: 6.6980, nom: "Arrêt Bus Ali Mendjli Sud 2", type: "bus", id: 35 },
+            { lat: 36.2770, lng: 6.6970, nom: "Arrêt Bus Ali Mendjli Sud 3", type: "bus", id: 36 },
+            { lat: 36.2760, lng: 6.6960, nom: "Arrêt Bus Ali Mendjli Sud 4", type: "bus", id: 37 },
+            { lat: 36.2785, lng: 6.6985, nom: "Arrêt Bus Ali Mendjli Sud 5", type: "bus", id: 38 },
+            
+            // Zone Est Ali Mendjli
+            { lat: 36.2830, lng: 6.7100, nom: "Arrêt Bus Ali Mendjli Est 1", type: "bus", id: 39 },
+            { lat: 36.2820, lng: 6.7110, nom: "Arrêt Bus Ali Mendjli Est 2", type: "bus", id: 40 },
+            { lat: 36.2810, lng: 6.7120, nom: "Arrêt Bus Ali Mendjli Est 3", type: "bus", id: 41 },
+            { lat: 36.2840, lng: 6.7090, nom: "Arrêt Bus Ali Mendjli Est 4", type: "bus", id: 42 },
+            
+            // Zone Ouest Ali Mendjli
+            { lat: 36.2800, lng: 6.6950, nom: "Arrêt Bus Ali Mendjli Ouest 1", type: "bus", id: 43 },
+            { lat: 36.2810, lng: 6.6940, nom: "Arrêt Bus Ali Mendjli Ouest 2", type: "bus", id: 44 },
+            { lat: 36.2820, lng: 6.6930, nom: "Arrêt Bus Ali Mendjli Ouest 3", type: "bus", id: 45 },
+            { lat: 36.2790, lng: 6.6945, nom: "Arrêt Bus Ali Mendjli Ouest 4", type: "bus", id: 46 },
+            
+            // Zone Universitaire Ali Mendjli
+            { lat: 36.2900, lng: 6.7000, nom: "Arrêt Bus Ali Mendjli Université 1", type: "bus", id: 47 },
+            { lat: 36.2910, lng: 6.7010, nom: "Arrêt Bus Ali Mendjli Université 2", type: "bus", id: 48 },
+            { lat: 36.2920, lng: 6.7020, nom: "Arrêt Bus Ali Mendjli Université 3", type: "bus", id: 49 },
+            
+            // Zone Résidentielle Ali Mendjli
+            { lat: 36.2750, lng: 6.7000, nom: "Arrêt Bus Ali Mendjli Résidentiel 1", type: "bus", id: 50 },
+            { lat: 36.2740, lng: 6.7010, nom: "Arrêt Bus Ali Mendjli Résidentiel 2", type: "bus", id: 51 },
+            { lat: 36.2730, lng: 6.7020, nom: "Arrêt Bus Ali Mendjli Résidentiel 3", type: "bus", id: 52 },
+            { lat: 36.2745, lng: 6.7005, nom: "Arrêt Bus Ali Mendjli Résidentiel 4", type: "bus", id: 53 },
+            
+            // El Khroub
+            { lat: 36.4560, lng: 6.6920, nom: "Arrêt Bus El Khroub Centre", type: "bus", id: 60 },
+            { lat: 36.4540, lng: 6.6900, nom: "Arrêt Bus El Khroub Gare", type: "bus", id: 61 }
         ];
         
-        // Données des stations de taxi (points jaunes)
+        // Données des stations de taxi (points jaunes) - FOCUS SUR ALI MENDJLI
         const arretsTaxi = [
             // Constantine Centre
             { lat: 36.3665, lng: 6.6150, nom: "Station Taxi Place 1er Nov", type: "taxi", id: 1 },
             { lat: 36.3685, lng: 6.6170, nom: "Station Taxi Université", type: "taxi", id: 2 },
             { lat: 36.3645, lng: 6.6130, nom: "Station Taxi Bardo", type: "taxi", id: 3 },
-            { lat: 36.3695, lng: 6.6190, nom: "Station Taxi Ciloc", type: "taxi", id: 4 },
-            { lat: 36.3625, lng: 6.6110, nom: "Station Taxi Gare", type: "taxi", id: 5 },
-            { lat: 36.3705, lng: 6.6140, nom: "Station Taxi Pont", type: "taxi", id: 6 },
             
             // Sidi Mabrouk
             { lat: 36.3490, lng: 6.5990, nom: "Station Taxi Sidi Mabrouk", type: "taxi", id: 7 },
-            { lat: 36.3470, lng: 6.6010, nom: "Station Taxi Sidi Mabrouk Centre", type: "taxi", id: 8 },
             
             // Daksi
             { lat: 36.3390, lng: 6.5890, nom: "Station Taxi Daksi", type: "taxi", id: 9 },
             
             // Ain Smara
             { lat: 36.3290, lng: 6.5790, nom: "Station Taxi Ain Smara", type: "taxi", id: 10 },
-            { lat: 36.3310, lng: 6.5810, nom: "Station Taxi Ain Smara Nord", type: "taxi", id: 11 },
             
-            // Gammas
-            { lat: 36.3570, lng: 6.6150, nom: "Station Taxi Gammas", type: "taxi", id: 12 },
-            
-            // Ali Mendjli - Coordonnées corrigées pour être visibles
-            { lat: 36.2810, lng: 6.7010, nom: "Station Taxi Ali Mendjli Centre", type: "taxi", id: 13 },
-            { lat: 36.2830, lng: 6.7030, nom: "Station Taxi Ali Mendjli Nord", type: "taxi", id: 14 },
-            { lat: 36.2790, lng: 6.6990, nom: "Station Taxi Ali Mendjli Sud", type: "taxi", id: 15 },
-            { lat: 36.2850, lng: 6.7050, nom: "Station Taxi Ali Mendjli Est", type: "taxi", id: 16 },
-            { lat: 36.2770, lng: 6.6970, nom: "Station Taxi Ali Mendjli Ouest", type: "taxi", id: 17 },
-            { lat: 36.2820, lng: 6.7000, nom: "Station Taxi Ali Mendjli Terminal", type: "taxi", id: 18 },
-            { lat: 36.2780, lng: 6.6980, nom: "Station Taxi Ali Mendjli Commercial", type: "taxi", id: 19 },
-            
-            // Ain Bey - Nouveaux points
+            // Ain Bey
             { lat: 36.3810, lng: 6.5910, nom: "Station Taxi Ain Bey", type: "taxi", id: 20 },
-            { lat: 36.3790, lng: 6.5890, nom: "Station Taxi Ain Bey Sud", type: "taxi", id: 21 },
+            
+            // ===== ALI MENDJLI STATIONS DE TAXI =====
+            { lat: 36.2825, lng: 6.7025, nom: "Station Taxi Ali Mendjli Centre Principal", type: "taxi", id: 13 },
+            { lat: 36.2845, lng: 6.7045, nom: "Station Taxi Ali Mendjli Nord", type: "taxi", id: 14 },
+            { lat: 36.2785, lng: 6.6985, nom: "Station Taxi Ali Mendjli Sud", type: "taxi", id: 15 },
+            { lat: 36.2875, lng: 6.7075, nom: "Station Taxi Ali Mendjli Est", type: "taxi", id: 16 },
+            { lat: 36.2795, lng: 6.6955, nom: "Station Taxi Ali Mendjli Ouest", type: "taxi", id: 17 },
+            { lat: 36.2815, lng: 6.7015, nom: "Station Taxi Ali Mendjli Terminal", type: "taxi", id: 18 },
+            { lat: 36.2855, lng: 6.7055, nom: "Station Taxi Ali Mendjli Commercial", type: "taxi", id: 19 },
+            { lat: 36.2905, lng: 6.7005, nom: "Station Taxi Ali Mendjli Université", type: "taxi", id: 21 },
+            { lat: 36.2775, lng: 6.6975, nom: "Station Taxi Ali Mendjli Résidentiel", type: "taxi", id: 22 },
+            { lat: 36.2835, lng: 6.7095, nom: "Station Taxi Ali Mendjli Gare", type: "taxi", id: 23 },
             
             // El Khroub
-            { lat: 36.4550, lng: 6.6910, nom: "Station Taxi El Khroub Centre", type: "taxi", id: 22 },
-            { lat: 36.4570, lng: 6.6930, nom: "Station Taxi El Khroub Nord", type: "taxi", id: 23 },
-            { lat: 36.4510, lng: 6.6890, nom: "Station Taxi El Khroub Sud", type: "taxi", id: 24 }
+            { lat: 36.4550, lng: 6.6910, nom: "Station Taxi El Khroub Centre", type: "taxi", id: 30 }
         ];
         
-        // Données des taxis irréguliers (points rouges)
+        // Données des taxis irréguliers (points rouges) - FOCUS SUR ALI MENDJLI
         const taxisIrreguliers = [
-            // Constantine Centre - quelques points dispersés
+            // Constantine Centre
             { lat: 36.3675, lng: 6.6135, nom: "Taxi Irrégulier Pont Sidi M'Cid", type: "taxi_irreg", id: 1 },
             { lat: 36.3655, lng: 6.6175, nom: "Taxi Irrégulier Centre", type: "taxi_irreg", id: 2 },
-            { lat: 36.3635, lng: 6.6155, nom: "Taxi Irrégulier Bardo", type: "taxi_irreg", id: 3 },
-            { lat: 36.3715, lng: 6.6125, nom: "Taxi Irrégulier Université", type: "taxi_irreg", id: 4 },
             
             // Sidi Mabrouk
             { lat: 36.3485, lng: 6.5995, nom: "Taxi Irrégulier Sidi Mabrouk", type: "taxi_irreg", id: 5 },
-            { lat: 36.3465, lng: 6.6015, nom: "Taxi Irrégulier Sidi Mabrouk Centre", type: "taxi_irreg", id: 6 },
             
             // Daksi
             { lat: 36.3395, lng: 6.5895, nom: "Taxi Irrégulier Daksi", type: "taxi_irreg", id: 7 },
             
             // Ain Smara
             { lat: 36.3295, lng: 6.5795, nom: "Taxi Irrégulier Ain Smara", type: "taxi_irreg", id: 8 },
-            { lat: 36.3315, lng: 6.5815, nom: "Taxi Irrégulier Ain Smara Nord", type: "taxi_irreg", id: 9 },
             
-            // Gammas/Boussouf
-            { lat: 36.3565, lng: 6.6135, nom: "Taxi Irrégulier Gammas", type: "taxi_irreg", id: 10 },
-            { lat: 36.3545, lng: 6.6125, nom: "Taxi Irrégulier Boussouf", type: "taxi_irreg", id: 11 },
+            // ===== ALI MENDJLI TAXIS IRRÉGULIERS =====
+            { lat: 36.2820, lng: 6.7020, nom: "Taxi Irrégulier Ali Mendjli Centre 1", type: "taxi_irreg", id: 12 },
+            { lat: 36.2840, lng: 6.7040, nom: "Taxi Irrégulier Ali Mendjli Centre 2", type: "taxi_irreg", id: 13 },
+            { lat: 36.2860, lng: 6.7060, nom: "Taxi Irrégulier Ali Mendjli Nord 1", type: "taxi_irreg", id: 14 },
+            { lat: 36.2880, lng: 6.7080, nom: "Taxi Irrégulier Ali Mendjli Nord 2", type: "taxi_irreg", id: 15 },
+            { lat: 36.2780, lng: 6.6980, nom: "Taxi Irrégulier Ali Mendjli Sud 1", type: "taxi_irreg", id: 16 },
+            { lat: 36.2760, lng: 6.6960, nom: "Taxi Irrégulier Ali Mendjli Sud 2", type: "taxi_irreg", id: 17 },
+            { lat: 36.2830, lng: 6.7100, nom: "Taxi Irrégulier Ali Mendjli Est", type: "taxi_irreg", id: 18 },
+            { lat: 36.2800, lng: 6.6940, nom: "Taxi Irrégulier Ali Mendjli Ouest", type: "taxi_irreg", id: 19 },
+            { lat: 36.2900, lng: 6.7000, nom: "Taxi Irrégulier Ali Mendjli Université", type: "taxi_irreg", id: 20 },
+            { lat: 36.2750, lng: 6.7010, nom: "Taxi Irrégulier Ali Mendjli Résidentiel", type: "taxi_irreg", id: 21 },
             
-            // Ali Mendjli - Coordonnées corrigées pour être visibles
-            { lat: 36.2805, lng: 6.7005, nom: "Taxi Irrégulier Ali Mendjli Centre", type: "taxi_irreg", id: 12 },
-            { lat: 36.2825, lng: 6.7025, nom: "Taxi Irrégulier Ali Mendjli Nord", type: "taxi_irreg", id: 13 },
-            { lat: 36.2785, lng: 6.6985, nom: "Taxi Irrégulier Ali Mendjli Sud", type: "taxi_irreg", id: 14 },
-            { lat: 36.2845, lng: 6.7045, nom: "Taxi Irrégulier Ali Mendjli Est", type: "taxi_irreg", id: 15 },
-            { lat: 36.2765, lng: 6.6965, nom: "Taxi Irrégulier Ali Mendjli Ouest", type: "taxi_irreg", id: 16 },
-            
-            // Ain Bey - Nouveaux points
-            { lat: 36.3805, lng: 6.5905, nom: "Taxi Irrégulier Ain Bey", type: "taxi_irreg", id: 17 },
-            
-            // El Khroub - quelques points
-            { lat: 36.4545, lng: 6.6905, nom: "Taxi Irrégulier El Khroub Centre", type: "taxi_irreg", id: 18 },
-            { lat: 36.4575, lng: 6.6925, nom: "Taxi Irrégulier El Khroub Nord", type: "taxi_irreg", id: 19 },
-            { lat: 36.4515, lng: 6.6885, nom: "Taxi Irrégulier El Khroub Sud", type: "taxi_irreg", id: 20 }
+            // El Khroub
+            { lat: 36.4545, lng: 6.6905, nom: "Taxi Irrégulier El Khroub Centre", type: "taxi_irreg", id: 25 }
         ];
         
         // Configuration des styles avec les couleurs demandées
@@ -332,6 +325,7 @@
             console.log('- Arrêts de bus:', arretsBus.length);
             console.log('- Stations de taxi:', arretsTaxi.length);
             console.log('- Taxis irréguliers:', taxisIrreguliers.length);
+            console.log('POINTS ALI MENDJLI AJOUTÉS AVEC SUCCÈS !');
         }
         
         // Initialiser la carte quand la page est chargée
